@@ -1,0 +1,2 @@
+INSERT INTO TOPIC(id, title, content) VALUES (1, 'Java', 'les bases du langage sont très lointaines...');
+INSERT INTO TOPIC(id, title, content) VALUES (2, 'Angular', 'les bases du langage sont plus proches.');

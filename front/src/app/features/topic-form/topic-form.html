@@ -1,0 +1,9 @@
+<p>topicForm.html works!</p>
+<div>
+@for(topic of (topic$ | async); track topic.id){
+    <div>
+        <h2>{{topic.title | uppercase}} {{topic.id}}</h2>
+        <p>{{topic.content | lowercase}}</p>
+    </div>
+}
+</div>
