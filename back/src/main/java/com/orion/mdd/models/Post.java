@@ -3,6 +3,7 @@ package com.orion.mdd.models;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -56,5 +57,7 @@ public class Post {//article
     @Size(max = 50)
     private String title;
 
-
+    @NotNull
+    private Date created_at;
+    
 }

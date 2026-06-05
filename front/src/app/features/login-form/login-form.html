@@ -1,0 +1,30 @@
+<div fxLayout="row" fxLayoutAlign="start center">
+    <button mat-icon-button (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+</div>
+<div>
+    <mat-card>
+        <mat-card-header fxLayoutAlign="center center">
+            <mat-card-title>{{labels.loginSeConnecterTitre}}</mat-card-title>
+        </mat-card-header>
+        
+        <form class="mt2" fxLayout="column" [formGroup]="myLoginForm" (ngSubmit)="submit()">
+            <mat-card-content>
+                <mat-form-field appearance="outline" class="" fxFlex>
+                    <mat-label>{{labels.loginNomUtilisateurOuEmail}}</mat-label>
+                    <input matInput formControlName="string">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="" fxFlex>
+                    <mat-label>{{labels.loginMotDePasse}}</mat-label>
+                    <input matInput formControlName="pwd">
+                </mat-form-field>
+            </mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="center center">
+                <button matButton class="login-custom-btn" >{{labels.loginSeConnecterBouton}}</button>
+            </div>
+        </form>
+
+    </mat-card>
+</div>

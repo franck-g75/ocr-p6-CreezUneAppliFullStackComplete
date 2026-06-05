@@ -47,6 +47,48 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   align-items: center;     /* vertical */
 }
 
+
+/*--------------------LANDING ------------------------*/
+.landing-top {
+  display: flex;
+  height: 50%;
+  width: 100%;
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */  
+}
+.landing-bottom {
+  display: flex;
+  justify-content: space-between; /* horizontal */
+  align-items: center;
+  align-items: top;     /* vertical */  
+  width: 50%;
+  margin: 0 auto; //horizontal middle
+}
+
+.landing-bottom-right {
+  justify-content: right; 
+}
+.landing-bottom-left {
+  justify-content: left; 
+}
+.landing-custom-btn.mat-mdc-raised-button,
+.landing-custom-btn.mat-mdc-outlined-button,
+.landing-custom-btn.mat-mdc-unelevated-button {
+  border-radius: 8px;
+  padding: 6px;
+}
+
+/*----------------------Login------------------*/
+
+
+.login-custom-btn.mat-mdc-raised-button,
+.login-custom-btn.mat-mdc-outlined-button,
+.login-custom-btn.mat-mdc-unelevated-button {
+  border-radius: 8px;
+  background: #7763C5;
+}
+
+/*----------------------Topic-----------------------------*/
 .bigGrid { //rectangle34
   width: 835px;
   height: 584px;
@@ -67,13 +109,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border: 1px solid #000000
 }
 
-
-
-
 .custom-btn.mat-mdc-raised-button,
 .custom-btn.mat-mdc-outlined-button,
 .custom-btn.mat-mdc-unelevated-button {
   border-radius: 8px;
   background: #7763C5;
-
 }
+
+

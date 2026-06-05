@@ -24,7 +24,8 @@ import jakarta.validation.constraints.Size;
 @Table(name = "TOPIC")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 @EqualsAndHashCode(of = {"id"})
 @Builder
@@ -48,7 +49,7 @@ public class Topic {
     private Set<Users> Users;
 
     @OneToMany(mappedBy = "topic")
-    private Set<Post> posts; 
+    private Set<Post> posts;
 
 }
 

@@ -8,12 +8,12 @@ INSERT INTO USERS(id,username,email,pwd) VALUES (1, 'fguindeuil','franck.guindeu
 INSERT INTO USERS(id,username,email,pwd) VALUES (2, 'lili','lili@coucou.fr','passedemot');
 INSERT INTO USERS(id,username,email,pwd) VALUES (3, 'delcour','delcour@coucou.fr','passedemot');
 
-INSERT INTO POST(id, title, content, topic_id, users_id) VALUES(1,"JAVA c'est de la balle", "Java, mais c'est super génial !", 1, 1);
-INSERT INTO POST(id, title, content, topic_id, users_id) VALUES(2,"ANGULAR c'est de la balle", "Angular est super génial aussi", 1, 1);
+INSERT INTO POST(id, title, content, topic_id, users_id, created_at) VALUES(1,"JAVA c'est de la balle", "Java, mais c'est super génial !", 1, 1, '2026-06-05 10:49:54');
+INSERT INTO POST(id, title, content, topic_id, users_id, created_at) VALUES(2,"ANGULAR c'est de la balle", "Angular est super génial aussi", 1, 1, '2026-06-05 11:10:15');
 
-INSERT INTO COMMENT(id, content, post_id, users_id) VALUES(1, "c'est vrai", 1, 2);
-INSERT INTO COMMENT(id, content, post_id, users_id) VALUES(2, "c'est meme pas vrai", 2, 2);
-INSERT INTO COMMENT(id, content, post_id, users_id) VALUES(3, "c'est celui qui le dit qui y est", 2, 1);
+INSERT INTO COMMENT(id, content, post_id, users_id, created_at) VALUES(1, "c'est vrai", 1, 2, '2026-06-05 10:55:45');
+INSERT INTO COMMENT(id, content, post_id, users_id, created_at) VALUES(2, "c'est meme pas vrai", 2, 2, '2026-06-05 12:25:56');
+INSERT INTO COMMENT(id, content, post_id, users_id, created_at) VALUES(3, "c'est celui qui le dit qui y est", 2, 1, '2026-06-05 12:26:12');
 
 INSERT INTO TOPIC_USERS(topic_id, users_id) VALUES (1,1);
 INSERT INTO TOPIC_USERS(topic_id, users_id) VALUES (2,1);

@@ -11,12 +11,11 @@ import java.util.List;
 
 @Service
 public class TopicService {
-    //private final TopicMapper topicMapper;
+
     private final TopicRepository topicRepository;
 
-    public TopicService(TopicRepository topicRepository){//}, TopicMapper topicMapper) {
+    public TopicService(TopicRepository topicRepository){
         this.topicRepository = topicRepository;
-        //this.topicMapper = topicMapper;
     }
 
     public List<Topic> findAll() {
