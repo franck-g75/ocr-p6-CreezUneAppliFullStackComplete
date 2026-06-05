@@ -1,9 +1,13 @@
-<p>topicForm.html works!</p>
-<div>
-@for(topic of (topic$ | async); track topic.id){
-    <div>
-        <h2>{{topic.title | uppercase}} {{topic.id}}</h2>
+<div class="page">
+
+<div class="bigGrid">
+    @for(topic of (topic$ | async); track topic.id){
+    <div class="gridCell">
+        <h2>{{topic.title | uppercase}} </h2>
         <p>{{topic.content | lowercase}}</p>
+        <p><button matButton="filled" class="custom-btn">S'abonner</button></p>
     </div>
-}
+    }
+</div>
+
 </div>

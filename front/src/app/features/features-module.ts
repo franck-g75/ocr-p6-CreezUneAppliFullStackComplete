@@ -7,6 +7,6 @@ import { TopicForm } from './topic-form/topic-form';
   imports: [
     CommonModule, TopicForm
   ],
-  exports: [ TopicForm]
+  exports: [ TopicForm ]
 })
 export class FeaturesModule { }
