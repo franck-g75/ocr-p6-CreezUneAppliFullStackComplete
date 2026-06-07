@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
 import { MatCardContent } from '@angular/material/card';
 import { MatCardTitle } from '@angular/material/card';
@@ -12,11 +12,14 @@ import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOGIN_LABELS } from '../../shared/labels';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { UsersService } from '../../core/services/users-service';
+import { Users } from '../../core/models/users.interface';
+import { MyLoggingService } from '../../core/services/logging.services';
+import { UserStore } from '../../core/services/user-store-service';
 
 @Component({
   selector: 'app-login-form',
-  imports: [FormsModule, ReactiveFormsModule, MatIcon, MatIconButton, MatFormField, MatLabel, MatCardContent, MatCardTitle, MatCard, MatCardHeader, MatInputModule],
+  imports: [FormsModule, ReactiveFormsModule, MatButton, MatIcon, MatIconButton, MatFormField, MatLabel, MatCardContent, MatCardTitle, MatCard, MatCardHeader, MatInputModule],
   templateUrl: './login-form.html',
   styleUrl: './login-form.scss',
 })
@@ -26,8 +29,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class LoginForm implements OnInit{
 
   labels = LOGIN_LABELS;
+  public hide = true;
   public myLoginForm!: FormGroup;
-  
+  public onError = false;
+  private logPrefix: String = "login-Form ";
 
   private initForm(): void {
     this.myLoginForm = this.formBuilder.group({
@@ -45,10 +50,13 @@ export class LoginForm implements OnInit{
   }
 
   constructor(
+    private myLog: MyLoggingService,
+    private userStore: UserStore,
     private route: ActivatedRoute,
     private matSnackBar: MatSnackBar,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private userService: UsersService
   ){  }
 
   public back() {
@@ -58,7 +66,21 @@ export class LoginForm implements OnInit{
   public submit(): void { 
     //const loginRequest = this.form.value as LoginRequest;
 
-    window.alert("coucou " + this.myLoginForm.get("string")?.value + ", et ton mot de passe est : " + this.myLoginForm.get("pwd")?.value);
+    //window.alert("coucou " + this.myLoginForm.get("string")?.value + ", et ton mot de passe est : " + this.myLoginForm.get("pwd")?.value);
+    this.myLog.info(this.logPrefix + "appel du service");
+    this.userService.getByString(this.myLoginForm.get("string")?.value).subscribe({
+      next: (response: Users) => {
+        this.myLog.info(this.logPrefix + " User trouvé : " + response.id + " " + response.email + " " + response.username );
+        this.onError = false;
+        this.userStore.setEmail(response.email);
+        this.userStore.setUsername(response.username);
+        this.router.navigate(['topic']);
+      },
+      error : (error: Error) => {
+        //this.myLog.info(this.logPrefix + "error : " + JSON.stringify(error).toString());
+        this.onError = true;
+      }
+    })
 
   }
 

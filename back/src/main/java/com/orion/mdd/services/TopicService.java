@@ -2,6 +2,7 @@ package com.orion.mdd.services;
 
 //import com.orion.mdd.mapper.TopicMapper;
 import com.orion.mdd.models.Topic;
+import com.orion.mdd.models.Users;
 import com.orion.mdd.repository.TopicRepository;
 
 import org.springframework.stereotype.Service;
@@ -21,5 +22,5 @@ public class TopicService {
     public List<Topic> findAll() {
         return this.topicRepository.findAll();
     }
-   
+
 }

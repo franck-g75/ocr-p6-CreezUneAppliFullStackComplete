@@ -47,12 +47,48 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   align-items: center;     /* vertical */
 }
 
+/*----------------------HEADER------------------------*/
+.long_top_bar_desktop{
+  width: 100%;
+  height: 95px;
+  display: flex;
+  justify-content: center; /* horizontal */
+  padding: 0px;
+  margin: 0px;
+  background: #ffffff;
+}
+
+.top_bar_desktop { //rectangle9  rectangle31 rectagle42
+  width: 75%;
+  height: 95px;
+  background: #ffffff;
+  display: flex;
+  padding: 0px;
+  margin: 0px;
+  border: 1px solid #000000;
+}
+
+.rightPart { //rectangle9  rectangle31 rectagle42
+  //width: 75%;
+  //height: 95px;
+  //background: #ffffff;
+  display: flex;
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  //border: 1px solid #000000;
+  justify-content: right; /* horizontal */
+  align-items: center;     /* vertical */  
+}
+
+
 
 /*--------------------LANDING ------------------------*/
 .landing-top {
   display: flex;
+  width: 85%;
   height: 50%;
-  width: 100%;
+  width: 85%;
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */  
 }
@@ -60,7 +96,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   display: flex;
   justify-content: space-between; /* horizontal */
   align-items: center;
-  align-items: top;     /* vertical */  
   width: 50%;
   margin: 0 auto; //horizontal middle
 }
@@ -80,32 +115,40 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /*----------------------Login------------------*/
 
-
 .login-custom-btn.mat-mdc-raised-button,
 .login-custom-btn.mat-mdc-outlined-button,
 .login-custom-btn.mat-mdc-unelevated-button {
   border-radius: 8px;
-  background: #7763C5;
+  padding: 6px;
+}
+
+.error{
+  color: red;
+}
+
+.login-arrow-back{
+  margin: 0 auto;
 }
 
 /*----------------------Topic-----------------------------*/
 .bigGrid { //rectangle34
-  width: 835px;
-  height: 584px;
+  width: 75%;
   background: #ffffff;
   display: grid;
   grid-template-rows:190px;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  padding: 16px;
+  padding: 0px;
+  margin: 0px;
   border: 1px solid #000000
 }
 
 .gridCell { //rectangle43
-  width: 392px;
+  width: 385px;
   height: 161px;
   border-radius: 8px;
   background: #F5F5F5;
   padding: 6px;
+  margin: 6px;
   border: 1px solid #000000
 }
 
