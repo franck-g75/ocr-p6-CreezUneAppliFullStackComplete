@@ -69,18 +69,36 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .rightPart { //rectangle9  rectangle31 rectagle42
-  //width: 75%;
-  //height: 95px;
-  //background: #ffffff;
   display: flex;
   padding: 0px;
   margin: 0px;
   width: 100%;
-  //border: 1px solid #000000;
   justify-content: right; /* horizontal */
   align-items: center;     /* vertical */  
 }
 
+/*--------------------BUTTONS---------------------------------*/
+
+.login-custom-btn.mat-mdc-raised-button,
+.login-custom-btn.mat-mdc-outlined-button,
+.login-custom-btn.mat-mdc-unelevated-button {
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.custom-btn.mat-mdc-raised-button,
+.custom-btn.mat-mdc-outlined-button,
+.custom-btn.mat-mdc-unelevated-button {
+  border-radius: 8px;
+  background: #7763C5;
+}
+
+.custom-btn-grey.mat-mdc-raised-button,
+.custom-btn-grey.mat-mdc-outlined-button,
+.custom-btn-grey.mat-mdc-unelevated-button {
+  border-radius: 8px;
+  background: #939393;
+}
 
 
 /*--------------------LANDING ------------------------*/
@@ -115,12 +133,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /*----------------------Login------------------*/
 
-.login-custom-btn.mat-mdc-raised-button,
-.login-custom-btn.mat-mdc-outlined-button,
-.login-custom-btn.mat-mdc-unelevated-button {
-  border-radius: 8px;
-  padding: 6px;
-}
+
 
 .error{
   color: red;
@@ -152,11 +165,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border: 1px solid #000000
 }
 
-.custom-btn.mat-mdc-raised-button,
-.custom-btn.mat-mdc-outlined-button,
-.custom-btn.mat-mdc-unelevated-button {
-  border-radius: 8px;
-  background: #7763C5;
-}
+
 
 

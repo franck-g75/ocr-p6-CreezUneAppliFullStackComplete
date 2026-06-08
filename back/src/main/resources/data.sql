@@ -19,4 +19,4 @@ INSERT INTO TOPIC_USERS(topic_id, users_id) VALUES (1,1);
 INSERT INTO TOPIC_USERS(topic_id, users_id) VALUES (2,1);
 INSERT INTO TOPIC_USERS(topic_id, users_id) VALUES (3,1);
 INSERT INTO TOPIC_USERS(topic_id, users_id) VALUES (5,2);
-
+INSERT INTO TOPIC_USERS(topic_id, users_id) VALUES (2,2);

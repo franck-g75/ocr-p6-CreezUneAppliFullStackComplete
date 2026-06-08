@@ -8,7 +8,7 @@ import com.orion.mdd.dto.TopicDto;
 import com.orion.mdd.models.Topic;
 
 
-@Mapper(componentModel = "spring")
+//@Mapper(componentModel = "spring")
 public interface TopicMapper {
 
     TopicDto convertToTopicDto(Topic topic);

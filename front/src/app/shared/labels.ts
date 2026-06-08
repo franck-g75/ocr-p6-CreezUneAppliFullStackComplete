@@ -8,7 +8,7 @@ export const LOGIN_LABELS = {
     loginMotDePasse: "Mot de passe",
     loginSeConnecterBouton: "Se connecter"
 }
-export const WELCOME_LABELS = {
-    welcomeSeConnecter: "Se connecter",
-    welcomeSinscrire: "S'inscrire"
+export const TOPIC_LABELS = {
+    topicSabonner: "S'abonner",
+    topicDejaAbonne: "Déjà abonné"
 };

@@ -5,7 +5,10 @@
     <div class="gridCell">
         <h2>{{topic.title | uppercase}} </h2>
         <p>{{topic.content | lowercase}}</p>
-        <p><button matButton="filled" class="custom-btn">S'abonner</button></p>
+        <p>
+            @if(topic.read){  <button matButton="outlined" class="custom-btn-grey">{{labels.topicDejaAbonne}}</button>  }
+            @else { <button matButton="filled" class="custom-btn">{{labels.topicSabonner}}</button> }
+        </p>
     </div>
     }
 </div>

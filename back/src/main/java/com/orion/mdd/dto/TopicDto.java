@@ -21,4 +21,7 @@ public class TopicDto {
     @NotNull
     @Size(max = 2500)
     private String content;
+
+    @NotNull
+    private Boolean read = false;
 }

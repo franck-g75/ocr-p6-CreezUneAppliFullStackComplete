@@ -1,7 +1,7 @@
 package com.orion.mdd.controllers;
 
 import com.orion.mdd.dto.TopicDto;
-import com.orion.mdd.mapper.TopicMapper;
+//import com.orion.mdd.mapper.TopicMapper;
 import com.orion.mdd.models.Topic;
 import com.orion.mdd.services.TopicService;
 import lombok.extern.log4j.Log4j2;
@@ -17,26 +17,20 @@ import java.util.List;
 @RequestMapping("/api/topic")
 @Log4j2
 public class TopicController {
-    private final TopicMapper topicMapper;
+    //private final TopicMapper topicMapper;
     private final TopicService topicService;
 
 
-    public TopicController( TopicService topicService,
-                            TopicMapper topicMapper) {
-        this.topicMapper = topicMapper;
+    public TopicController( TopicService topicService) {
+        //this.topicMapper = topicMapper;
         this.topicService = topicService;
     }
 
-    @GetMapping()
-    public ResponseEntity<?> findAll() {
-        List<Topic> topics = this.topicService.findAll();
-        List<TopicDto> topicDtos = new ArrayList<TopicDto>();
-        
-        for (Topic topic : topics) {
-            topicDtos.add(this.topicMapper.convertToTopicDto(topic));
-         }
-        
-        return ResponseEntity.ok().body(topicDtos);
+    @GetMapping("/{username}")
+    public ResponseEntity<?> findAll(@PathVariable("username") String username) {
+        List<TopicDto> topics = this.topicService.findAll(username);
+                  
+        return ResponseEntity.ok().body(topics);
     }
     
 }
