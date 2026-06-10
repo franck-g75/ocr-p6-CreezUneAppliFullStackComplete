@@ -2,12 +2,19 @@
 
 <div class="bigGrid">
     @for(topic of (topic$ | async); track topic.id){
-    <div class="gridCell">
+    <div id="grigCell" class="gridCell">
         <h2>{{topic.title | uppercase}} </h2>
         <p>{{topic.content | lowercase}}</p>
         <p>
-            @if(topic.read){  <button matButton="outlined" class="custom-btn-grey">{{labels.topicDejaAbonne}}</button>  }
-            @else { <button matButton="filled" class="custom-btn">{{labels.topicSabonner}}</button> }
+            <button 
+                [id] ="'btnTopic-' + topic.id" 
+                matButton="filled" 
+                [disabled]="topic.read"
+                [ngClass]="{'custom-btn-grey':topic.read,'custom-btn':!topic.read}"
+                (click)="subscription(topic.id,$event, topic.read)">
+                {{topic.read ? labels.topicDejaAbonne : labels.topicSabonner}}
+            </button>
+            
         </p>
     </div>
     }

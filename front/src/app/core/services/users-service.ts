@@ -23,5 +23,13 @@ export class UsersService {
     return this.httpClient.get<Users>(this.pathService + '/' + string );
     
   }
+
+  public postsubscription(idUser: number,idTopic: number): Observable<void> { //TODO: mettre un string ok pour vérifier la bonne prise en compte du click
+    
+    this.myLog.info(this.logPrefix + "postsubscription(idUser="+idUser+" idTopic="+idTopic+")");
+
+    return this.httpClient.post<void>(`${this.pathService}/idUser/${idUser}/idTopic/${idTopic}`,null);
+    
+  }
   
-} 
+}

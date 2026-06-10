@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -32,6 +33,7 @@ public class TopicService {
         return this.topicRepository.findAll();
     }
 
+    
     public List<TopicDto> findAll(String userName) {
         List<Topic> topicList = this.topicRepository.findAll();
         List<TopicDto> retour = new ArrayList<TopicDto>();
@@ -66,6 +68,10 @@ public class TopicService {
             }
         }
         return retour;
+    }
+
+    public Optional<Topic> findById(Long idTopic) {
+        return topicRepository.findById(idTopic);
     }
 
 }

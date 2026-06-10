@@ -74,6 +74,7 @@ export class LoginForm implements OnInit{
         this.onError = false;
         this.userStore.setEmail(response.email);
         this.userStore.setUsername(response.username);
+        this.userStore.setUserId(response.id);
         this.router.navigate(['topic']);
       },
       error : (error: Error) => {

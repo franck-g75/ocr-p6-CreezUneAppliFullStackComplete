@@ -14,6 +14,14 @@ export class UserStore {
     return this.username();
   }
 
+  userid = signal(0);
+  setUserId(userid: number): void {
+    this.userid.set(userid);
+  }
+  getUserId(): number {
+    return this.userid();
+  }
+
 /*
   username: String = '';
   setUsername(username: string): void {
