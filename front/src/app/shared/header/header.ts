@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { MatIcon } from '@angular/material/icon';
-
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-header',
-  imports: [MatIcon],
+  imports: [MatIcon,  RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
@@ -18,7 +18,6 @@ export class Header {
       
       if (val instanceof NavigationEnd){
         
-
         switch(val.url){
           case '/subscription' :
             myLog.info("Header " + val.url + " must not show right part");
@@ -32,11 +31,17 @@ export class Header {
             myLog.info("Header " + val.url + " must show right part");
             this.showRight = true;
           break;
+          case '/me' :
+            myLog.info("Header " + val.url + " must show right part");
+            this.showRight = true;
+          break;
         }
 
       }
 
     })
   }
+
+  
 
 }

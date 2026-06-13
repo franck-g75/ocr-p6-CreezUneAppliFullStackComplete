@@ -1,8 +1,8 @@
-<div class="page">
+<div id="topic_page">
 
-<div class="bigGrid">
+<div class="topic_grid">
     @for(topic of (topic$ | async); track topic.id){
-    <div id="grigCell" class="gridCell">
+    <div id="topicCell" class="topic_cell">
         <h2>{{topic.title | uppercase}} </h2>
         <p>{{topic.content | lowercase}}</p>
         <p>
@@ -14,7 +14,6 @@
                 (click)="subscription(topic.id,$event, topic.read)">
                 {{topic.read ? labels.topicDejaAbonne : labels.topicSabonner}}
             </button>
-            
         </p>
     </div>
     }

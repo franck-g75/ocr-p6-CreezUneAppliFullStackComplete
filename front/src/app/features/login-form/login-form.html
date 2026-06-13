@@ -1,41 +1,45 @@
-<div>
-    <button mat-icon-button (click)="back()">
-        <mat-icon>arrow_back</mat-icon>
-    </button>
-</div>
-
-<div class="page">
-<mat-card>
-    <mat-card-header >
-        <mat-card-title>{{labels.loginSeConnecterTitre}}</mat-card-title>
-    </mat-card-header>
+<div class="centred_content_no_margin">
+<div id="login_page">
     
-    <form class="mt2"  [formGroup]="myLoginForm" (ngSubmit)="submit()">
-        <mat-card-content>
-            <mat-form-field appearance="outline" class="" >
-                <mat-label>{{labels.loginNomUtilisateurOuEmail}}</mat-label>
-                <input matInput formControlName="string">
-            </mat-form-field>
+    <div class="left_arrow">
+        <button mat-icon-button (click)="back()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+    </div>
 
-            <mat-form-field appearance="outline" class="" >
-                <mat-label>{{labels.loginMotDePasse}}</mat-label>
-                <input matInput [type]="hide ? 'password' : 'text'" formControlName="pwd">
-                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
-                    [attr.aria-pressed]="hide">
-                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                </button>
-            </mat-form-field>
-        </mat-card-content>
+    <div class="form_box login">
+    <mat-card>
+        
+        <h1 >{{labels.loginSeConnecterTitre}}</h1>
+        
+        <form [formGroup]="myLoginForm" >
+            <mat-card-content>
+                <div class="centred_content_no_margin">
+                <mat-form-field appearance="outline" class="form_text_box" >
+                    <mat-label>{{labels.loginNomUtilisateurOuEmail}}</mat-label>
+                    <input matInput formControlName="string">
+                </mat-form-field>
+                </div>
+                <div class="centred_content_no_margin">
+                <mat-form-field appearance="outline" class="form_text_box" >
+                    <mat-label>{{labels.loginMotDePasse}}</mat-label>
+                    <input matInput [type]="hide ? 'password' : 'text'" formControlName="pwd">
+                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field>
+                </div>
+            </mat-card-content>
 
-        <div class="page">
-            <button matButton class="login-custom-btn" >{{labels.loginSeConnecterBouton}}</button>
-        </div>
-        @if(onError) {
-            <div class="page error">An error occurred !</div>
-        }
-    </form>
+            <div class="centred_content_no_margin">
+                <button matButton="filled" (click)="submit();" class="custom-btn" >{{labels.loginSeConnecterBouton}}</button>
+            </div>
+            @if(onError) {
+                <div class="centred_content_no_margin error">An error occurred !</div>
+            }
+        </form>
 
-</mat-card>
+    </mat-card>
+    </div>
+</div>    
 </div>
-    
-

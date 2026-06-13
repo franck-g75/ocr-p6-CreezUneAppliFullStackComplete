@@ -1,13 +1,13 @@
-<div class="page">
+<div class="centred_content_no_margin">
     <div class="long_top_bar_desktop">
     <div class="top_bar_desktop">
         <img src="logo_p6.png">
         @if(showRight){
-        <div class="rightPart">
-            <div class="error">se déconnecter</div>
-            <div>Articles</div>
-            <div>Theme</div>
-            <div><mat-icon >account_circle</mat-icon></div>
+        <div class="top_bar_right_part">
+            <div class="top_bar_internal_right_part disconnect">se déconnecter</div>
+            <div class="top_bar_internal_right_part">Articles</div>
+            <div class="top_bar_internal_right_part"><a routerLink="topic">Theme</a></div>
+            <div class="top_bar_internal_right_part"><mat-icon routerLink="me" class="account_circle">perm_identity</mat-icon></div>
         </div>
         }
     </div>

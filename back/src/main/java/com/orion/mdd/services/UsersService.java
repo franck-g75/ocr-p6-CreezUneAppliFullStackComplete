@@ -56,4 +56,19 @@ public class UsersService {
 
     }
 
+    public void delTopic(Long idUser, Long idTopic) {
+        Optional<Users> user = this.findById(idUser);
+        Optional<Topic> topic = topicService.findById(idTopic);
+        Topic topicTmp = topic.get(); 
+
+        if (user!=null && topic!=null){
+            Set<Topic> topicSet = user.get().getTopics();
+            topicSet.remove(topicTmp);
+            user.get().setTopics(topicSet);
+            this.usersRepository.save(user.get());
+        } else {
+           throw new NotFoundException();
+        }
+    }
+
 }

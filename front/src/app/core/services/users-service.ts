@@ -24,12 +24,19 @@ export class UsersService {
     
   }
 
-  public postsubscription(idUser: number,idTopic: number): Observable<void> { //TODO: mettre un string ok pour vérifier la bonne prise en compte du click
+  public postsubscription(idUser: number,idTopic: number): Observable<void> { 
     
     this.myLog.info(this.logPrefix + "postsubscription(idUser="+idUser+" idTopic="+idTopic+")");
 
-    return this.httpClient.post<void>(`${this.pathService}/idUser/${idUser}/idTopic/${idTopic}`,null);
+    return this.httpClient.post<void>(`${this.pathService}/subscribe/idUser/${idUser}/idTopic/${idTopic}`,null);
     
   }
   
+  public postunsubscription(idUser: number,idTopic: number): Observable<void> { 
+    
+    this.myLog.info(this.logPrefix + "postunsubscription(idUser="+idUser+" idTopic="+idTopic+")");
+
+    return this.httpClient.post<void>(`${this.pathService}/unsubscribe/idUser/${idUser}/idTopic/${idTopic}`,null);
+    
+  }
 }

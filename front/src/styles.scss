@@ -5,19 +5,44 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@import '../public/orion-theme.css';
 
+:root{
+  --page-width: 75%;
+  --page-desktop-height: 100%;
+  --top-bar-desktop-width: 95px;
+  --rayon: var(--mat-sys-corner-small);
+  --topic-box-width: 385px;
+  --topic-box-height: 161px;
+
+  --bg-color-white: #FFFFFF;
+  --bg-color-grey: #F5F5F5;
+  --btn-color-purple: #7763C5;
+  --btn-color-white: #FFFFFF;
+  --btn-color-grey: #939393;
+  --error-color: red;
+  --disconnect-color: darkred;
+  --text-color: black;
+  --border-color: #000000;
+
+}
+/*
 html {
+
   @include mat.theme((
     color: (
       //primary: #939393, 
       //tertiary: #7763C5,
       primary: mat.$magenta-palette,
+      
       tertiary: mat.$violet-palette,
     ),
     typography: Roboto,
     density: 0,
   ));
+  
 }
+*/
 
 body {
   // Default the application to a light color theme. This can be changed to
@@ -28,7 +53,7 @@ body {
   // Set a default background, font and text colors for the application using
   // Angular Material's system-level CSS variables. Learn more about these
   // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
+  background-color: #FFFFFF;//var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
 
@@ -37,68 +62,147 @@ body {
 }
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/*-------------------------------------------------------------------------------------------------*/
+//                  COMMON
+/*-------------------------------------------------------------------------------------------------*/
 
-.page{ //centred content
+html, body { 
+  height: 100%;
+  width: 100%;
+  margin: 0; 
+  //font-family: Roboto, "Helvetica Neue", sans-serif; 
+  
+  //display: flex;
+  //justify-content: center; // horizontal 
+  //align-items: center;     // vertical 
+}
+.centred_content_no_margin{ //centred content
   margin: 0;
   display: flex;
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
+  justify-content: center; // horizontal
+  align-items: center;     // vertical
 }
+
+.mat-mdc-card{
+  background-color: yellow;
+} 
+.mdc-card{
+  background-color: red; //var(--bg-color-white);
+  //border: 1px solid black; //var(--bg-color-white);
+}
+
 
 /*----------------------HEADER------------------------*/
 .long_top_bar_desktop{
   width: 100%;
-  height: 95px;
+  height: var(--top-bar-desktop-width);
   display: flex;
-  justify-content: center; /* horizontal */
+  justify-content: center; // horizontal
   padding: 0px;
   margin: 0px;
-  background: #ffffff;
+  //background: #ffffff;
 }
-
 .top_bar_desktop { //rectangle9  rectangle31 rectagle42
-  width: 75%;
-  height: 95px;
-  background: #ffffff;
+  width: var(--page-width);
+  height: var(--top-bar-desktop-width);
+  //background: #ffffff;
   display: flex;
   padding: 0px;
   margin: 0px;
-  border: 1px solid #000000;
+  border: 1px solid var(--border-color);
 }
-
-.rightPart { //rectangle9  rectangle31 rectagle42
+.top_bar_right_part { //rectangle9  rectangle31 rectagle42
   display: flex;
   padding: 0px;
   margin: 0px;
   width: 100%;
-  justify-content: right; /* horizontal */
-  align-items: center;     /* vertical */  
+  justify-content: right; // horizontal 
+  align-items: center;     // vertical   
 }
+.top_bar_internal_right_part{
+  margin: 5px;
+  padding: 5px;
+}
+.disconnect{
+  color: darkred;
+}
+.account_circle{
+  border-width: 2px;
+  color: black;
+  border-color: black;
+}
+
+/*
+
+                  FORM
+
+*/
+
+.form_box{ //title textboxes button
+  margin-top: 20px;
+  margin-bottom: 20px;
+  justify-content: center; // horizontal
+  align-items: center;     // vertical 
+}
+
+.form_text_box{
+  width: 350px;
+}
+
+hr {
+  width: var(--page-width);
+}
+
+h1{
+  margin: 20px;
+  text-align: center;
+}
+.error{
+  color: var(--error-color);
+}
+
+.left_arrow{//class
+  position: absolute;
+  top: 0px;
+  left:0px;
+  //border: 1px solid blue;
+}
+
+
 
 /*--------------------BUTTONS---------------------------------*/
 
-.login-custom-btn.mat-mdc-raised-button,
-.login-custom-btn.mat-mdc-outlined-button,
-.login-custom-btn.mat-mdc-unelevated-button {
-  border-radius: 8px;
+.landing-custom-btn.mat-mdc-raised-button,
+.landing-custom-btn.mat-mdc-outlined-button,
+.landing-custom-btn.mat-mdc-unelevated-button {
+  border-radius: var(--rayon);
   padding: 6px;
+  background-color: var(--btn-color-white);
+  color: var(--text-color);
 }
 
 .custom-btn.mat-mdc-raised-button,
 .custom-btn.mat-mdc-outlined-button,
 .custom-btn.mat-mdc-unelevated-button {
-  border-radius: 8px;
-  background: #7763C5;
+  border-radius: var(--rayon);
+  padding: 6px;
+  background: var(--btn-color-purple); 
 }
 
 .custom-btn-grey.mat-mdc-raised-button,
 .custom-btn-grey.mat-mdc-outlined-button,
 .custom-btn-grey.mat-mdc-unelevated-button {
-  border-radius: 8px;
-  background: #939393;
+  border-radius: var(--rayon);
+  padding: 6px;
+  background: var(--btn-color-grey); 
 }
+
+
+/*
+
+                  PAGES
+
+*/
 
 
 /*--------------------LANDING ------------------------*/
@@ -106,65 +210,80 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   display: flex;
   width: 85%;
   height: 50%;
-  width: 85%;
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */  
+  justify-content: center; // horizontal
+  align-items: center;     // vertical 
+  //border: 1px solid black;
+
 }
 .landing-bottom {
   display: flex;
-  justify-content: space-between; /* horizontal */
+  justify-content: space-between; //horizontal
   align-items: center;
-  width: 50%;
-  margin: 0 auto; //horizontal middle
+  width: 85%;
+  //border: 1px solid blue;
 }
-
 .landing-bottom-right {
   justify-content: right; 
+  margin-right:15%;
 }
 .landing-bottom-left {
-  justify-content: left; 
-}
-.landing-custom-btn.mat-mdc-raised-button,
-.landing-custom-btn.mat-mdc-outlined-button,
-.landing-custom-btn.mat-mdc-unelevated-button {
-  border-radius: 8px;
-  padding: 6px;
+  justify-content: left;
+  margin-left:15%; 
 }
 
-/*----------------------Login------------------*/
 
-
-
-.error{
-  color: red;
+/*--------------------------LOGIN-----------------------*/
+#login_page{//id
+  width: var(--page-width);
+  height: var(--page-desktop-height);
+  display: flex;
+  justify-content: center; // horizontal
+  border: 1px solid var(--border-color);
+  position: relative;
 }
 
-.login-arrow-back{
-  margin: 0 auto;
+.login{
+  display: flex;
 }
 
-/*----------------------Topic-----------------------------*/
-.bigGrid { //rectangle34
-  width: 75%;
-  background: #ffffff;
+/*--------------------------ME-----------------------*/
+#me_page{//id
+  width: var(--page-width);
+  border: 1px solid var(--border-color);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.me{
+  display: block;
+}
+
+/*----------------------TOPIC-----------------------------*/
+#topic_page{//id
+  width: var(--page-width);
+  height: var(--page-desktop-height);
+  display: block;
+  border: 1px solid var(--border-color);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.topic_grid { //rectangle34
+  width: 100%;
   display: grid;
   grid-template-rows:190px;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   padding: 0px;
   margin: 0px;
-  border: 1px solid #000000
+  //border: 1px solid #000000
 }
 
-.gridCell { //rectangle43
-  width: 385px;
-  height: 161px;
-  border-radius: 8px;
-  background: #F5F5F5;
+.topic_cell { //rectangle43
+  width: var(--topic-box-width);
+  height: var(--topic-box-height);
+  border-radius: var(--rayon);
+  background: var(--bg-color-grey);
   padding: 6px;
   margin: 6px;
-  border: 1px solid #000000
+  //border: 1px solid #000000
 }
-
-
-
-

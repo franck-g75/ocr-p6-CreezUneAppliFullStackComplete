@@ -62,19 +62,33 @@ public class UsersController {
 
 
 
-    @PostMapping("/idUser/{idUser}/idTopic/{idTopic}")
-    public ResponseEntity<?> addSubsiption(@PathVariable("idTopic") Long idTopic, @PathVariable("idUser") Long idUser) {
+    @PostMapping("/subscribe/idUser/{idUser}/idTopic/{idTopic}")
+    public ResponseEntity<?> addSubscription(@PathVariable("idTopic") Long idTopic, @PathVariable("idUser") Long idUser) {
 
         try{
 
           this.usersService.addTopic(idUser,idTopic);
-          log.info(idUser + " - " + idTopic);
+          log.info("addTopic " + idUser + " - " + idTopic);
 
           return ResponseEntity.ok().build();
         } catch (Exception e){
-          log.info("api/user/{:idTopic-:idUser} exception " + e.toString());
+          log.info("subscribe/api/user/{:idTopic-:idUser} exception " + e.toString());
           return ResponseEntity.badRequest().build();
         }
     }
 
+    @PostMapping("/unsubscribe/idUser/{idUser}/idTopic/{idTopic}")
+    public ResponseEntity<?> delSubscription(@PathVariable("idTopic") Long idTopic, @PathVariable("idUser") Long idUser) {
+
+        try{
+
+          this.usersService.delTopic(idUser,idTopic);
+          log.info("delTopic " + idUser + " - " + idTopic);
+
+          return ResponseEntity.ok().build();
+        } catch (Exception e){
+          log.info("/unsubscribe/api/user/{:idTopic-:idUser} exception " + e.toString());
+          return ResponseEntity.badRequest().build();
+        }
+    }
 }

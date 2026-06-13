@@ -79,29 +79,3 @@ export class TopicForm {
 
 }
 
-
-/*
-
-
-@if(topic.read){
-    <button 
-        id ="topic.id" 
-        matButton="outlined" 
-        class="custom-btn-grey">{{labels.topicDejaAbonne}}
-    </button>  
-}
-@else { 
-    <button 
-        id="topic.id" 
-        matButton="filled" 
-        class="custom-btn" 
-        (click)="subscription(topic.id,$event)">{{labels.topicSabonner}}
-    </button> 
-}
-
-
-
-
-
-
-*/

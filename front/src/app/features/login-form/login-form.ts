@@ -29,7 +29,7 @@ import { UserStore } from '../../core/services/user-store-service';
 export class LoginForm implements OnInit{
 
   labels = LOGIN_LABELS;
-  public hide = true;
+  public hide = true; //hidden password by default
   public myLoginForm!: FormGroup;
   public onError = false;
   private logPrefix: String = "login-Form ";
