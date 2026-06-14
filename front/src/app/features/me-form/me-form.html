@@ -1,44 +1,7 @@
 <div id="me_page" >
 
     <div class="form_box me">
-        <mat-card appearance="outlined" >
-            
-            <h1>{{labels.meTitle}}</h1>
-            
-            <form [formGroup]="myLoginForm" >
-                <mat-card-content>
-                    <div class="centred_content_no_margin">
-                    <mat-form-field appearance="outline" class="form_text_box" >
-                        <mat-label>{{labels.meUsername}}</mat-label>
-                        <input matInput formControlName="username">
-                    </mat-form-field>
-                    </div>
-                    <div class="centred_content_no_margin">
-                    <mat-form-field appearance="outline" class="form_text_box" >
-                        <mat-label>{{labels.meEmail}}</mat-label>
-                        <input matInput formControlName="email">
-                    </mat-form-field>
-                    </div>
-                    <div class="centred_content_no_margin">
-                    <mat-form-field appearance="outline" class="form_text_box" >
-                        <mat-label>{{labels.meMotDePasse}}</mat-label>
-                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="pwd">
-                        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        </button>
-                    </mat-form-field>
-                    </div>
-                </mat-card-content>
-
-                <div class="centred_content_no_margin">
-                    <button matButton="filled" (click)="submit();" class="custom-btn" >{{labels.meBtnSvg}}</button>
-                </div>
-                @if(onError) {
-                    <div class="centred_content_no_margin error">An error occurred !</div>
-                }
-            </form>
-
-        </mat-card>
+        <app-signup myOrigin="me"></app-signup>
     </div>
 
     <hr class="me_shape_box"/>

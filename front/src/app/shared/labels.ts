@@ -21,11 +21,11 @@ export const ME_LABELS = {
     meBtnSvg: "Sauvegarder",
     meUnsubcribe: "Se désabonner"
 };
-export const INSCRIPTION_LABELS = {
-    inscriptionTitle: "Inscription",
-    inscriptionNomUtilisateur: "Nom d'utilisateur",
-    inscriptionAdresseEmail: "Adresse e-mail",
-    inscriptionMotDePasse: "Mot de passe",
-    InscriptionBtn: "S'inscrire"
+export const SUBSCRIPTION_LABELS = {
+    subscriptionTitle: "Inscription",
+    suscriptionNomUtilisateur: "Nom d'utilisateur",
+    subscriptionAdresseEmail: "Adresse e-mail",
+    subinscriptionMotDePasse: "Mot de passe",
+    subscriptionBtn: "S'inscrire"
 };
 

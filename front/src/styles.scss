@@ -238,7 +238,9 @@ h1{
   height: var(--page-desktop-height);
   display: flex;
   justify-content: center; // horizontal
-  border: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
   position: relative;
 }
 
@@ -249,7 +251,9 @@ h1{
 /*--------------------------ME-----------------------*/
 #me_page{//id
   width: var(--page-width);
-  border: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
   margin-left: auto;
   margin-right: auto;
 }
@@ -263,7 +267,10 @@ h1{
   width: var(--page-width);
   height: var(--page-desktop-height);
   display: block;
-  border: 1px solid var(--border-color);
+  //border: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
   margin-left: auto;
   margin-right: auto;
 }

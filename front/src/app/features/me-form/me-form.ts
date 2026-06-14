@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ME_LABELS } from '../../shared/labels';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Topic } from '../../core/models/topic.interface';
@@ -8,26 +8,24 @@ import { UsersService } from '../../core/services/users-service';
 import { UserStore } from '../../core/services/user-store-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AsyncPipe, LowerCasePipe, NgClass, UpperCasePipe } from '@angular/common';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatFormField } from '@angular/material/form-field';
-import { MatCardContent } from '@angular/material/card';
-import { MatCardTitle } from '@angular/material/card';
-import { MatCard } from '@angular/material/card';
-import { MatCardHeader } from '@angular/material/card';
-import { MatLabel } from '@angular/material/form-field';
+import { MatButton } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input'
-import { MatIcon } from '@angular/material/icon';
+
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SignupForm } from "../../shared/signup-form/signup-form";
 
 @Component({
   selector: 'app-me-form',
-  imports: [FormsModule, ReactiveFormsModule, UpperCasePipe, LowerCasePipe, AsyncPipe, MatButton, NgClass, MatButton, MatCard, MatCardContent,  MatLabel, MatIcon, MatIconButton, MatInputModule, MatFormField],
+  imports: [FormsModule, ReactiveFormsModule, UpperCasePipe, LowerCasePipe, AsyncPipe, MatButton, NgClass, MatButton,  MatInputModule,  SignupForm],
   templateUrl: './me-form.html',
   styleUrl: './me-form.scss',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  standalone: true
 })
 export class MeForm {
 
   public labels = ME_LABELS;
+  public myOrigin = "me";
 
   public hide: boolean = true;
   public onError: boolean = false;
@@ -59,7 +57,6 @@ export class MeForm {
 
     }
 
-
   private initForm(): void {
     this.myLoginForm = this.formBuilder.group({
         username: ['',
@@ -73,10 +70,7 @@ export class MeForm {
         ]
       });
   }
-
-
-
-
+  
   public unsubscription(idTopic: number,event: Event, read: boolean): void {
 
     this.myLog.info("TopicForm unsubscription : idUser=" + this.idUser + "," + idTopic);
@@ -115,3 +109,6 @@ export class MeForm {
   }
 
 }
+
+
+

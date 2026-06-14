@@ -1,0 +1,39 @@
+<mat-card appearance="outlined" >
+    
+    <h1>{{myTitle}}</h1>
+    
+    <form [formGroup]="mySignUpForm"> 
+        <mat-card-content>
+            <div class="centred_content_no_margin">
+            <mat-form-field appearance="outline" class="form_text_box" >
+                <mat-label #username>{{myUsernameLabel}}</mat-label>
+                <input matInput formControlName="username">
+            </mat-form-field>
+            </div>
+            <div class="centred_content_no_margin">
+            <mat-form-field appearance="outline" class="form_text_box" >
+                <mat-label #email>{{myEmailLabel}}</mat-label>
+                <input matInput formControlName="email">
+            </mat-form-field>
+            </div>
+            <div class="centred_content_no_margin">
+            <mat-form-field appearance="outline" class="form_text_box" >
+                <mat-label #pwd>{{myPwdLabel}}</mat-label>
+                <input matInput [type]="hide ? 'password' : 'text'" formControlName="pwd">
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+            </div>
+        </mat-card-content>
+
+        <div class="centred_content_no_margin">
+            <button matButton="filled" (click)="submit();" class="custom-btn" #btn>{{myBtnLabel}}</button>
+        </div>
+        @if(onError) {
+            <div class="centred_content_no_margin error">An error occurred !</div>
+        }
+    </form>
+
+</mat-card>
+

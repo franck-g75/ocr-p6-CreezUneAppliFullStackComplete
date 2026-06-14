@@ -24,8 +24,6 @@ import { UserStore } from '../../core/services/user-store-service';
   styleUrl: './login-form.scss',
 })
 
-
-
 export class LoginForm implements OnInit{
 
   labels = LOGIN_LABELS;
