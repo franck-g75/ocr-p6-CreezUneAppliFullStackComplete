@@ -6,7 +6,7 @@ import { AsyncPipe, LowerCasePipe, UpperCasePipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { UserStore } from '../../core/services/user-store-service';
 import { TOPIC_LABELS } from '../../shared/labels';
-import { UsersService } from '../../core/services/users-service';
+import { UserInfoService } from '../../core/services/user-info-service';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgClass } from '@angular/common';
@@ -29,7 +29,7 @@ export class TopicForm {
   constructor(
     private myLog: MyLoggingService,
     private topicService: TopicService,
-    private usersService: UsersService,
+    private userInfoService: UserInfoService,
     private userStore: UserStore,
     private matSnackBar: MatSnackBar
   ) {  }
@@ -49,7 +49,7 @@ export class TopicForm {
     this.myLog.info("TopicForm subscription : idUser=" + this.idUser + "," + idTopic);
     if (!read){
       //subscribe the topic...
-      this.usersService.postsubscription(this.idUser, idTopic).subscribe({
+      this.userInfoService.postsubscription(this.idUser, idTopic).subscribe({
       next: (_: any) => {
 
           //change the read value of the topiId in the observable topicSubject :

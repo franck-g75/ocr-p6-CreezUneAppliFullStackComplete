@@ -1,17 +1,14 @@
 package com.orion.mdd.services;
 
-import com.orion.mdd.MddApplication;
 import com.orion.mdd.dto.TopicDto;
-//import com.orion.mdd.mapper.TopicMapper;
 import com.orion.mdd.models.Topic;
-import com.orion.mdd.models.Users;
+import com.orion.mdd.models.UserInfo;
 import com.orion.mdd.repository.TopicRepository;
 
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.stereotype.Service;
 
-import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +39,7 @@ public class TopicService {
         for (Topic topic : topicList) {
 
             Boolean userIsIn = false;
-            for(Users u : topic.getUsers()){
+            for(UserInfo u : topic.getUserInfos()){
                 log.info(topic.getTitle() + " ?????? " + userName + " " + u.getUsername());
                 if (userName.equals(u.getUsername())){
                     log.info(topic.getTitle() + u.getUsername() +" true");

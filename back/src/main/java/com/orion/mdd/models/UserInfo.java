@@ -2,6 +2,7 @@ package com.orion.mdd.models;
 
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -21,7 +22,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@Table(name = "USERS")
+@Table(name = "USER_INFO")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Getter
@@ -30,8 +31,8 @@ import jakarta.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class Users {
+@ToString(exclude = {"posts","comments","topics"})
+public class UserInfo {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,20 +50,19 @@ public class Users {
     @Size(max = 50)
     private String pwd;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade= CascadeType.ALL)
-    @JoinTable(name="TOPIC_USERS",
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="TOPIC_USER",
     joinColumns = {
-        @JoinColumn(name="users_id", referencedColumnName = "id")
+        @JoinColumn(name="user_id", referencedColumnName = "id")
     },inverseJoinColumns = {
         @JoinColumn(name="topic_id", referencedColumnName = "id")
     } )
     private Set<Topic> topics;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Post> posts;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
-
 
 }

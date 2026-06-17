@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
@@ -31,8 +32,9 @@ import jakarta.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"userInfos","posts"})
 public class Topic {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,10 +47,10 @@ public class Topic {
     @Size(max = 2500)
     private String content;
 
-    @ManyToMany(mappedBy="topics",fetch=FetchType.LAZY)
-    private Set<Users> Users;
+    @ManyToMany(mappedBy="topics", fetch=FetchType.LAZY)
+    private Set<UserInfo> userInfos;
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Post> posts;
 
 }

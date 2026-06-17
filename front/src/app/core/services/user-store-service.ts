@@ -22,14 +22,13 @@ export class UserStore {
     return this.userid();
   }
 
-/*
-  username: String = '';
-  setUsername(username: string): void {
-    this.username=username;
-  }
-*/
-  email: String = '';;
+  email = signal('');
   setEmail(email: string): void {
-    this.email=email;
+    this.email.set(email);
   }
+  getEmail(): string {
+    return this.email();
+  }
+
+
 }

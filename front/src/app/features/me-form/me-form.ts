@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Topic } from '../../core/models/topic.interface';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { TopicService } from '../../core/services/topic-service';
-import { UsersService } from '../../core/services/users-service';
+import { UserInfoService } from '../../core/services/user-info-service';
 import { UserStore } from '../../core/services/user-store-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AsyncPipe, LowerCasePipe, NgClass, UpperCasePipe } from '@angular/common';
@@ -38,7 +38,7 @@ export class MeForm {
   constructor(
     private myLog: MyLoggingService,
     private topicService: TopicService,
-    private usersService: UsersService,
+    private userInfoService: UserInfoService,
     private formBuilder: FormBuilder,
     private userStore: UserStore,
     private matSnackBar: MatSnackBar
@@ -76,7 +76,7 @@ export class MeForm {
     this.myLog.info("TopicForm unsubscription : idUser=" + this.idUser + "," + idTopic);
     if (read){
       //unsubscribe the topic...
-      this.usersService.postunsubscription(this.idUser, idTopic).subscribe({
+      this.userInfoService.postunsubscription(this.idUser, idTopic).subscribe({
       next: (_: any) => {
 
           //change the read value of the topiId in the observable topicSubject :

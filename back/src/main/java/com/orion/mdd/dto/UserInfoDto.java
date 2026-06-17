@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsersDto {
+public class UserInfoDto {
 
     private Long id;
 
@@ -20,5 +20,9 @@ public class UsersDto {
     @NotBlank
     @Size(max = 50)
     private String email;
+
+    @NotBlank
+    @Size(max = 50)
+    private String pwd;
 
 }

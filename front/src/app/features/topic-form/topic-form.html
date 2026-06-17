@@ -3,7 +3,7 @@
 <div class="topic_grid">
     @for(topic of (topic$ | async); track topic.id){
     <div id="topicCell" class="topic_cell">
-        <h2>{{topic.title | uppercase}} </h2>
+        <h2>{{topic.title | uppercase}}</h2>
         <p>{{topic.content | lowercase}}</p>
         <p>
             <button 

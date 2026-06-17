@@ -3,23 +3,21 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
 import { MatCardContent } from '@angular/material/card';
-import { MatCardTitle } from '@angular/material/card';
 import { MatCard } from '@angular/material/card';
-import { MatCardHeader } from '@angular/material/card';
 import { MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input'
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOGIN_LABELS } from '../../shared/labels';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { UsersService } from '../../core/services/users-service';
-import { Users } from '../../core/models/users.interface';
+import { UserInfoService } from '../../core/services/user-info-service';
+import { UserInfo } from '../../core/models/user-info.interface';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { UserStore } from '../../core/services/user-store-service';
 
 @Component({
   selector: 'app-login-form',
-  imports: [FormsModule, ReactiveFormsModule, MatButton, MatIcon, MatIconButton, MatFormField, MatLabel, MatCardContent, MatCardTitle, MatCard, MatCardHeader, MatInputModule],
+  imports: [FormsModule, ReactiveFormsModule, MatButton, MatIcon, MatIconButton, MatFormField, MatLabel, MatCardContent,  MatCard, MatInputModule],
   templateUrl: './login-form.html',
   styleUrl: './login-form.scss',
 })
@@ -54,7 +52,7 @@ export class LoginForm implements OnInit{
     private matSnackBar: MatSnackBar,
     private formBuilder: FormBuilder,
     private router: Router,
-    private userService: UsersService
+    private userInfoService: UserInfoService
   ){  }
 
   public back() {
@@ -66,8 +64,8 @@ export class LoginForm implements OnInit{
 
     //window.alert("coucou " + this.myLoginForm.get("string")?.value + ", et ton mot de passe est : " + this.myLoginForm.get("pwd")?.value);
     this.myLog.info(this.logPrefix + "appel du service");
-    this.userService.getByString(this.myLoginForm.get("string")?.value).subscribe({
-      next: (response: Users) => {
+    this.userInfoService.getByString(this.myLoginForm.get("string")?.value).subscribe({
+      next: (response: UserInfo) => {
         this.myLog.info(this.logPrefix + " User trouvé : " + response.id + " " + response.email + " " + response.username );
         this.onError = false;
         this.userStore.setEmail(response.email);

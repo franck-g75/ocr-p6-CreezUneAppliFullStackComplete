@@ -7,8 +7,11 @@ import lombok.experimental.Accessors;
 import java.util.Date;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +24,8 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "COMMENT")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 @EqualsAndHashCode(of = {"id"})
 @Builder
@@ -34,12 +38,12 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne( cascade = CascadeType.PERSIST )
     @JoinColumn(name="users_id", nullable=false)
-    private Users users;
+    private UserInfo userInfo;
 
-    @ManyToOne
-    @JoinColumn(name="post_id", nullable=false)
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn(name="post_id", nullable=false )
     private Post post;
 
     @NotNull
