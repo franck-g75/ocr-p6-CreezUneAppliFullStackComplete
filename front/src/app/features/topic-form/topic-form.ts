@@ -59,20 +59,20 @@ export class TopicForm {
             )
           );
         
-          this.matSnackBar.open('subscription registrered !', 'Close', { duration: 3000 });
+          this.matSnackBar.open(this.labels.topicMsgSouscriptionOk, 'Close', { duration: 3000 });
         },
       error:(err) => {
         this.myLog.error(
         `Erreur lors de la souscription : ${err.status} - ${err.message}`
         );
         this.matSnackBar.open(
-          'Erreur lors de la souscription : veuillez contacter l\'administrateur', 'Close', { duration: 5000 }
+          this.labels.topicMsgSouscriptionKo, 'Close', { duration: 5000 }
         );
       }
     });
     } else {
       // already subscribed 
-      alert ("déjà abonné ! ");
+      alert (this.labels.topicDejaAbonne);
     }
 
   }

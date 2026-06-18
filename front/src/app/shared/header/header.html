@@ -4,10 +4,11 @@
         <img src="logo_p6.png">
         @if(showRight){
         <div class="top_bar_right_part">
-            <div class="top_bar_internal_right_part disconnect">se déconnecter</div>
-            <div class="top_bar_internal_right_part">Articles</div>
-            <div class="top_bar_internal_right_part"><a routerLink="topic">Theme</a></div>
-            <div class="top_bar_internal_right_part"><mat-icon routerLink="me" class="account_circle">perm_identity</mat-icon></div>
+            <div class="top_bar_internal_right_part disconnect">{{labels.headerSeDeconnecter}}</div>
+            <div class="top_bar_internal_right_part">{{labels.headerArticle}}</div>
+            <div class="top_bar_internal_right_part"><a routerLink="topic">{{labels.headerTheme}}</a></div>
+            <div class="top_bar_internal_right_part">
+                <mat-icon id="account" routerLink="me" [class]="colored_accont_icon">account_circle</mat-icon></div>
         </div>
         }
     </div>

@@ -35,7 +35,7 @@
                 <button matButton="filled" (click)="submit();" class="custom-btn" >{{labels.loginSeConnecterBouton}}</button>
             </div>
             @if(onError) {
-                <div class="centred_content_no_margin error">An error occurred !</div>
+                <div class="centred_content_no_margin error">{{labels.loginError}}</div>
             }
         </form>
 

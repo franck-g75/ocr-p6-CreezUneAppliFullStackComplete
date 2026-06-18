@@ -79,9 +79,11 @@ export class SignupForm implements OnInit{
     this.myLog.info("Signup Form ngOnInit ... myTitle=" + this.myTitle + " myBtnLabel=" + this.myBtnLabel);
 
     this.initForm();
+    
   }
 
   private initForm(): void {
+
     this.mySignUpForm = this.formBuilder.group({
         username: [this.userStore.getUsername(),
           [Validators.required, Validators.maxLength(50), Validators.minLength(2)]
@@ -122,7 +124,7 @@ export class SignupForm implements OnInit{
           i++;
         }
       }
-      return forbidden ? {'forbiddenPassword': {value: control.value}} : null;
+      return forbidden ? {'forbidden password': {value: control.value}} : null;
     };
   }
 
@@ -137,29 +139,29 @@ export class SignupForm implements OnInit{
         this.myLog.info(`saving userInfo ${userInfo.username} in progress...`);
         this.userInfoService.create(userInfo).subscribe({
           next: (user: UserInfo) => {
-            this.exitPage('User created !');
+            this.exitPage(this.labels_sub.subscriptionUserCreated);
           },
           error: (err: HttpErrorResponse) => {
             this.myLog.info('User not created !  ' + err.status + ' ' + err.error );
-            this.displayError('User not created !  ' + err.error );
+            this.displayError(this.labels_sub.subscriptionUserNotCreated + ' ' + err.error );
           }
         });
       } else {
         this.myLog.info(`updating userInfo ${userInfo.username} in progress...`);
         this.userInfoService.update(userInfo).subscribe({
           next: (user: UserInfo) => {
-            this.exitPage('User updated !');
+            this.exitPage(this.labels_me.meUserUpdated);
           },
           error: (err: HttpErrorResponse) => {
             this.myLog.info('User not updated !  : ' + err.status + ' ' + err.error );
-            this.displayError('User not updated !' + err.error);
+            this.displayError(this.labels_me.meUserNotUpdated + ' ' + err.error);
           }
         });
       }
 
     } else {
       
-      this.matSnackBar.open("Error(s) found on form validation : fill in every fields. email must be well formatted and password must have at least 8 characters and contain 1 lowercase 1 uppercase 1 number and a special character... ", 'Close', { duration: 10000 });
+      this.matSnackBar.open(this.labels_me.meFormPbm, 'Close', { duration: 10000 });
 
     }
     
@@ -169,9 +171,11 @@ export class SignupForm implements OnInit{
     this.matSnackBar.open(message, 'Close', { duration: 3000 });
     this.router.navigate(['/landing']);
   }
+
   private displayError(message: string): void {
     this.matSnackBar.open(message, 'Close', { duration: 10000 });
   }
+
 }
 
 

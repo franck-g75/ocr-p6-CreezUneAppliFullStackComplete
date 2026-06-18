@@ -39,7 +39,6 @@ export class MeForm {
     private myLog: MyLoggingService,
     private topicService: TopicService,
     private userInfoService: UserInfoService,
-    private formBuilder: FormBuilder,
     private userStore: UserStore,
     private matSnackBar: MatSnackBar
   ) {  }
@@ -53,24 +52,8 @@ export class MeForm {
         this.topicSubject.next(topics);
       });
 
-      this.initForm();
-
-    }
-
-  private initForm(): void {
-    this.myLoginForm = this.formBuilder.group({
-        username: ['',
-          [Validators.required]
-        ],
-        email: ['',
-          [Validators.required]
-        ],
-        pwd: ['',
-          [Validators.required]
-        ]
-      });
   }
-  
+
   public unsubscription(idTopic: number,event: Event, read: boolean): void {
 
     this.myLog.info("TopicForm unsubscription : idUser=" + this.idUser + "," + idTopic);
@@ -86,26 +69,22 @@ export class MeForm {
             )
           );
         
-          this.matSnackBar.open('unsubscription registrered !', 'Close', { duration: 3000 });
+          this.matSnackBar.open( this.labels.meUnsubcriptionSuccess , 'Close', { duration: 3000 });
         },
       error:(err) => {
         this.myLog.error(
-        `Error when unsubscription : ${err.status} - ${err.message}`
+          `Error when unsubscription : ${err.status} - ${err.message}`
         );
         this.matSnackBar.open(
-          'Error when unsubscription : contact the administrator', 'Close', { duration: 5000 }
+          this.labels.meUnsubcriptionError, 'Close', { duration: 5000 }
         );
       }
     });
     } else {
       // already subscribed 
-      alert ("not subscribed ! ");
+      alert (this.labels.meNotSubscribed);
     }
 
-  }
-
-  public submit(): void {
-    window.alert("submit clicked !!");
   }
 
 }

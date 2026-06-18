@@ -129,9 +129,19 @@ html, body {
 .account_circle{
   border-width: 2px;
   color: black;
-  border-color: black;
-}
 
+  //border-color: black;
+  //background-color: #7763C5;
+  //border: 1px solid black;
+}
+.account_circle_me{
+  border-width: 2px;
+  color: #7763C5;
+
+  //border-color: black;
+  //background-color: #7763C5;
+  //border: 1px solid black;
+}
 /*
 
                   FORM
