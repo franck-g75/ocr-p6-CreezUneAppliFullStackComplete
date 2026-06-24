@@ -9,12 +9,14 @@
             <mat-form-field appearance="outline" class="form_text_box" >
                 <mat-label #username>{{myUsernameLabel}}</mat-label>
                 <input matInput formControlName="username">
+                <div class="centred_content_no_margin error">{{ showClientUsernameValidationError() }}</div>
             </mat-form-field>
             </div>
             <div class="centred_content_no_margin">
             <mat-form-field appearance="outline" class="form_text_box" >
                 <mat-label #email>{{myEmailLabel}}</mat-label>
                 <input matInput formControlName="email">
+                <div class="centred_content_no_margin error">{{ showClientEmailValidationError() }}</div>
             </mat-form-field>
             </div>
             <div class="centred_content_no_margin">
@@ -24,10 +26,16 @@
                 <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                     <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
+                <div class="centred_content_no_margin error">{{ showClientPwdValidationError() }}</div>
             </mat-form-field>
             </div>
         </mat-card-content>
-
+        
+        <div class="centred_content_no_margin error">{{ showServerUsernameValidationError() }}</div>
+        <div class="centred_content_no_margin error">{{ showServerEmailValidationError() }}</div>
+        <div class="centred_content_no_margin error">{{ showServerPwdValidationError() }}</div>
+        <div class="centred_content_no_margin error">{{ showServerErrorMessage() }}</div>
+        
         <div class="centred_content_no_margin">
             <button matButton="filled" (click)="submit();" class="custom-btn" #btn>{{myBtnLabel}}</button>
         </div>

@@ -1,3 +1,4 @@
+<div class="centred_content_no_margin">
 <div id="me_page" >
 
     <div class="form_box me">
@@ -7,30 +8,8 @@
     <hr class="me_shape_box"/>
 
     <div class="me_shape_box">  
-
-        <h1>{{labels.meAbonnements}}</h1>
-
-        <div class="topic_grid">
-            @for(topic of (topic$ | async); track topic.id){
-                @if(topic.read){
-                <div class="topic_cell">
-                    <h2>{{topic.title | uppercase}} </h2>
-                    <p>{{topic.content | lowercase}}</p>
-                    <p>
-                        <button 
-                            [id] ="'btnTopic-' + topic.id" 
-                            matButton="filled" 
-                            [ngClass]="{'custom-btn':topic.read}"
-                            (click)="unsubscription(topic.id,$event, topic.read)">
-                            {{topic.read ? labels.meUnsubcribe : ''}}
-                        </button>
-                    </p>
-                </div>
-                }
-            }
-        </div>
-        
+        <app-topic-module myOrigin="me"></app-topic-module>
     </div>
 </div>
-   
+</div>
 

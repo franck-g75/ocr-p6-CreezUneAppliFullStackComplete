@@ -1,0 +1,34 @@
+<div class="centred_content_no_margin">
+<div id="display_page">
+    <div class="centred_content_no_margin">
+        <div class="article_top">
+            <div class="article_top_left">
+                <button matButton="filled" (click)="addArticle();" class="custom-btn" >{{labels.creerUnArticle}}</button>
+            </div>
+            <div class="article_top_right">
+                <div id="btn-sort" class="centred_content_no_margin" (click)="sort()">
+                    {{labels.trierPar}}
+                    @if(descSort===true){
+                        <mat-icon>arrow_downward</mat-icon>
+                    } @else {
+                        <mat-icon>arrow_upward</mat-icon>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="display_grid">
+        @for(post of (post$ | async); track post.id){
+        <div class="display_cell">
+            <div class="article_title">{{post.title}}</div>
+            <div class="article_top centred_content_no_margin ">
+                <div class="article_date">{{post.created_at | date: 'EEEE d MMMM yyyy à HH:mm ':'':'fr'}}</div>
+                <div class="article_username">{{post.username}}</div>
+            </div>
+            <pre class="article_content">{{post.content | shorten}}</pre>
+        </div>
+        }
+    </div>
+</div>
+</div>
+

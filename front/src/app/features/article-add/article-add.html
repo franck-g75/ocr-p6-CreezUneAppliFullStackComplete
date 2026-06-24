@@ -1,0 +1,55 @@
+<div class="centred_content_no_margin">
+<div id="display_page">
+
+    <h1>{{labels.creerUnNouvelArticle}}</h1>
+   
+        <div class="left_arrow">
+            <button mat-icon-button (click)="back()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+        </div>
+    
+
+    <div class="form_box centred_content_no_margin">
+        
+        <mat-card>
+            <form [formGroup]="addForm" >
+                <mat-card-content>
+                    <div class="centred_content_no_margin">
+                    <mat-form-field appearance="outline" class="form_text_box" >
+                        <mat-label>{{labels.topicList}}</mat-label>
+                        <mat-select matInput [(value)]="selected" formControlName="topic">
+                            @for (topic of (topic$ | async); track topic.id) {
+                                <mat-option [value]="topic.id">{{topic.title}}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    </div>
+                    <div class="centred_content_no_margin">
+                    <mat-form-field appearance="outline" class="form_text_box" >
+                        <mat-label>{{labels.postTitle}}</mat-label>
+                        <input  matInput formControlName="title">
+                    </mat-form-field>
+                    </div>
+                    <div class="centred_content_no_margin">
+                    <mat-form-field appearance="outline" class="form_text_box" >
+                        <mat-label>{{labels.postContent}}</mat-label>
+                        <textarea matInput formControlName="content"></textarea>
+                    </mat-form-field>
+                    </div>
+                </mat-card-content>
+
+                <div class="centred_content_no_margin">
+                    <button matButton="filled" (click)="submit();" class="custom-btn" >{{labels.postCreateBtn}}</button>
+                </div>
+            </form>
+            
+        </mat-card>
+    </div>
+
+</div>
+</div>
+
+
+
+

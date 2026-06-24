@@ -3,6 +3,9 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Header } from './shared/header/header';
 import { MyLoggingService } from './core/services/logging.services';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+registerLocaleData(localeFr, 'fr');
 
 @Component({
   selector: 'app-root',
@@ -26,6 +29,7 @@ export class App {
           myLog.info("APP " + val.url + " must show header");
           this.showHeader = true;
         }
+        
       }
     })
 

@@ -6,8 +6,8 @@ import { TopicForm } from './topic-form/topic-form';
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule, TopicForm
+    CommonModule, 
   ],
-  exports: [ TopicForm ]
+  exports: [  ]
 })
 export class FeaturesModule { }

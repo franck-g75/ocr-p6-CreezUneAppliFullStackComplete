@@ -1,5 +1,5 @@
 import { Component,  Input,  OnInit} from '@angular/core';
-import { ME_LABELS, SUBSCRIPTION_LABELS } from '../labels';
+import { ME_LABELS, SUBSCRIPTION_LABELS, SIGNUP_LABELS} from '../labels';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +13,7 @@ import { UserInfoService } from '../../core/services/user-info-service';
 import { UserInfo } from '../../core/models/user-info.interface';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
 
 @Component({
   selector: 'app-signup',
@@ -25,6 +26,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class SignupForm implements OnInit{
   public labels_me = ME_LABELS;
   public labels_sub = SUBSCRIPTION_LABELS;
+  public labels_sign = SIGNUP_LABELS;
 
   @Input({required:true}) public myOrigin!: 'subscription' | 'me';
   public myTitle!: string;
@@ -34,6 +36,11 @@ export class SignupForm implements OnInit{
   public myPwdLabel!: string;
 
   public mySignUpForm!: FormGroup;
+  
+  private serverErrorMessage!: String;
+  private serverEmailErrorMessage!: string;
+  private serverPwdErrorMessage!: string;
+  private serverUsernameErrorMessage!: string;
 
   public hide: boolean = true;
   public onError: boolean = false;
@@ -51,8 +58,6 @@ export class SignupForm implements OnInit{
     private userStore: UserStore,
     private matSnackBar: MatSnackBar,
     private router: Router){
-
-    this.myLog.info(`Signup Form constructor ...#${this.id}...  myOrigin=" + ${this.myOrigin}`);
 
   }
 
@@ -86,13 +91,13 @@ export class SignupForm implements OnInit{
 
     this.mySignUpForm = this.formBuilder.group({
         username: [this.userStore.getUsername(),
-          [Validators.required, Validators.maxLength(50), Validators.minLength(2)]
+          [Validators.required, Validators.maxLength(25), Validators.minLength(2)]
         ],
         email: [this.userStore.getEmail(),
-          [Validators.required, Validators.email, Validators.maxLength(50)]
+          [Validators.required, Validators.email, Validators.minLength(6), Validators.maxLength(25)]
         ],
         pwd: ['',
-          [Validators.required, Validators.minLength(8), Validators.maxLength(50), this.pwdValidator()]
+          [Validators.required, Validators.minLength(8), Validators.maxLength(25), this.pwdValidator()]
         ],
         id:[this.userStore.getUserId()]
       });
@@ -101,7 +106,7 @@ export class SignupForm implements OnInit{
 
 
   public pwdValidator(): ValidatorFn {
-    const charList=["abcdefghijklmnopqrstuvwxyzéèêàûüç","ABCDEFGHIJKLMNOPQRSTUVWXYZ","0123456789","&#{}()[]-|_@=+$£%µ*,?;.:/!\\"]
+    const charList=["abcdefghijklmnopqrstuvwxyzéèêàûüç","ABCDEFGHIJKLMNOPQRSTUVWXYZ","0123456789","&#{}()<>[]-|_@=+$£%µ*,?;.:/!\\"]
     return (control: AbstractControl<string>): {[key: string]: any} | null => {
       //is.myLog.info(charList[0]);
       let forbidden: boolean = true;
@@ -134,16 +139,16 @@ export class SignupForm implements OnInit{
     const userInfo = this.mySignUpForm?.value as UserInfo;
 
     if (this.mySignUpForm.valid){
-      //window.alert("voila " + msg);.subscribe((_: Session) => this.exitPage('Session created !'));
       if (!this.onUpdate) {
         this.myLog.info(`saving userInfo ${userInfo.username} in progress...`);
         this.userInfoService.create(userInfo).subscribe({
           next: (user: UserInfo) => {
             this.exitPage(this.labels_sub.subscriptionUserCreated);
           },
-          error: (err: HttpErrorResponse) => {
-            this.myLog.info('User not created !  ' + err.status + ' ' + err.error );
-            this.displayError(this.labels_sub.subscriptionUserNotCreated + ' ' + err.error );
+          error: (error: HttpErrorResponse) => {
+            this.myLog.info('srv error found ... ' + error); 
+            this.serverError(error);
+            
           }
         });
       } else {
@@ -152,9 +157,10 @@ export class SignupForm implements OnInit{
           next: (user: UserInfo) => {
             this.exitPage(this.labels_me.meUserUpdated);
           },
-          error: (err: HttpErrorResponse) => {
-            this.myLog.info('User not updated !  : ' + err.status + ' ' + err.error );
-            this.displayError(this.labels_me.meUserNotUpdated + ' ' + err.error);
+          error: (error: HttpErrorResponse) => {
+            this.myLog.info('User not updated !  : ' + error.status + ' ' + error.error );
+            //this.displayError(this.labels_me.meUserNotUpdated + ' ' + err.error);
+            this.serverError(error);
           }
         });
       }
@@ -172,10 +178,107 @@ export class SignupForm implements OnInit{
     this.router.navigate(['/landing']);
   }
 
-  private displayError(message: string): void {
-    this.matSnackBar.open(message, 'Close', { duration: 10000 });
+  public showClientEmailValidationError(): string {
+    const emailControl = this.mySignUpForm.get('email');
+    if (emailControl?.touched && !emailControl?.valid) {
+      if (emailControl?.errors?emailControl.errors['required']:false){
+        return this.labels_sign.MandatoryEmail;
+      } else if (emailControl?.errors ? emailControl.errors['minlength'] : false){
+        return this.labels_sign.EmailMinLength;
+      } else if (emailControl?.errors ? emailControl.errors['maxlength'] : false){
+        return this.labels_sign.EmailMaxLength;
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
   }
 
-}
+  public showClientUsernameValidationError(){
+    const usernameControl = this.mySignUpForm.get('username');
+    if (usernameControl?.touched && !usernameControl?.valid) {
+      if (usernameControl?.errors?usernameControl.errors['required']:false){
+        return this.labels_sign.MandatoryUsername;
+      } else if (usernameControl?.errors ? usernameControl.errors['minlength'] : false){
+        return this.labels_sign.UsernameMinLength;
+      } else if (usernameControl?.errors ? usernameControl.errors['maxlength'] : false){
+        return this.labels_sign.UsernameMaxLength;
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
+  }
 
+  public showClientPwdValidationError(){
+    const pwdControl = this.mySignUpForm.get('pwd');
+    if (pwdControl?.touched && !pwdControl?.valid) {
+      if (pwdControl?.errors?pwdControl.errors['required']:false){
+        return this.labels_sign.MandatoryPwd;
+      } else if (pwdControl?.errors ? pwdControl.errors['minlength'] : false){
+        return this.labels_sign.PwdMinLength;
+      } else if (pwdControl?.errors ? pwdControl.errors['maxlength'] : false){
+        return this.labels_sign.PwdMaxLength;
+      } else if (this.pwdValidator()!==null){
+        return this.labels_sign.PwdValidator;
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
+  }
+
+
+  public showServerEmailValidationError(): string {
+    return this.serverEmailErrorMessage!==undefined ? this.serverEmailErrorMessage : '';
+  }
+  public showServerPwdValidationError(): string {
+    return this.serverPwdErrorMessage!==undefined ? this.serverPwdErrorMessage : '';
+  }
+  public showServerUsernameValidationError(): string {
+    return this.serverUsernameErrorMessage!==undefined ? this.serverUsernameErrorMessage : '';
+  }
+
+  public showServerErrorMessage(){
+    return this.serverErrorMessage!==null ? this.serverErrorMessage : '';
+  }
+
+  public  serverError(error : HttpErrorResponse): void{
+    const backEndResponseBody = error.error as BackEndErrorResponseBody;
+    if (backEndResponseBody!==null && backEndResponseBody!==undefined){
+      this.serverEmailErrorMessage = "";
+      this.serverPwdErrorMessage = "";
+      this.serverUsernameErrorMessage = "";
+      this.serverErrorMessage = "";
+      if (error.status === 0) {
+        console.error('Network error:', error.error)
+        //this.serverErrorMessage.push("erreur réseau");
+      } else {
+        if (backEndResponseBody.validationErrors!==null && backEndResponseBody.validationErrors !==undefined ) {
+          this.myLog.error(`Backend returned code ${error.status}, body:`, error.error);
+          if (backEndResponseBody.validationErrors.email!==undefined) {
+            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.email}`);
+            this.serverEmailErrorMessage = "le champ email : " + backEndResponseBody.validationErrors.email;        
+          }
+          if (backEndResponseBody.validationErrors.pwd!==undefined) {
+            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.pwd}`);
+            this.serverPwdErrorMessage = "Le champ mot de passe : " + backEndResponseBody.validationErrors.pwd;        
+          }
+          if (backEndResponseBody.validationErrors.username!==undefined) {
+            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.username}`);
+            this.serverUsernameErrorMessage = "Le champ username : " + backEndResponseBody.validationErrors.username;
+          }
+        } else { //validationErrrors==nuul 
+          this.myLog.error(`Backend returned ${backEndResponseBody.errorMessage}`);
+          this.serverErrorMessage = "Le serveur a répondu " + backEndResponseBody.errorMessage;
+        }
+      }
+    } else {
+      
+    }
+  }
+}
 

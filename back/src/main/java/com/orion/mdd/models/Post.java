@@ -3,10 +3,12 @@ package com.orion.mdd.models;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -42,14 +44,14 @@ public class Post {//article
     private Long id;
 
     @OneToMany(mappedBy="post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> comments;
+    private Collection<Comment> comments;
 
     @ManyToOne( fetch = FetchType.LAZY )
     @JoinColumn(name="topic_id", nullable=false)
     private Topic topic;
 
     @ManyToOne( fetch = FetchType.LAZY )
-    @JoinColumn(name="users_id", nullable=false)
+    @JoinColumn(name="user_info_id", nullable=false)
     private UserInfo userInfo;
 
     @NotNull
@@ -61,6 +63,7 @@ public class Post {//article
     private String title;
 
     @NotNull
+    @DateTimeFormat
     private Date created_at;
     
 }

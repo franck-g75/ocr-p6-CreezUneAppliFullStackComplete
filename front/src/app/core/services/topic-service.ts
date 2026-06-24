@@ -21,6 +21,10 @@ export class TopicService {
     this.myLog.info("TopicService path = " + this.pathService + "/" + username);
     return this.httpClient.get<Topic[]>(this.pathService + "/" + username);
   }
+  public allTopics() : Observable<Topic[]> {
+    this.myLog.info("TopicService path = " + this.pathService);
+    return this.httpClient.get<Topic[]>(this.pathService);
+  }
 /*
   public all(userid: number): Observable<Topic[]> {
     this.myLog.info("TopicService path = " + this.pathService + "/" + userid);

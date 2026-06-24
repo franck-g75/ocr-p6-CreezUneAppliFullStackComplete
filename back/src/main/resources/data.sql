@@ -8,15 +8,18 @@ INSERT INTO USER_INFO(id,username,email,pwd) VALUES (1, 'fguindeuil','franck.gui
 INSERT INTO USER_INFO(id,username,email,pwd) VALUES (2, 'lili','lili@coucou.fr','passedemot');
 INSERT INTO USER_INFO(id,username,email,pwd) VALUES (3, 'delcour','delcour@coucou.fr','passedemot');
 
-INSERT INTO POST(id, title, content, topic_id, users_id, created_at) VALUES(1,"JAVA c'est de la balle", "Java, mais c'est super génial !", 1, 1, '2026-06-05 10:49:54');
-INSERT INTO POST(id, title, content, topic_id, users_id, created_at) VALUES(2,"ANGULAR c'est de la balle", "Angular est super génial aussi", 1, 1, '2026-06-05 11:10:15');
+INSERT INTO POST(id, title, content, topic_id, user_info_id, created_at) VALUES(1,"JAVA c'est de la balle", "Java, mais c'est super génial !", 1, 1, '2026-06-05 10:49:54');
+INSERT INTO POST(id, title, content, topic_id, user_info_id, created_at) VALUES(2,"ANGULAR c'est de la balle", "Angular est super génial aussi", 2, 1, '2026-06-05 11:10:15');
+INSERT INTO POST(id, title, content, topic_id, user_info_id, created_at) VALUES(3,"SAP êtes vous passé à S4HANA ?", "s4hana est la dernière version de SAP.", 5, 2, '2026-06-21 11:10:15');
 
-INSERT INTO COMMENT(id, content, post_id, users_id, created_at) VALUES(1, "c'est vrai", 1, 2, '2026-06-05 10:55:45');
-INSERT INTO COMMENT(id, content, post_id, users_id, created_at) VALUES(2, "c'est meme pas vrai", 2, 2, '2026-06-05 12:25:56');
-INSERT INTO COMMENT(id, content, post_id, users_id, created_at) VALUES(3, "c'est celui qui le dit qui y est", 2, 1, '2026-06-05 12:26:12');
+INSERT INTO COMMENT(id, content, post_id, user_info_id, created_at) VALUES(1, "c'est vrai", 1, 2, '2026-06-05 10:55:45');
+INSERT INTO COMMENT(id, content, post_id, user_info_id, created_at) VALUES(2, "c'est meme pas vrai", 2, 2, '2026-06-05 12:25:56');
+INSERT INTO COMMENT(id, content, post_id, user_info_id, created_at) VALUES(3, "c'est celui qui le dit qui y est", 2, 1, '2026-06-05 12:26:12');
 
-INSERT INTO TOPIC_USER(topic_id, user_id) VALUES (1,1);
-INSERT INTO TOPIC_USER(topic_id, user_id) VALUES (2,1);
-INSERT INTO TOPIC_USER(topic_id, user_id) VALUES (3,1);
-INSERT INTO TOPIC_USER(topic_id, user_id) VALUES (5,2);
-INSERT INTO TOPIC_USER(topic_id, user_id) VALUES (2,2);
+INSERT INTO TOPIC_USER(topic_id, user_info_id) VALUES (1,1);
+INSERT INTO TOPIC_USER(topic_id, user_info_id) VALUES (2,1);
+INSERT INTO TOPIC_USER(topic_id, user_info_id) VALUES (3,1);
+INSERT INTO TOPIC_USER(topic_id, user_info_id) VALUES (5,2);
+INSERT INTO TOPIC_USER(topic_id, user_info_id) VALUES (2,2);
+
+

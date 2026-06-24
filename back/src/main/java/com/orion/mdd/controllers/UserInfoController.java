@@ -1,9 +1,13 @@
 package com.orion.mdd.controllers;
 
 import com.orion.mdd.dto.UserInfoDto;
+import com.orion.mdd.exception.CustomException;
+import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.mapper.UserInfoMapper;
 import com.orion.mdd.models.UserInfo;
 import com.orion.mdd.services.UserInfoService;
+
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
@@ -29,16 +33,16 @@ public class UserInfoController {
     @GetMapping("/{string}")
     public ResponseEntity<?> findbyString(@PathVariable("string") String string) {
         
-        UserInfo[] user = null;
+        UserInfo user = null;
         UserInfoDto usersDto = null;
 
         user = userInfoService.findByUsername(string);
-        if (user.length>0){
-            usersDto = this.userInfoMapper.toDto(user[0]);
+        if (user!=null){
+            usersDto = this.userInfoMapper.toDto(user);
         } else {
             user = userInfoService.findByEmail(string);
-            if (user.length>0){
-                usersDto = this.userInfoMapper.toDto(user[0]);
+            if (user!=null){
+                usersDto = this.userInfoMapper.toDto(user);
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -54,11 +58,9 @@ public class UserInfoController {
      * @return a 200 ok response if ok or a badRequest response if exception found
      */
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody UserInfoDto userInfoDto){
-        log.info("creating user...");
+    public ResponseEntity<?> create(@Valid @RequestBody UserInfoDto userInfoDto){
+        log.info("creating user..." + userInfoDto);
         try{
-          log.info(userInfoDto);
-          
           UserInfo user = new UserInfo();
 
           user.setEmail(userInfoDto.getEmail());
@@ -71,39 +73,39 @@ public class UserInfoController {
           this.userInfoService.create(user);
           return ResponseEntity.ok().body(this.userInfoMapper.toDto(user));
         } catch (Exception e){
-          log.info("create user exception : " + e.toString().split(": ")[1]);
-          return ResponseEntity.badRequest().body(e.toString().split(": ")[1]);
+          log.error("create user exception : " + e.getMessage());
+          throw new CustomException(ErrorCode.INVALID_INPUT);
+          //return ResponseEntity.badRequest().build();
         }
     }
 
      /**
-     * Create a user
+     * update a user
      * @param userInfoDto
-     * @return a 200 ok response if ok or a badRequest response if exception found
+     * @return a 200 ok response if ok or notFoundException if user not found or a badRequest response if exception found
+     * @throws notFoundException if user not found
+     * @throws badRequest response if exception found
      */
     @PutMapping()
-    public ResponseEntity<?> update(@RequestBody UserInfoDto userInfoDto){
-        log.info("updating user...");
+    public ResponseEntity<?> update(@Valid @RequestBody UserInfoDto userInfoDto){
+        log.info("updating user  {} ...", userInfoDto.getId() + "  :  " + userInfoDto.getUsername());
         try{
-          log.info(userInfoDto);
-          
+                  
           Optional<UserInfo> user = userInfoService.findById(userInfoDto.getId());
 
-          if (user != null){
-            user.get().setEmail(userInfoDto.getEmail());
-            user.get().setUsername(userInfoDto.getUsername());
-            user.get().setPwd(userInfoDto.getPwd());
+          if (user.isPresent()){
+            this.userInfoService.update( user.get(), userInfoDto );
+            return ResponseEntity.ok().body(this.userInfoMapper.toDto(user.get()));
           } else {
+            log.error("user {} not found in db.", userInfoDto.getId());
             return ResponseEntity.notFound().build();
           }
 
-          log.info(user.get());
-
-          this.userInfoService.update(user.get());
-          return ResponseEntity.ok().body(this.userInfoMapper.toDto(user.get()));
         } catch (Exception e){
-          log.info("update user exception : " + e.toString().split(": ")[1]);
-          return ResponseEntity.badRequest().body(e.toString().split(": ")[1]);
+
+          log.info("update user exception : " + e.toString());
+          return ResponseEntity.badRequest().build();
+
         }
     }
 
@@ -116,8 +118,10 @@ public class UserInfoController {
           return ResponseEntity.ok().build();
 
         } catch (Exception e){
-          log.info("subscribe/api/user/{:idTopic-:idUser} exception " + e.toString());
+
+          log.info("/subscribe/idUser/{}/idTopic/{} exception \n ",idUser,idTopic  + e.toString());
           return ResponseEntity.badRequest().build();
+
         }
     }
 
@@ -130,8 +134,10 @@ public class UserInfoController {
           return ResponseEntity.ok().build();
 
         } catch (Exception e){
-          log.info("/unsubscribe/api/user/{:idTopic-:idUser} exception " + e.toString());
+
+          log.error("/unsubscribe/idUser/{}/idTopic/{} exception \n ",idUser,idTopic  + e.toString());
           return ResponseEntity.badRequest().build();
+
         }
     }
 }

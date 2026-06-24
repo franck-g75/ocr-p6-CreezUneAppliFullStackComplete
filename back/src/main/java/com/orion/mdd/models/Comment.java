@@ -7,8 +7,8 @@ import lombok.experimental.Accessors;
 import java.util.Date;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
@@ -31,15 +31,15 @@ import jakarta.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne( cascade = CascadeType.PERSIST )
-    @JoinColumn(name="users_id", nullable=false)
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn(name="user_info_id", nullable=false)
+    @Size(max = 20)
     private UserInfo userInfo;
 
     @ManyToOne( fetch = FetchType.LAZY )
@@ -51,5 +51,6 @@ public class Comment {
     private String content;
 
     @NotNull
+    @DateTimeFormat
     private Date created_at;
 }

@@ -2,7 +2,6 @@ package com.orion.mdd.models;
 
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,21 +38,21 @@ public class UserInfo {
     private Long id;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 20)
     private String username;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 30, min=6)
     private String email;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 50, min=8)
     private String pwd;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="TOPIC_USER",
     joinColumns = {
-        @JoinColumn(name="user_id", referencedColumnName = "id")
+        @JoinColumn(name="user_info_id", referencedColumnName = "id")
     },inverseJoinColumns = {
         @JoinColumn(name="topic_id", referencedColumnName = "id")
     } )

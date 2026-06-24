@@ -2,18 +2,15 @@ import { Component } from '@angular/core';
 import { TopicService } from '../../core/services/topic-service';
 import { Topic } from '../../core/models/topic.interface';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { AsyncPipe, LowerCasePipe, UpperCasePipe } from '@angular/common';
-import { MatButton } from '@angular/material/button';
 import { UserStore } from '../../core/services/user-store-service';
 import { TOPIC_LABELS } from '../../shared/labels';
 import { UserInfoService } from '../../core/services/user-info-service';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-topic',
-  imports: [UpperCasePipe, LowerCasePipe, AsyncPipe, MatButton, NgClass],
+  imports: [],
   templateUrl: './topic-form.html',
   styleUrl: './topic-form.scss',
 })

@@ -71,7 +71,7 @@ export class LoginForm implements OnInit{
         this.userStore.setEmail(response.email);
         this.userStore.setUsername(response.username);
         this.userStore.setUserId(response.id);
-        this.router.navigate(['topic']);
+        this.router.navigate(['article']);
       },
       error : (error: Error) => {
         //this.myLog.info(this.logPrefix + "error : " + JSON.stringify(error).toString());
@@ -81,8 +81,4 @@ export class LoginForm implements OnInit{
 
   }
 
-  private exitPage(message: string): void {
-    this.matSnackBar.open(message, 'Close', { duration: 3000 });
-    this.router.navigate(['topic']);
-  }
 }

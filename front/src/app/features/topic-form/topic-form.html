@@ -1,22 +1,5 @@
-<div id="topic_page">
+<div id="display_page">
 
-<div class="topic_grid">
-    @for(topic of (topic$ | async); track topic.id){
-    <div id="topicCell" class="topic_cell">
-        <h2>{{topic.title | uppercase}}</h2>
-        <p>{{topic.content | lowercase}}</p>
-        <p>
-            <button 
-                [id] ="'btnTopic-' + topic.id" 
-                matButton="filled" 
-                [disabled]="topic.read"
-                [ngClass]="{'custom-btn-grey':topic.read,'custom-btn':!topic.read}"
-                (click)="subscription(topic.id,$event, topic.read)">
-                {{topic.read ? labels.topicDejaAbonne : labels.topicSabonner}}
-            </button>
-        </p>
-    </div>
-    }
-</div>
+ERROR should not see this !! 
 
 </div>

@@ -15,7 +15,7 @@ export enum LogLevel { All = 0, Debug = 1, Info = 2, Warn = 3, Error = 4, Fatal 
  * logs centralization
  */
 export class MyLoggingService {
-  level: LogLevel = LogLevel.All; // Niveau de log global
+  level: LogLevel = LogLevel.Info; // Niveau de log global
   logWithDate: boolean = true;    // Afficher la date
   prefix: String = "";
 
@@ -75,7 +75,26 @@ export class MyLoggingService {
       if (params.length) {
         logMsg += ' - ' + this.formatParams(params);
       }
-      console.log(logMsg);
+      switch(level) {
+        case LogLevel.Debug : 
+          console.debug(logMsg);
+        break;
+        case LogLevel.Info : 
+          console.log(logMsg);
+        break;
+        case LogLevel.Warn : 
+          console.warn(logMsg);
+        break;
+        case LogLevel.Error : 
+          console.error(logMsg);
+        break;
+        case LogLevel.Fatal : 
+          console.error(logMsg);
+        break;
+        case LogLevel.All : 
+          console.error(logMsg);
+        break;
+      }
     }
   }
   private shouldLog(level: LogLevel): boolean {

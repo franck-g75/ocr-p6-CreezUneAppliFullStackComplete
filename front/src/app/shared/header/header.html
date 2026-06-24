@@ -1,14 +1,15 @@
 <div class="centred_content_no_margin">
     <div class="long_top_bar_desktop">
     <div class="top_bar_desktop">
-        <img src="logo_p6.png">
+        <a routerLink="" class="top_bar_logo"><img src="logo_p6.png"></a>
         @if(showRight){
         <div class="top_bar_right_part">
-            <div class="top_bar_internal_right_part disconnect">{{labels.headerSeDeconnecter}}</div>
-            <div class="top_bar_internal_right_part">{{labels.headerArticle}}</div>
-            <div class="top_bar_internal_right_part"><a routerLink="topic">{{labels.headerTheme}}</a></div>
+            <div class="disconnect top_bar_internal_right_part">{{labels.headerSeDeconnecter}}</div>
+            <div class="top_bar_internal_right_part"><a routerLink="article" [class]="colored_header_article_link">{{labels.headerArticle}}</a></div>
+            <div class="top_bar_internal_right_part"><a routerLink="theme" [class]="colored_header_theme_link">{{labels.headerTheme}}</a></div>
             <div class="top_bar_internal_right_part">
-                <mat-icon id="account" routerLink="me" [class]="colored_accont_icon">account_circle</mat-icon></div>
+                <mat-icon id="account" routerLink="me" [class]="colored_accont_icon">account_circle</mat-icon>
+            </div>
         </div>
         }
     </div>

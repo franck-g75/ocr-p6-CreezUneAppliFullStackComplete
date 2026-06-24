@@ -1,0 +1,38 @@
+<div class="display_grid">
+    @if(myOrigin!="me"){
+        @for(topic of (topic$ | async); track topic.id){
+            <div class="display_cell">
+                <h2>{{topic.title | uppercase}}</h2>
+                <p>{{topic.content | lowercase}}</p>
+                <p>
+                    <button 
+                        [id] ="'btnTopic-' + topic.id" 
+                        matButton="filled" 
+                        [disabled]="topic.read"
+                        [ngClass]="{'custom-btn-grey':topic.read,'custom-btn':!topic.read}"
+                        (click)="subscription(topic.id,$event, topic.read)">
+                        {{topic.read ? labelsTopic.topicDejaAbonne : labelsTopic.topicSabonner}}
+                    </button>
+                </p>
+            </div>
+        }
+    } @else {
+        @for(topic of (topic$ | async); track topic.id){
+            @if (topic.read ){
+                <div class="display_cell">
+                    <h2>{{topic.title | uppercase}} </h2>
+                    <p>{{topic.content | lowercase}}</p>
+                    <p>
+                        <button 
+                            [id] ="'btnTopic-' + topic.id" 
+                            matButton="filled" 
+                            [ngClass]="{'custom-btn':topic.read}"
+                            (click)="unsubscription(topic.id,$event, topic.read)">
+                            {{topic.read ? labelsMe.meUnsubcribe : ''}}
+                        </button>
+                    </p>
+                </div>
+            }
+        }
+    }
+</div>

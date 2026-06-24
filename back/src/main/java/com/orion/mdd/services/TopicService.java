@@ -7,6 +7,7 @@ import com.orion.mdd.repository.TopicRepository;
 
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,21 +18,28 @@ import java.util.Optional;
 @Service
 public class TopicService {
 
-    
-    //private final MddApplication mddApplication;
     private final TopicRepository topicRepository;
 
-    public TopicService(TopicRepository topicRepository){//, MddApplication mddApplication){
+    public TopicService(TopicRepository topicRepository){
         this.topicRepository = topicRepository;
-        //this.mddApplication = mddApplication;
     }
 
-    public List<Topic> findAll() {
-        return this.topicRepository.findAll();
+    public List<TopicDto> findAll() {
+        log.info("findAll() ...");
+        
+        List<Topic> topicList = this.topicRepository.findAll();
+        List<TopicDto> topicRetour = new ArrayList<TopicDto>();
+        for(Topic topic : topicList){
+            TopicDto topicDto = new TopicDto(topic.getId(),topic.getTitle(),topic.getContent(), false);
+            topicRetour.add(topicDto);
+        }
+        return topicRetour;
     }
 
     
     public List<TopicDto> findAll(String userName) {
+        log.info("findAll({}) ...", userName);
+
         List<Topic> topicList = this.topicRepository.findAll();
         List<TopicDto> retour = new ArrayList<TopicDto>();
 
@@ -67,7 +75,9 @@ public class TopicService {
         return retour;
     }
 
-    public Optional<Topic> findById(Long idTopic) {
+
+    public Optional<Topic> findById(@NonNull Long idTopic) {
+        log.info("findById({})", idTopic);
         return topicRepository.findById(idTopic);
     }
 

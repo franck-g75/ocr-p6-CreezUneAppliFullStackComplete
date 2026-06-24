@@ -16,6 +16,8 @@ export class Header {
   public labels = HEADER_LABELS;
   public showRight = false;
   public colored_accont_icon = "account_circle";
+  public colored_header_article_link = "inactive_link";
+  public colored_header_theme_link = "inactive_link";
 
   constructor(private router: Router, private myLog: MyLoggingService ){
     router.events.subscribe((val)=> {
@@ -32,16 +34,43 @@ export class Header {
             myLog.debug("Header " + val.url + " must not show right part");
             this.showRight = false;
             this.colored_accont_icon = "account_circle";
+            this.colored_header_article_link = "inactive_link";
+            this.colored_header_theme_link = "inactive_link";
           break;
-          case '/topic' :
+          case '/theme' :
             myLog.debug("Header " + val.url + " must show right part");
             this.showRight = true;
             this.colored_accont_icon = "account_circle";
+            this.colored_header_article_link = "inactive_link";
+            this.colored_header_theme_link = "active_link";
           break;
           case '/me' :
             myLog.debug("Header " + val.url + " must show right part");
             this.showRight = true;
             this.colored_accont_icon = "account_circle_me";
+            this.colored_header_article_link = "inactive_link";
+            this.colored_header_theme_link = "inactive_link";
+          break;
+          case '/article' :
+            myLog.debug("Header " + val.url + " must show right part");
+            this.showRight = true;
+            this.colored_accont_icon = "account_circle";
+            this.colored_header_article_link = "active_link";
+            this.colored_header_theme_link = "inactive_link";
+          break;
+          case '/add-article' :
+            myLog.debug("Header " + val.url + " must show right part");
+            this.showRight = true;
+            this.colored_accont_icon = "account_circle";
+            this.colored_header_article_link = "active_link";
+            this.colored_header_theme_link = "inactive_link";
+          break;
+          case '/show-article' :
+            myLog.debug("Header " + val.url + " must show right part");
+            this.showRight = true;
+            this.colored_accont_icon = "account_circle";
+            this.colored_header_article_link = "active_link";
+            this.colored_header_theme_link = "inactive_link";
           break;
         }
       }

@@ -40,10 +40,10 @@ public class Topic {
     private Long id;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 45)
     private String title;
 
-    @NotNull
+    @NotBlank
     @Size(max = 2500)
     private String content;
 

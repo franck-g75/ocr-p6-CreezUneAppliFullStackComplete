@@ -7,10 +7,10 @@
         </button>
     </div>
 
-    <div class="form_box login">
+    <div class="form_box">
     <mat-card>
         
-        <h1 >{{labels.loginSeConnecterTitre}}</h1>
+        <h1>{{labels.loginSeConnecterTitre}}</h1>
         
         <form [formGroup]="myLoginForm" >
             <mat-card-content>
@@ -32,7 +32,7 @@
             </mat-card-content>
 
             <div class="centred_content_no_margin">
-                <button matButton="filled" (click)="submit();" class="custom-btn" >{{labels.loginSeConnecterBouton}}</button>
+            <button matButton="filled" (click)="submit();" class="custom-btn" >{{labels.loginSeConnecterBouton}}</button>
             </div>
             @if(onError) {
                 <div class="centred_content_no_margin error">{{labels.loginError}}</div>

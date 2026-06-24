@@ -14,20 +14,20 @@ import java.util.Optional;
 public interface UserInfoRepository  extends JpaRepository<UserInfo, Long> {
 
     //List<Users> findByTopics(Long id);
-    UserInfo[] findByEmail(String email);
-    UserInfo[] findByUsername(String username);
+    Optional<UserInfo> findByEmail(String email);
+    Optional<UserInfo> findByUsername(String username);
     Optional<UserInfo> findById(Long id);
     
     <U extends UserInfo> U save(U entity);
 
     @Modifying
     @Transactional
-    @Query(value="INSERT INTO TOPIC_USER (user_id,topic_id) VALUES (?1, ?2)", nativeQuery=true)
+    @Query(value="INSERT INTO TOPIC_USER (user_info_id,topic_id) VALUES (?1, ?2)", nativeQuery=true)
     public void addUserTopic(Long idUser, Long idTopic);
 
     @Modifying
     @Transactional
-    @Query(value="DELETE FROM TOPIC_USER WHERE user_id=?1 AND topic_id=?2", nativeQuery=true)
+    @Query(value="DELETE FROM TOPIC_USER WHERE user_info_id=?1 AND topic_id=?2", nativeQuery=true)
     public void delUserTopic(Long idUser, Long idTopic);
 
 }
