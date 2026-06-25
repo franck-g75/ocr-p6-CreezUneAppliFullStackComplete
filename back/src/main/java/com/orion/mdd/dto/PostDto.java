@@ -19,11 +19,11 @@ public class PostDto {
     private Long id;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 15)
     private String title;
 
     @NotBlank
-    @Size(max = 5000)
+    @Size(max = 15)
     private String content;
 
     @NotNull

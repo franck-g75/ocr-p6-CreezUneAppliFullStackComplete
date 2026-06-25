@@ -60,7 +60,13 @@ public class PostService {
         if (post.isEmpty()){
             throw new CustomException(ErrorCode.DATA_NOT_FOUND);
         } else {
-            PostDto postReturn = new PostDto(post.get().getId(),post.get().getTitle(),post.get().getContent(), post.get().getCreated_at(), post.get().getUserInfo().getUsername(), post.get().getTopic().getId());
+            PostDto postReturn = new PostDto(
+                post.get().getId(),
+                post.get().getTitle(),
+                post.get().getContent(), 
+                post.get().getCreated_at(), 
+                post.get().getUserInfo().getUsername(), 
+                post.get().getTopic().getId());
             return postReturn;
         }
         
@@ -139,7 +145,7 @@ public class PostService {
     }
 
 
-    public void addPost( PostDto postDto ){
+    public void addPost( PostDto postDto ) throws CustomException {
 
         Optional<UserInfo> user = this.userInfoRepository.findByUsername(postDto.getUsername());
         

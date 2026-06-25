@@ -51,7 +51,12 @@ export const ARTICLE_LABELS = {
     topicList: "Sélectionnez un thème",
     postTitle: "Titre de l'article",
     postContent: "contenu de l'article",
-    postCreateBtn: "Créer"
+    postCreateBtn: "Créer",
+    mandatoryTitle: "Le titre est obligatoire.",
+    titleMaxLength: "Le titre doit être composé de 20 caractères maximum",
+    mandatoryContent: "Le contenu est obligatoire",
+    contentMaxLength : "Le contenu doit être composé de 20 caractères maximum"
+
 
 };
 export const SIGNUP_LABELS = {
@@ -65,6 +70,6 @@ export const SIGNUP_LABELS = {
     MandatoryUsername: "Le nom d'utilisateur est obligatoire",
     UsernameMinLength: "Le nom d'utilisateur doit être composé de 2 caractères minimum",
     UsernameMaxLength: "Le nom d'utilisateur doit être composé de 20 caractères maximum"
-
+    
 
 }

@@ -2,13 +2,13 @@ package com.orion.mdd.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 
-
 public enum ErrorCode {
+
+    //java/com/orion/security/password.java contains the invalid pasword message (need a const string)
 
     SERVER_ERROR("E001", "erreur de serveur interne.", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_INPUT("E002", "Saisie invalide.", HttpStatus.BAD_REQUEST),
     DATA_NOT_FOUND("E003", "Donnée(s) non trouvée(s).", HttpStatus.NOT_FOUND);
-    
     
     private final String code;
 

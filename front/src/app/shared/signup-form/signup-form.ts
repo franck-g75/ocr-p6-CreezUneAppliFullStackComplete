@@ -148,7 +148,6 @@ export class SignupForm implements OnInit{
           error: (error: HttpErrorResponse) => {
             this.myLog.info('srv error found ... ' + error); 
             this.serverError(error);
-            
           }
         });
       } else {
@@ -159,7 +158,6 @@ export class SignupForm implements OnInit{
           },
           error: (error: HttpErrorResponse) => {
             this.myLog.info('User not updated !  : ' + error.status + ' ' + error.error );
-            //this.displayError(this.labels_me.meUserNotUpdated + ' ' + err.error);
             this.serverError(error);
           }
         });

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.orion.mdd.dto.PostDto;
+import com.orion.mdd.exception.CustomException;
+import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.models.Topic;
 import com.orion.mdd.dto.CommentDto;
 import com.orion.mdd.services.PostService;
@@ -30,9 +32,11 @@ public class PostController {
 
     private final PostService postService;
     private final TopicService topicService;
-
-
-    public PostController( PostService postService, TopicService topicService) {
+    
+    public PostController( 
+        PostService postService, 
+        TopicService topicService
+       ) {
         this.postService = postService;
         this.topicService = topicService;
     }
@@ -45,7 +49,7 @@ public class PostController {
             return ResponseEntity.ok().body(posts);
         } catch (Exception e){
             log.error("findAll(iduser) exception : " + e.toString());
-            return ResponseEntity.notFound().build();
+            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
         }
     }
 
@@ -57,7 +61,7 @@ public class PostController {
             return ResponseEntity.ok().body(comments);
         } catch(Exception e) {
             log.error("findAllComments exception : " + e.getMessage());
-            return ResponseEntity.notFound().build();
+            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
         }
     }
 
@@ -70,30 +74,35 @@ public class PostController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("add comment exception : " + e.getMessage());
-            return ResponseEntity.badRequest().build();
+            throw new CustomException(ErrorCode.INVALID_INPUT);
         }
 
     }
 
 
     @PostMapping("")
-    public ResponseEntity<?> addPost(@Valid @RequestBody PostDto postDto) {
+    public ResponseEntity<?> addPost(@Valid @RequestBody PostDto postDto) throws CustomException {
         
         log.info("addPost post=" + postDto.toString());
 
         Optional<Topic> topic = this.topicService.findById(postDto.getId_topic());
 
         if (topic.isPresent()){
+           
             try{
                 this.postService.addPost(postDto);
                 return ResponseEntity.ok().build();
+            } catch (CustomException ce) {
+                log.error("add post customexception : " + ce.getMessage());
+                throw new CustomException(ce.getErrorCode());
             } catch (Exception e) {
                 log.error("add post exception : " + e.getMessage());
-                return ResponseEntity.badRequest().build();
+                throw e;
             }
+
         } else {
             log.error("addPost : Topic non trouvé.");
-            return ResponseEntity.badRequest().build();
+            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
         }
 
     }

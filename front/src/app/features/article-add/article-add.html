@@ -29,15 +29,22 @@
                     <mat-form-field appearance="outline" class="form_text_box" >
                         <mat-label>{{labels.postTitle}}</mat-label>
                         <input  matInput formControlName="title">
+                        <div class="centred_content_no_margin error">{{ showClientTitleValidationError() }}</div>
                     </mat-form-field>
                     </div>
                     <div class="centred_content_no_margin">
                     <mat-form-field appearance="outline" class="form_text_box" >
                         <mat-label>{{labels.postContent}}</mat-label>
                         <textarea matInput formControlName="content"></textarea>
+                        <div class="centred_content_no_margin error">{{ showClientContentValidationError() }}</div>
                     </mat-form-field>
                     </div>
                 </mat-card-content>
+
+                <div class="centred_content_no_margin error">{{ showServerErrorMessage() }}</div>
+                <div class="centred_content_no_margin error">{{ showServerTopicValidationError() }}</div>
+                <div class="centred_content_no_margin error">{{ showServerTitleValidationError() }}</div>
+                <div class="centred_content_no_margin error">{{ showServerContentValidationError() }}</div>
 
                 <div class="centred_content_no_margin">
                     <button matButton="filled" (click)="submit();" class="custom-btn" >{{labels.postCreateBtn}}</button>
