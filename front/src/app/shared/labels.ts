@@ -1,3 +1,8 @@
+export const GENERIC_LABELS = {
+    error: "/!\\  Une erreur est survenue : ",
+    clientError: "Erreurs trouvées lors de la validation du formulaire : corrigez le formulaire en fonction des messages en rouge... ",
+    ok: "ok"
+};
 export const LANDING_LABELS = {
     landingSeConnecter: "Se connecter",
     landingSinscrire: "S'inscrire"
@@ -29,11 +34,11 @@ export const ME_LABELS = {
     meBtnSvg: "Sauvegarder",
     meUnsubcribe: "Se désabonner",
     meNotSubscribed: "Non souscrit !",
-    meUnsubcriptionError: "Error when unsubscription : contact the administrator",
+    meUnsubcriptionError: "Erreur lors de la désincription : veuillez contacter l'adiministrateur.",
     meUnsubcriptionSuccess: "Désinscription réussie ! ",
     meUserNotUpdated: "Utilisateur non mis à jour !",
     meUserUpdated: "Utilisateur mis à jour !",
-    meFormPbm: "Erreurs trouvées lors de la validation du formulaire : remplissez tous les champs. L'email doit être correctement formatté et le mot de passe doit avoir 8 caractères minimum et contenir au moins 1 minuscule, 1 majuscule, 1 chiffre et 1 caractère spécial... "
+    
 };
 export const SUBSCRIPTION_LABELS = {
     subscriptionTitle: "Inscription",
@@ -53,23 +58,25 @@ export const ARTICLE_LABELS = {
     postContent: "contenu de l'article",
     postCreateBtn: "Créer",
     mandatoryTitle: "Le titre est obligatoire.",
-    titleMaxLength: "Le titre doit être composé de 20 caractères maximum",
+    titleMaxLength: "Le titre doit être composé de 30 caractères maximum",
     mandatoryContent: "Le contenu est obligatoire",
-    contentMaxLength : "Le contenu doit être composé de 20 caractères maximum"
-
-
+    contentMaxLength : "Le contenu doit être composé de 4000 caractères maximum",
+    comments: "Commentaires :",
+    commentContent: "Ecrivez ici votre commentaire : ",
+    postSendBtn: "Envoyer"
 };
+
 export const SIGNUP_LABELS = {
     MandatoryEmail: "L'email est obligatoire",
     EmailMinLength: "L'email doit faire 6 caractères minimum",
-    EmailMaxLength: "L'email doit faire 20 caractères maximum",
+    EmailMaxLength: "L'email doit faire 50 caractères maximum",
     MandatoryPwd: "Le mot de passse est obligatoire.",    
     PwdMinLength: "Le mot de passe doit être composé de 8 caractères minimum",
-    PwdMaxLength: "Le mot de passe doit être composé de 20 caractères maximum",
+    PwdMaxLength: "Le mot de passe doit être composé de 50 caractères maximum",
     PwdValidator: "Le mot de passe doit être composé d'ou moins : 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.",
     MandatoryUsername: "Le nom d'utilisateur est obligatoire",
     UsernameMinLength: "Le nom d'utilisateur doit être composé de 2 caractères minimum",
-    UsernameMaxLength: "Le nom d'utilisateur doit être composé de 20 caractères maximum"
-    
+    UsernameMaxLength: "Le nom d'utilisateur doit être composé de 20 caractères maximum",
+    ServerResponds: "Le serveur a répondu : "
 
 }

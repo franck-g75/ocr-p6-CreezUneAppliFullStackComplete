@@ -3,7 +3,7 @@ package com.orion.mdd.controllers;
 import com.orion.mdd.dto.UserInfoDto;
 import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
-import com.orion.mdd.mapper.UserInfoMapper;
+import com.orion.mdd.exception.ErrorManagement;
 import com.orion.mdd.models.UserInfo;
 import com.orion.mdd.services.UserInfoService;
 
@@ -22,11 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 public class UserInfoController {
     
-    private final UserInfoMapper userInfoMapper;
+   
     private final UserInfoService userInfoService;
     
-    public UserInfoController(  UserInfoService userInfoService, UserInfoMapper userInfoMapper ) {
-        this.userInfoMapper = userInfoMapper;
+    public UserInfoController(  UserInfoService userInfoService ) {
         this.userInfoService = userInfoService;
     }
 
@@ -38,11 +37,11 @@ public class UserInfoController {
 
         user = userInfoService.findByUsername(string);
         if (user!=null){
-            usersDto = this.userInfoMapper.toDto(user);
+            usersDto = this.userToDto(user);
         } else {
             user = userInfoService.findByEmail(string);
             if (user!=null){
-                usersDto = this.userInfoMapper.toDto(user);
+                usersDto = this.userToDto(user);
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -71,11 +70,10 @@ public class UserInfoController {
           user.setPosts(null);
 
           this.userInfoService.create(user);
-          return ResponseEntity.ok().body(this.userInfoMapper.toDto(user));
+          return ResponseEntity.ok().body(this.userToDto(user));
         } catch (Exception e){
           log.error("create user exception : " + e.getMessage());
           throw new CustomException(ErrorCode.INVALID_INPUT);
-          //return ResponseEntity.badRequest().build();
         }
     }
 
@@ -95,16 +93,16 @@ public class UserInfoController {
 
           if (user.isPresent()){
             this.userInfoService.update( user.get(), userInfoDto );
-            return ResponseEntity.ok().body(this.userInfoMapper.toDto(user.get()));
+            return ResponseEntity.ok().body(this.userToDto(user.get()));
           } else {
             log.error("user {} not found in db.", userInfoDto.getId());
-            return ResponseEntity.notFound().build();
+            return ErrorManagement.responseError(new CustomException(ErrorCode.DATA_NOT_FOUND));
           }
 
         } catch (Exception e){
 
           log.info("update user exception : " + e.toString());
-          return ResponseEntity.badRequest().build();
+          return ErrorManagement.responseError(e);
 
         }
     }
@@ -120,7 +118,8 @@ public class UserInfoController {
         } catch (Exception e){
 
           log.info("/subscribe/idUser/{}/idTopic/{} exception \n ",idUser,idTopic  + e.toString());
-          return ResponseEntity.badRequest().build();
+          return ErrorManagement.responseError(e);
+
 
         }
     }
@@ -136,8 +135,26 @@ public class UserInfoController {
         } catch (Exception e){
 
           log.error("/unsubscribe/idUser/{}/idTopic/{} exception \n ",idUser,idTopic  + e.toString());
-          return ResponseEntity.badRequest().build();
+          return ErrorManagement.responseError(e);
+
 
         }
     }
+
+    private UserInfoDto userToDto(UserInfo user) throws CustomException {
+      UserInfoDto usrReturn = new UserInfoDto();
+
+      if (user==null){
+        log.error("userToDto(null) user==null");
+        throw new CustomException(ErrorCode.DATA_NOT_FOUND);
+      } else {
+        usrReturn.setId(user.getId());
+        usrReturn.setEmail(user.getEmail());
+        usrReturn.setUsername(user.getUsername());
+        usrReturn.setPwd(user.getPwd());
+      }
+      
+      return usrReturn;
+    }
+
 }

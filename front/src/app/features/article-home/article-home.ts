@@ -66,7 +66,15 @@ export class ArticleHome {
         }
       }
       
-    }).unsubscribe();
+    });
 
   }
+
+  public showArticleDetails(idArticle: number){
+
+    this.router.navigate(['/article-details',idArticle]);
+
+  }
+  
+
 }

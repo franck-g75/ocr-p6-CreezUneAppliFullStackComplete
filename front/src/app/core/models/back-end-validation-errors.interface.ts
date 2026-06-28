@@ -5,7 +5,8 @@ export interface BackEndValidationErrors {
   pwd?: string;
   username?: string;
   title?: string;
-  topic?: string;
+  topic_id?: string;
+  topic_title?: string;
   content?: string;
   created_at?: string;
   read?: string;

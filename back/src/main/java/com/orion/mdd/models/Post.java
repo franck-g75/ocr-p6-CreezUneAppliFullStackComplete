@@ -5,7 +5,6 @@ import lombok.experimental.Accessors;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -54,12 +53,12 @@ public class Post {//article
     @JoinColumn(name="user_info_id", nullable=false)
     private UserInfo userInfo;
 
-    @NotNull
-    @Size(max = 5000)
+    @NotBlank(message="Le contenu d'un article doit être saisi.")
+    @Size(max=4000, message="La taille d'un article doit être comprise entre 1 et 4000 caractères.")
     private String content;
 
-    @NotBlank
-    @Size(max = 50)
+    @NotBlank(message="Le titre d'un article doit être saisi.")
+    @Size(max=50, message = "Le titre du theme doit avoir une taille comprise entre 1 et 50 caractères.")
     private String title;
 
     @NotNull

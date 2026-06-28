@@ -41,7 +41,7 @@ public class PostService {
         this.userInfoRepository = userInfoRepository;
     }
 
-    public Set<PostDto> findPostsByUserInfo(Long id){
+    public Set<PostDto> findPostsByUserInfo(Long id) throws CustomException{
 
         Optional<UserInfo> user = this.userInfoService.findById(id);
 
@@ -53,7 +53,7 @@ public class PostService {
         
     }
 
-    public PostDto findPostById(Long id){
+    public PostDto findPostById(Long id) throws CustomException{
 
         Optional<Post> post = this.postRepository.findById(id);
 
@@ -66,13 +66,16 @@ public class PostService {
                 post.get().getContent(), 
                 post.get().getCreated_at(), 
                 post.get().getUserInfo().getUsername(), 
-                post.get().getTopic().getId());
+                post.get().getTopic().getId(),
+                post.get().getTopic().getTitle()
+            );
+
             return postReturn;
         }
         
     }
 
-    public List<CommentDto> findCommentsByPostId(Long id){
+    public List<CommentDto> findCommentsByPostId(Long id) throws CustomException{
 
         Optional<Post> post = this.postRepository.findById(id);
 
@@ -96,36 +99,11 @@ public class PostService {
             }
         }
     }
-/*
-    public List<CommentDto> addCommentsByPostId(Long id){
 
-        Optional<Post> post = this.postRepository.findById(id);
 
-        if (post.isEmpty()){
-            throw new NotFoundException("post not found");
-        } else {
-            Comment comment;
 
-            post.get().getComments().add(comment);
-            
-            Optional<Iterable<Comment>> comments = this.commentRepository.findByPost(post.get());
-            if (post.isEmpty()){
-                return new ArrayList<CommentDto>();
-            } else {
-                List<CommentDto> retour = new ArrayList<CommentDto>(); 
-                for(Comment c : comments.get()){
-                    CommentDto commentDto = new CommentDto();
-                    commentDto.setId(c.getId());
-                    commentDto.setContent(c.getContent());
-                    commentDto.setUsername(c.getUserInfo().getUsername());
-                    retour.add(commentDto);
-                }
-                return retour;
-            }
-        }
-    }
-*/
-    public void addComment(Long idPost, CommentDto commentDto){
+    
+    public void addComment(Long idPost, CommentDto commentDto) throws CustomException {
 
         Optional<UserInfo> user = this.userInfoRepository.findByUsername(commentDto.getUsername());
         Optional<Post> post = this.postRepository.findById(idPost);

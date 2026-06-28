@@ -1,5 +1,5 @@
 import { Component,  Input,  OnInit} from '@angular/core';
-import { ME_LABELS, SUBSCRIPTION_LABELS, SIGNUP_LABELS} from '../labels';
+import { ME_LABELS, SUBSCRIPTION_LABELS, SIGNUP_LABELS, GENERIC_LABELS} from '../labels';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,8 +27,10 @@ export class SignupForm implements OnInit{
   public labels_me = ME_LABELS;
   public labels_sub = SUBSCRIPTION_LABELS;
   public labels_sign = SIGNUP_LABELS;
+  public labels_generic = GENERIC_LABELS;
 
   @Input({required:true}) public myOrigin!: 'subscription' | 'me';
+
   public myTitle!: string;
   public myBtnLabel!: string;
   public myUsernameLabel!: string;
@@ -91,13 +93,13 @@ export class SignupForm implements OnInit{
 
     this.mySignUpForm = this.formBuilder.group({
         username: [this.userStore.getUsername(),
-          [Validators.required, Validators.maxLength(25), Validators.minLength(2)]
+          [Validators.required, Validators.maxLength(20), Validators.minLength(2)]
         ],
         email: [this.userStore.getEmail(),
-          [Validators.required, Validators.email, Validators.minLength(6), Validators.maxLength(25)]
+          [Validators.required, Validators.email, Validators.minLength(6), Validators.maxLength(50)]
         ],
         pwd: ['',
-          [Validators.required, Validators.minLength(8), Validators.maxLength(25), this.pwdValidator()]
+          [Validators.required, Validators.minLength(8), Validators.maxLength(50), this.pwdValidator()]
         ],
         id:[this.userStore.getUserId()]
       });
@@ -107,6 +109,7 @@ export class SignupForm implements OnInit{
 
   public pwdValidator(): ValidatorFn {
     const charList=["abcdefghijklmnopqrstuvwxyzéèêàûüç","ABCDEFGHIJKLMNOPQRSTUVWXYZ","0123456789","&#{}()<>[]-|_@=+$£%µ*,?;.:/!\\"]
+    
     return (control: AbstractControl<string>): {[key: string]: any} | null => {
       //is.myLog.info(charList[0]);
       let forbidden: boolean = true;
@@ -131,8 +134,8 @@ export class SignupForm implements OnInit{
       }
       return forbidden ? {'forbidden password': {value: control.value}} : null;
     };
+    
   }
-
 
   public submit(): void{
     
@@ -165,7 +168,7 @@ export class SignupForm implements OnInit{
 
     } else {
       
-      this.matSnackBar.open(this.labels_me.meFormPbm, 'Close', { duration: 10000 });
+      this.matSnackBar.open(this.labels_generic.clientError, 'Close', { duration: 10000 });
 
     }
     
@@ -252,30 +255,30 @@ export class SignupForm implements OnInit{
       this.serverUsernameErrorMessage = "";
       this.serverErrorMessage = "";
       if (error.status === 0) {
-        console.error('Network error:', error.error)
-        //this.serverErrorMessage.push("erreur réseau");
+        console.error('Network error:', error.error);
       } else {
         if (backEndResponseBody.validationErrors!==null && backEndResponseBody.validationErrors !==undefined ) {
           this.myLog.error(`Backend returned code ${error.status}, body:`, error.error);
           if (backEndResponseBody.validationErrors.email!==undefined) {
             this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.email}`);
-            this.serverEmailErrorMessage = "le champ email : " + backEndResponseBody.validationErrors.email;        
+            this.serverEmailErrorMessage = backEndResponseBody.validationErrors.email;        
           }
           if (backEndResponseBody.validationErrors.pwd!==undefined) {
             this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.pwd}`);
-            this.serverPwdErrorMessage = "Le champ mot de passe : " + backEndResponseBody.validationErrors.pwd;        
+            this.serverPwdErrorMessage = backEndResponseBody.validationErrors.pwd;        
           }
           if (backEndResponseBody.validationErrors.username!==undefined) {
             this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.username}`);
-            this.serverUsernameErrorMessage = "Le champ username : " + backEndResponseBody.validationErrors.username;
+            this.serverUsernameErrorMessage = backEndResponseBody.validationErrors.username;
           }
         } else { //validationErrrors==nuul 
           this.myLog.error(`Backend returned ${backEndResponseBody.errorMessage}`);
-          this.serverErrorMessage = "Le serveur a répondu " + backEndResponseBody.errorMessage;
+          this.serverErrorMessage = this.labels_sign.ServerResponds + backEndResponseBody.errorMessage;
         }
       }
     } else {
-      
+      this.myLog.error(`Backend returned  ${error.status}  ${error.statusText}  ${error.message}`);
+      this.serverErrorMessage = this.labels_sign.ServerResponds + error.status + "  " +  error.statusText + " " + error.message;
     }
   }
 }

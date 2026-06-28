@@ -61,6 +61,12 @@ public class UserInfoService {
         
     }
 
+    /**
+     * 
+     * @param user
+     * @return
+     * @throws CustomException
+     */
     public UserInfo create(UserInfo user) throws CustomException {
 
         log.info("create({})...",user);
@@ -72,7 +78,7 @@ public class UserInfoService {
             log.error("create({}) mail is found in db",user);
             throw new CustomException(ErrorCode.INVALID_INPUT);
         } else if (userByUsername.isPresent()) {  //existing user (same username)
-            log.error( "create({}) mail is found in db", user);
+            log.error( "create({}) username is found in db", user);
             throw new CustomException(ErrorCode.INVALID_INPUT);
         } else { //non existing user : save it
             log.info("saving user ...");

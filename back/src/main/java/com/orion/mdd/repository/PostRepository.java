@@ -17,7 +17,7 @@ import com.orion.mdd.models.Post;
 @Transactional
 public interface PostRepository extends JpaRepository<Post, Long>{
 
-    String qSelect = " SELECT POST.id, POST.title as 'title', POST.content as 'content', POST.created_at as 'created_at', fait.username as 'username', POST.topic_id as 'id_topic' ";
+    String qSelect = " SELECT POST.id, POST.title as 'title', POST.content as 'content', POST.created_at as 'created_at', fait.username as 'username', POST.topic_id as 'id_topic', TOPIC.title as 'topic_title' ";
     String qFromInner1 = " FROM POST INNER JOIN TOPIC ON POST.topic_id=TOPIC.id ";
     String qInner2 = " INNER JOIN TOPIC_USER as abo1 ON abo1.topic_id = TOPIC.id  ";
     String qInner3 = " INNER JOIN USER_INFO as abo2 ON abo1.user_info_id = abo2.id  ";

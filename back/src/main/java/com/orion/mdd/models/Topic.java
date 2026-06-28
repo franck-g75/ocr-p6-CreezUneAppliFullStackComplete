@@ -39,12 +39,12 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 45)
+    @NotBlank(message="le titre du message ne doit pas être vide.")
+    @Size(max = 45, message="le titre du message ne doit pas dépasser 45 caractères.")
     private String title;
 
-    @NotBlank
-    @Size(max = 2500)
+    @NotBlank(message="le contenu du theme ne doit pas être vide.")
+    @Size(max = 1000, message = "Le contenu du theme ne doit pas dépasser 1000 caractères.")
     private String content;
 
     @ManyToMany(mappedBy="topics", fetch=FetchType.LAZY)

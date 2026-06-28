@@ -17,12 +17,12 @@ public class CommentDto {
     @NotNull
     private Long id;
 
-    @NotBlank
-    @Size(max = 1500)
+    @NotBlank(message="Le contenu du message ne doit pas être vide.")
+    @Size(max = 2000, message="Le contenu du message ne doit pas dépasser 2000 caractères.")
     private String content;
 
-    @Nullable
-    @Size(max = 20)
+    @NotBlank(message="Le nom d'utilisateur ne doit pas être vide.")
+    @Size(max = 20, min=2, message="La taille du nom d'utilisateur doit être comprise entre 2 et 20 caractères.")
     private String username;
 
 }

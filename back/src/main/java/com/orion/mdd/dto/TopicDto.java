@@ -14,14 +14,15 @@ import jakarta.validation.constraints.Size;
 public class TopicDto {
     private Long id;
 
-    @NotBlank
-    @Size(max = 50)
+    @NotBlank(message="le titre du message ne doit pas être vide.")
+    @Size(max = 45, message="le titre du message ne doit pas dépasser 45 caractères.")
     private String title;
 
-    @NotNull
-    @Size(max = 2500)
+    @NotBlank(message="le contenu du theme ne doit pas être vide.")
+    @Size(max = 1000, message = "Le contenu du theme ne doit pas dépasser 1000 caractères.")
     private String content;
 
+    //champ technique pour la descente vers le client
     @NotNull
     private Boolean read = false;
 }

@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.orion.mdd.dto.PostDto;
 import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
+import com.orion.mdd.exception.ErrorManagement;
 import com.orion.mdd.models.Topic;
 import com.orion.mdd.dto.CommentDto;
 import com.orion.mdd.services.PostService;
 import com.orion.mdd.services.TopicService;
+import com.orion.mdd.exception.ErrorCode;
 
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -41,15 +43,50 @@ public class PostController {
         this.topicService = topicService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<?> findAll(@PathVariable("id") Long idUser) {
         log.info("findAll(iduser={}) ...", idUser);
         try{
             Set<PostDto> posts = this.postService.findPostsByUserInfo(idUser);
             return ResponseEntity.ok().body(posts);
+        } catch(CustomException ce){
+            log.error("findAll(iduser) customException : " + ce.toString());
+            switch (ce.getErrorCode()){
+                case INVALID_INPUT : 
+                    return ResponseEntity.badRequest().build();
+                case DATA_NOT_FOUND :
+                    return ResponseEntity.notFound().build();
+                case SERVER_ERROR : 
+                    return ResponseEntity.internalServerError().build();
+                default :
+                    return ResponseEntity.notFound().build();
+             }
         } catch (Exception e){
             log.error("findAll(iduser) exception : " + e.toString());
-            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
+            if (e instanceof RuntimeException){
+                return ResponseEntity.internalServerError().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findPost(@PathVariable("id") Long idPost) {
+        log.info("findPost(idpost={}) ...", idPost);
+        try{
+            PostDto post = this.postService.findPostById(idPost);
+            return ResponseEntity.ok().body(post);
+        } catch (CustomException ce) {
+            log.error("findPost(idpost) customException : " + ce.toString());
+            throw ce;
+        } catch (Exception e){
+            log.error("findPost(idpost) exception : " + e.toString());
+            if (e instanceof RuntimeException){
+                return ResponseEntity.internalServerError().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         }
     }
 
@@ -59,9 +96,16 @@ public class PostController {
         try{
             List<CommentDto> comments = this.postService.findCommentsByPostId(postId);
             return ResponseEntity.ok().body(comments);
+        } catch (CustomException ce) {
+            log.error("findAllComments(postId) customException : " + ce.toString());
+            throw ce;
         } catch(Exception e) {
             log.error("findAllComments exception : " + e.getMessage());
-            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
+            if (e instanceof RuntimeException){
+                return ResponseEntity.internalServerError().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         }
     }
 
@@ -72,14 +116,27 @@ public class PostController {
         try{
             this.postService.addComment(idPost, commentDto);
             return ResponseEntity.ok().build();
+        } catch (CustomException ce) {
+            log.error("addComment(idPost,commentDto) customException : " + ce.toString());
+            throw ce;
         } catch (Exception e) {
-            log.error("add comment exception : " + e.getMessage());
-            throw new CustomException(ErrorCode.INVALID_INPUT);
+            log.error("addComment exception : " + e.getMessage());
+            if (e instanceof RuntimeException){
+                return ResponseEntity.internalServerError().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         }
 
     }
 
 
+    /**
+     * 
+     * @param postDto
+     * @return
+     * @throws CustomException
+     */
     @PostMapping("")
     public ResponseEntity<?> addPost(@Valid @RequestBody PostDto postDto) throws CustomException {
         
@@ -94,15 +151,17 @@ public class PostController {
                 return ResponseEntity.ok().build();
             } catch (CustomException ce) {
                 log.error("add post customexception : " + ce.getMessage());
-                throw new CustomException(ce.getErrorCode());
+                return ErrorManagement.responseError(ce);
             } catch (Exception e) {
                 log.error("add post exception : " + e.getMessage());
-                throw e;
+                return ErrorManagement.responseError(e);
             }
 
-        } else {
+        } else { //topic not present
+
             log.error("addPost : Topic non trouvé.");
-            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
+            return ErrorManagement.responseError( new CustomException(ErrorCode.DATA_NOT_FOUND) );
+
         }
 
     }

@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ARTICLE_LABELS } from '../../shared/labels';
+import { ARTICLE_LABELS, GENERIC_LABELS } from '../../shared/labels';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { UserStore } from '../../core/services/user-store-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -27,8 +27,9 @@ import { BackEndErrorResponseBody } from '../../core/models/error-response.inter
 })
 export class ArticleAdd {
 
-
   public labels = ARTICLE_LABELS;
+  public labels_generic = GENERIC_LABELS;
+
   public addForm!: FormGroup;
   private logPrefix: String = "addArticle - ";
   private onError: boolean = false;
@@ -54,13 +55,20 @@ export class ArticleAdd {
   public ngOnInit(): void {
 
     //to add the topics in topic list items
-    this.topicService.allTopics().subscribe(
-      topics => {
+    this.topicService.allTopics().subscribe({
+      next: (topics: Topic[]) => {
         this.topicSubject.next(topics);
         this.selected = topics[0].id;
-      });
-    
+        this.myLog.info('loading of topic list done.'); 
+      },
+      error: (error: HttpErrorResponse) => {
+        this.myLog.info('srv error found ... ' + error); 
+        this.matSnackBar.open(this.labels_generic.error + " " + error.status + " " + error.statusText, 'Close', { duration: 10000 });
+      }
+    });
+
     this.initForm();
+
   }
 
 
@@ -74,17 +82,17 @@ export class ArticleAdd {
           [Validators.required]
         ],
         title: ['',
-          [Validators.required, Validators.maxLength(20)]
+          [Validators.required, Validators.maxLength(30)]
         ],
         content: ['',
-          [Validators.required, Validators.maxLength(20)]
+          [Validators.required, Validators.maxLength(4000)]
         ]
       });
   }
 
 
   public submit(): void{
-    this.myLog.info(this.logPrefix + "appel du service");
+    this.myLog.info(this.logPrefix + "Submit addForm : validation form");
 
     if (this.addForm.valid){
 
@@ -93,6 +101,7 @@ export class ArticleAdd {
                         title:this.addForm.get("title")?.value , 
                         content: this.addForm.get("content")?.value, 
                         id_topic: this.selected, 
+                        topic_title: "",
                         username: this.userStore.getUsername(), 
                         created_at: new Date()};
 
@@ -109,6 +118,9 @@ export class ArticleAdd {
           this.serverError(error);
         }
       });
+    } else {
+      this.myLog.error("erreurs dans le formulaire...");
+      this.matSnackBar.open(this.labels_generic.clientError, 'Close', { duration: 10000 });
     }
 
   }
@@ -174,21 +186,25 @@ export class ArticleAdd {
         } else {
           if (backEndResponseBody.validationErrors!==null && backEndResponseBody.validationErrors !==undefined ) {
             this.myLog.error(`Backend returned code ${error.status}, body:`, error.error);
-            if (backEndResponseBody.validationErrors.topic!==undefined) {
-              this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.topic}`);
-              this.serverTopicErrorMessage = "le champ theme : " + backEndResponseBody.validationErrors.topic;        
+            if (backEndResponseBody.validationErrors.topic_id!==undefined) {
+              this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.topic_id}`);
+              this.serverTopicErrorMessage = backEndResponseBody.validationErrors.topic_id;        
+            }
+            if (backEndResponseBody.validationErrors.topic_title!==undefined) {
+              this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.topic_title}`);
+              this.serverTopicErrorMessage = backEndResponseBody.validationErrors.topic_title;        
             }
             if (backEndResponseBody.validationErrors.title!==undefined) {
               this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.title}`);
-              this.serverTitleErrorMessage = "Le champ titre : " + backEndResponseBody.validationErrors.title;        
+              this.serverTitleErrorMessage = backEndResponseBody.validationErrors.title;        
             }
             if (backEndResponseBody.validationErrors.content!==undefined) {
               this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.content}`);
-              this.serverContentErrorMessage = "Le champ contenu : " + backEndResponseBody.validationErrors.content;
+              this.serverContentErrorMessage = backEndResponseBody.validationErrors.content;
             }
-          } else { //validationErrrors==nuul 
+          } else { //validationErrrors==null 
             this.myLog.error(`Backend returned ${backEndResponseBody.errorMessage}`);
-            this.serverErrorMessage = "Le serveur a répondu " + backEndResponseBody.errorMessage;
+            this.serverErrorMessage = "Le serveur a répondu : " + backEndResponseBody.errorMessage;
           }
         }
       } else {

@@ -18,7 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Table(name = "COMMENT")
@@ -46,10 +46,11 @@ public class Comment {
     @JoinColumn(name="post_id", nullable=false )
     private Post post;
 
-    @NotNull
-    @Size(max = 1500)
+    @NotBlank(message="Le contenu du message ne doit pas être vide.")
+    @Size(max = 2000, message="Le contenu du message ne doit pas dépasser 2000 caractères.")
     private String content;
 
+    //champs technique pour la descente vers le client.
     @NotNull
     @DateTimeFormat
     private Date created_at;

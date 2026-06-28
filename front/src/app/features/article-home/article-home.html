@@ -19,13 +19,15 @@
     </div>
     <div class="display_grid">
         @for(post of (post$ | async); track post.id){
-        <div class="display_cell">
-            <div class="article_title">{{post.title}}</div>
+        <div id="clickable">
+        <div id="cell" class="display_cell hand" (click)="showArticleDetails(post.id)">
+            <h3>{{post.title}}</h3>
             <div class="article_top centred_content_no_margin ">
-                <div class="article_date">{{post.created_at | date: 'EEEE d MMMM yyyy à HH:mm ':'':'fr'}}</div>
-                <div class="article_username">{{post.username}}</div>
+                <span class="article_date hand">{{post.created_at | date: 'EEEE d MMMM yyyy à HH:mm ':'':'fr'}}</span>
+                <span class="article_username hand">{{post.username}}</span>
             </div>
-            <pre class="article_content">{{post.content | shorten}}</pre>
+            <pre class="article_content hand">{{post.content | shorten}}</pre>
+        </div>
         </div>
         }
     </div>
