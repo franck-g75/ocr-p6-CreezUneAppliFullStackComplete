@@ -29,53 +29,7 @@ public class UserInfoController {
         this.userInfoService = userInfoService;
     }
 
-    @GetMapping("/{string}")
-    public ResponseEntity<?> findbyString(@PathVariable("string") String string) {
-        
-        UserInfo user = null;
-        UserInfoDto usersDto = null;
-
-        user = userInfoService.findByUsername(string);
-        if (user!=null){
-            usersDto = this.userToDto(user);
-        } else {
-            user = userInfoService.findByEmail(string);
-            if (user!=null){
-                usersDto = this.userToDto(user);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        }
-        
-        return ResponseEntity.ok().body(usersDto);
-
-    }
-
-    /**
-     * Create a user
-     * @param userInfoDto
-     * @return a 200 ok response if ok or a badRequest response if exception found
-     */
-    @PostMapping()
-    public ResponseEntity<?> create(@Valid @RequestBody UserInfoDto userInfoDto){
-        log.info("creating user..." + userInfoDto);
-        try{
-          UserInfo user = new UserInfo();
-
-          user.setEmail(userInfoDto.getEmail());
-          user.setUsername(userInfoDto.getUsername());
-          user.setPwd(userInfoDto.getPwd());
-          user.setComments(null);
-          user.setTopics(null);
-          user.setPosts(null);
-
-          this.userInfoService.create(user);
-          return ResponseEntity.ok().body(this.userToDto(user));
-        } catch (Exception e){
-          log.error("create user exception : " + e.getMessage());
-          throw new CustomException(ErrorCode.INVALID_INPUT);
-        }
-    }
+    
 
      /**
      * update a user

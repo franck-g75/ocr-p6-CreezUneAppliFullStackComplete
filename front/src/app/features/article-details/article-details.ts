@@ -12,7 +12,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { Comment } from '../../core/models/comment.interface';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
-import { UserStore } from '../../core/services/user-store-service';
+import { UserStore } from '../../core/services/user-store.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';

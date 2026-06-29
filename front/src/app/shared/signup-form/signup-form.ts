@@ -7,13 +7,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
-import { UserStore } from '../../core/services/user-store-service';
+import { UserStore } from '../../core/services/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { UserInfoService } from '../../core/services/user-info-service';
 import { UserInfo } from '../../core/models/user-info.interface';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
+import { AuthService } from '../../core/services/auth.service';
+import { UserInfoService } from '../../core/services/user-info.service';
 
 @Component({
   selector: 'app-signup',
@@ -55,6 +56,7 @@ export class SignupForm implements OnInit{
 
   public constructor(
     private myLog: MyLoggingService,
+    private authService: AuthService,
     private userInfoService: UserInfoService,
     private formBuilder: FormBuilder,
     private userStore: UserStore,
@@ -144,7 +146,7 @@ export class SignupForm implements OnInit{
     if (this.mySignUpForm.valid){
       if (!this.onUpdate) {
         this.myLog.info(`saving userInfo ${userInfo.username} in progress...`);
-        this.userInfoService.create(userInfo).subscribe({
+        this.authService.create(userInfo).subscribe({
           next: (user: UserInfo) => {
             this.exitPage(this.labels_sub.subscriptionUserCreated);
           },

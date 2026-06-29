@@ -10,10 +10,10 @@ import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOGIN_LABELS } from '../../shared/labels';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { UserInfoService } from '../../core/services/user-info-service';
+import { AuthService } from '../../core/services/auth.service';
 import { UserInfo } from '../../core/models/user-info.interface';
 import { MyLoggingService } from '../../core/services/logging.services';
-import { UserStore } from '../../core/services/user-store-service';
+import { UserStore } from '../../core/services/user-store.service';
 
 @Component({
   selector: 'app-login-form',
@@ -52,7 +52,7 @@ export class LoginForm implements OnInit{
     private matSnackBar: MatSnackBar,
     private formBuilder: FormBuilder,
     private router: Router,
-    private userInfoService: UserInfoService
+    private authService: AuthService
   ){  }
 
   public back() {
@@ -64,7 +64,7 @@ export class LoginForm implements OnInit{
 
     //window.alert("coucou " + this.myLoginForm.get("string")?.value + ", et ton mot de passe est : " + this.myLoginForm.get("pwd")?.value);
     this.myLog.info(this.logPrefix + "appel du service");
-    this.userInfoService.getByString(this.myLoginForm.get("string")?.value).subscribe({
+    this.authService.getByString(this.myLoginForm.get("string")?.value).subscribe({
       next: (response: UserInfo) => {
         this.myLog.info(this.logPrefix + " User trouvé : " + response.id + " " + response.email + " " + response.username );
         this.onError = false;

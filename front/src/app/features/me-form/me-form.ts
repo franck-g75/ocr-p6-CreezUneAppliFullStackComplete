@@ -2,8 +2,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ME_LABELS } from '../../shared/labels';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Topic } from '../../core/models/topic.interface';
-import { TopicService } from '../../core/services/topic-service';
-import { UserStore } from '../../core/services/user-store-service';
+import { TopicService } from '../../core/services/topic.service';
+import { UserStore } from '../../core/services/user-store.service';
 import { MatInputModule } from '@angular/material/input'
 
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
