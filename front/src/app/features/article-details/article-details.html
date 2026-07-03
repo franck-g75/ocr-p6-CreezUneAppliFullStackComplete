@@ -8,7 +8,7 @@
         </div>
 
         @if(post){
-            <h2>{{post.title}}</h2>
+            <h3>{{post.title}}</h3>
             <div class="form_box centred_content_no_margin">
                 <div class="article_top">
                 <div class="article_top_left">
@@ -26,7 +26,9 @@
             
             </div>
         }
-        <hr class="me_shape_box"/>
+
+
+        <div class="centred_content_no_margin"><hr /></div>
     
 
     
@@ -36,43 +38,57 @@
 
 
         @for(com of (comment$ | async); track com.id){
-        <div class="extended">
-            <div class="form_box_col">
-                <div><h3>{{com.username}}</h3></div>
-                <div id="cell" class="display_cell_in_col extended">
-                    <pre class="article_content">{{com.content}}</pre>
+        <div class="container text-left">
+            <div class="row justify-content-md-center mb-2">
+                <div class="col col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 col-xxl-2 "></div>
+                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-xxl-8 ">
+                    
+                        <div class="form_box_col">
+                            <div><h2>{{com.username}}</h2></div>
+                            <div  class="display_cell_in_col extended">
+                                <pre class="article_content">{{com.content}}</pre>
+                            </div>
+                        </div>
+                    
                 </div>
+                <div class="col col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 col-xxl-2"></div>
             </div>
         </div>
         }
+    
+
+
+        <div class="container text-end">
+            <div class="row justify-content-end">
+                <div class="col col-xs-12 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1 "></div>
+                <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10 col-xl-10 col-xxl-10">
+                <mat-card class="extended">
+                    <form [formGroup]="addComment" >
+                        <mat-card-content class="custom_card">
+                            
+                            <mat-form-field appearance="outline" class="extended80 hand">
+                                <mat-label>{{labels.commentContent}}</mat-label>
+                                <textarea matInput formControlName="content"></textarea>
+                                <div class="centred_content_no_margin error">{{ showClientCommentValidationError() }}</div>
+                            </mat-form-field>
+                        
+                            
+                            <mat-icon id="sendcomment" (click)="submit();"  class="extended20 hand" >send</mat-icon>
+                            
+                        </mat-card-content>
+
+                        <div class="centred_content_no_margin error">{{ showServerErrorMessage() }}</div>
+                        <div class="centred_content_no_margin error">{{ showServerCommentValidationError() }}</div>
+                        
+                    </form>
+                    
+                </mat-card>
+                </div>
+                <div class="col col-xs-12 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1"></div>
+            </div>
+        </div>
+
     </div>
-
-
-    <div class="form_box centred_content_no_margin">
-        
-        <mat-card>
-            <form [formGroup]="addComment" >
-                <mat-card-content class="custom_card extended">
-                    
-                    <mat-form-field appearance="outline" class="extended80">
-                        <mat-label>{{labels.commentContent}}</mat-label>
-                        <textarea matInput formControlName="content"></textarea>
-                        <div class="centred_content_no_margin error">{{ showClientCommentValidationError() }}</div>
-                    </mat-form-field>
-                   
-                    
-                    <mat-icon id="sendcomment" (click)="submit();"  class="extended20 hand" >send</mat-icon>
-                    
-                </mat-card-content>
-
-                <div class="centred_content_no_margin error">{{ showServerErrorMessage() }}</div>
-                <div class="centred_content_no_margin error">{{ showServerCommentValidationError() }}</div>
-                
-            </form>
-            
-        </mat-card>
-    </div>
-
 
 </div>
 </div>

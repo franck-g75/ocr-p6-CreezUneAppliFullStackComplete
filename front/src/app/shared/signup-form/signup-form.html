@@ -1,4 +1,4 @@
-<mat-card appearance="outlined" >
+<mat-card>
     
     <h1>{{myTitle}}</h1>
     
@@ -37,7 +37,7 @@
         <div class="centred_content_no_margin error">{{ showServerErrorMessage() }}</div>
         
         <div class="centred_content_no_margin">
-            <button matButton="filled" (click)="submit();" class="custom-btn" #btn>{{myBtnLabel}}</button>
+            <button type="button" (click)="submit();" class="btn btn-primary-custom" #btn>{{myBtnLabel}}</button>
         </div>
         @if(onError) {
             <div class="centred_content_no_margin error">An error occurred !</div>

@@ -18,6 +18,8 @@ export class Header {
   public colored_accont_icon = "account_circle";
   public colored_header_article_link = "inactive_link";
   public colored_header_theme_link = "inactive_link";
+  public isCollapsed!: boolean;
+
 
   constructor(private router: Router, private myLog: MyLoggingService ){
     router.events.subscribe((val)=> {
@@ -76,4 +78,9 @@ export class Header {
       }
     })
   }
+
+  public toggle(){
+    this.isCollapsed = ! this.isCollapsed;
+  }
+
 }

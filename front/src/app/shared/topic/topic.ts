@@ -1,6 +1,5 @@
 import { AsyncPipe, LowerCasePipe, NgClass, UpperCasePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { GENERIC_LABELS, ME_LABELS, TOPIC_LABELS } from '../labels';
 import { MyLoggingService } from '../../core/services/logging.services';
@@ -13,7 +12,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-topic-module',
-  imports: [UpperCasePipe, LowerCasePipe, AsyncPipe, MatButton, NgClass],
+  imports: [UpperCasePipe, LowerCasePipe, AsyncPipe, NgClass],
   templateUrl: './topic.html',
   styleUrl: './topic.scss',
 })

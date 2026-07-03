@@ -3,7 +3,7 @@
     <div class="centred_content_no_margin">
         <div class="article_top">
             <div class="article_top_left">
-                <button matButton="filled" (click)="addArticle();" class="custom-btn" >{{labels.creerUnArticle}}</button>
+                <button type="button" class="btn btn-primary-custom" (click)="addArticle();"  >{{labels.creerUnArticle}}</button>
             </div>
             <div class="article_top_right">
                 <div id="btn-sort" class="centred_content_no_margin" (click)="sort()">
@@ -17,19 +17,21 @@
             </div>
         </div>
     </div>
-    <div class="display_grid">
+    <div class="container-fluid"><!--class="display_grid_old"   class="container-fluid"-->
+        <div class="row gx-1"> <!--nothing  class="row gx-1"-->
         @for(post of (post$ | async); track post.id){
-        <div id="clickable">
+        <div id="clickable" class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2" ><!--class="display_cell_old"   class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2"-->
         <div id="cell" class="display_cell hand" (click)="showArticleDetails(post.id)">
-            <h3>{{post.title}}</h3>
+            <h2>{{post.title}}</h2>
             <div class="article_top centred_content_no_margin ">
                 <span class="article_date hand">{{post.created_at | date: 'EEEE d MMMM yyyy à HH:mm ':'':'fr'}}</span>
                 <span class="article_username hand">{{post.username}}</span>
             </div>
-            <pre class="article_content hand">{{post.content | shorten}}</pre>
+            <pre class="article_content ">{{post.content | shorten}}</pre>
         </div>
         </div>
         }
+        </div>
     </div>
 </div>
 </div>

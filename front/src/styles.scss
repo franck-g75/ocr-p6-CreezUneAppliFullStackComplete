@@ -4,15 +4,31 @@
 // components according to the Material 3 design spec.
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
+
+
+@use 'bootstrap/scss/bootstrap';
+
 @use '@angular/material' as mat;
-@import '../public/orion-theme.css';
+
+@use '../public/orion-theme.css';
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:root {
+  @include mat.card-overrides((
+    elevated-container-color: white,
+    elevated-container-elevation: black,
+  ));
+}
+
+
+
 
 :root{
-  --page-width: 75%;
+  --page-width: 90%;
   --page-desktop-height: 100%;
-  --top-bar-desktop-width: 95px;
+  --top-bar-desktop-height: 95px;
   --rayon: var(--mat-sys-corner-small);
-  --topic-box-width: 385px;
+  --topic-box-width: 380px;
   --topic-box-height: 161px;
 
   --bg-color-white: #FFFFFF;
@@ -25,8 +41,11 @@
   --text-color-black: black;
   --text-color-white: white;
   --border-color: #000000;
-
+  --border-color-white: white;
 }
+
+
+
 /*
 html {
 
@@ -49,14 +68,14 @@ body {
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
   // user's system settings.
-  color-scheme: light;
+  //color-scheme: light;
 
   // Set a default background, font and text colors for the application using
   // Angular Material's system-level CSS variables. Learn more about these
   // variables at https://material.angular.dev/guide/system-variables
-  background-color: #FFFFFF;//var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
+  //background-color: #FFFFFF;//var(--mat-sys-surface);
+  //color: var(--mat-sys-on-surface);
+  //font: var(--mat-sys-body-medium);
 
   // Reset the user agent margin.
   margin: 0;
@@ -89,15 +108,25 @@ h1{
 }
 
 h2{
-  margin-top: 10px;
-  margin-left: 50px;
-  padding-left: 50 px;
+  width: 100%;
+  margin-top: 6px;
+  margin-left: 2px;
+  padding-left: 2px;
   text-align: left;
+  font-size: 19px;
+  font-weight: 600;
+  //border: 1px solid var(--border-color);
 }
 
 h3{
-  margin: 0px;
+  width: 100%;
+  margin-top: 6px;
+  margin-left: 20px;
+  padding-left: 20px;
   text-align: left;
+  font-size: 25px;
+  font-weight: 600;
+  //border: 1px solid var(--border-color);
 }
 
 pre {
@@ -107,6 +136,11 @@ pre {
   white-space: -o-pre-wrap;
 
   font: var(--mat-sys-body-medium);
+
+  //justify-content: right;
+  //align-items: center;
+  text-align: left;
+  //border: 1px solid var(--border-color);
 }
 
 textarea {
@@ -114,10 +148,12 @@ textarea {
 }
 
 .centred_content_no_margin{ //centred content
+  
   margin: 0;
   display: flex;
   justify-content: center; // horizontal
   align-items: center;     // vertical
+  //border: 1px solid #000000;
 }
 
 .extended{
@@ -141,14 +177,14 @@ textarea {
 /*----------------------HEADER------------------------*/
 .long_top_bar_desktop{
   width: 100%;
-  height: var(--top-bar-desktop-width);
+  height: var(--top-bar-desktop-height);
   display: flex;
   justify-content: center; // horizontal
   padding: 0px;
   margin: 0px;
 }
 .top_bar_logo{
-  height: var(--top-bar-desktop-width);
+  height: var(--top-bar-desktop-height);
   display: flex;
   padding: 0px;
   margin: 0px;
@@ -156,7 +192,7 @@ textarea {
 }
 .top_bar_desktop { //rectangle9  rectangle31 rectagle42
   width: var(--page-width);
-  height: var(--top-bar-desktop-width);
+  height: var(--top-bar-desktop-height);
   display: flex;
   padding: 0px;
   margin: 0px;
@@ -204,11 +240,14 @@ textarea {
 
 */
 .form_box{ //title textboxes button
-  margin: 20px;
+
+  width: var(--page-width);
+  margin: 30px;
   display: block;
   justify-content: center; // horizontal
   align-items: center;     // vertical 
   //border: 1px solid black;
+  //background-color: white;
 }
 
 .form_box_col{
@@ -218,6 +257,7 @@ textarea {
   height: 100%;
   justify-content: center; // horizontal
   align-items: center;     // vertical
+  
 }
 
 .form_text_box{
@@ -344,7 +384,7 @@ textarea {
 }
 
 /*----------------------DISPLAY-:-topic-&-article-----------------------------*/
-#display_page{//id
+#display_page{
   width: var(--page-width);
   height: var(--page-desktop-height);
   display: block;
@@ -356,7 +396,7 @@ textarea {
   position: relative;
 }
 
-.display_grid { //rectangle34
+.display_grid_old {
   width: 100%;
   height: 100%;;
   display: grid;
@@ -364,7 +404,7 @@ textarea {
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   padding: 0px;
   margin: 0px;
-  //border: 1px solid #000000
+  border: 1px solid #000000
 }
 
 .display_col { 
@@ -376,22 +416,28 @@ textarea {
   //border: 1px solid #000000
 }
 
-.display_cell { //rectangle43
-  width: var(--topic-box-width);
-  height: var(--topic-box-height);
+.display_cell { 
+  //width: var(--topic-box-width);
+  //height: var(--topic-box-height);
   border-radius: var(--rayon);
   background: var(--bg-color-grey);
-  padding: 6px;
-  margin: 6px;
+  padding: 8px;
+  margin: 8px;
+  //border: 1px solid #000000;
 }
-.display_cell_in_col { //rectangle43
+
+.display_cell_in_col { 
   width: 100%;
   height: 100%;
   border-radius: var(--rayon);
   background: var(--bg-color-grey);
-  padding: 6px;
-  margin: 6px;
+  padding: 2px;
+  margin: 2px;
+  //border: 1px solid #000000;
+  //justify-content: right;
+  //align-items: center;
 }
+
 #clickable :hover{
   border: 1px solid #000000;
   cursor: hand;
@@ -476,3 +522,56 @@ textarea {
 }
 
 
+
+
+
+
+
+
+
+
+
+.btn-primary-white {
+  background-color: var(--btn-color-white); 
+  border-color: var(--border-color);
+  color: var(--text-color-black);
+  margin-bottom: 20px;
+}
+
+.btn-primary-white:hover {
+  background-color: var(--btn-color-purple); 
+  border-color: var(--border-color);
+  color: var(--text-color-white);
+  margin-bottom: 20px;
+}
+
+.btn-primary-grey {
+  background-color: var(--btn-color-grey); 
+  border-color: var(--border-color-white);
+  color: var(--text-color-white);
+  margin-bottom: 20px;
+}
+
+.btn-primary-custom {
+  background-color: var(--btn-color-purple); 
+  border-color: var(--border-color-white);
+  color: var(--text-color-white);
+  margin-bottom: 20px;
+}
+
+.btn-primary-custom:hover {
+  background-color: var(--btn-color-white); 
+  border-color: var(--border-color);
+  color: var(--text-color-black);
+  margin-bottom: 20px;
+}
+
+
+
+.my-mat-mdc-card {
+  border-style:none;
+}
+
+.mat-mdc-card-outlined{
+  border-style: none;
+}

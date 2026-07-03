@@ -10,9 +10,9 @@
         </div>
     
 
-    <div class="form_box centred_content_no_margin">
+    <div class="form_box">
         
-        <mat-card>
+        <mat-card >
             <form [formGroup]="addForm" >
                 <mat-card-content>
                     <div class="centred_content_no_margin">
@@ -47,7 +47,7 @@
                 <div class="centred_content_no_margin error">{{ showServerContentValidationError() }}</div>
 
                 <div class="centred_content_no_margin">
-                    <button matButton="filled" (click)="submit();" class="custom-btn" >{{labels.postCreateBtn}}</button>
+                    <button type="button" (click)="submit();" class="btn btn-primary-custom" >{{labels.postCreateBtn}}</button>
                 </div>
             </form>
             

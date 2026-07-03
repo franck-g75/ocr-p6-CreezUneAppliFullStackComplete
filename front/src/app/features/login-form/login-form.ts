@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import {  MatIconButton } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
 import { MatCardContent } from '@angular/material/card';
 import { MatCard } from '@angular/material/card';
@@ -17,7 +17,7 @@ import { UserStore } from '../../core/services/user-store.service';
 
 @Component({
   selector: 'app-login-form',
-  imports: [FormsModule, ReactiveFormsModule, MatButton, MatIcon, MatIconButton, MatFormField, MatLabel, MatCardContent,  MatCard, MatInputModule],
+  imports: [FormsModule, ReactiveFormsModule,  MatIcon, MatIconButton, MatFormField, MatLabel, MatCardContent,  MatCard, MatInputModule],
   templateUrl: './login-form.html',
   styleUrl: './login-form.scss',
 })
