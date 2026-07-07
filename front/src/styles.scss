@@ -210,7 +210,9 @@ textarea {
   margin: 5px;
   padding: 5px;
 }
+
 .disconnect{
+  cursor: pointer;
   color: var(--disconnect-color);
 }
 .account_circle{

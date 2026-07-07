@@ -6,7 +6,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { MyLoggingService } from '../../core/services/logging.services';
-import { UserStore } from '../../core/services/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
@@ -18,6 +17,7 @@ import { Post } from '../../core/models/post.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-article-add',
@@ -30,9 +30,11 @@ export class ArticleAdd {
   public labels = ARTICLE_LABELS;
   public labels_generic = GENERIC_LABELS;
 
+  private userName!: string;
+
   public addForm!: FormGroup;
   private logPrefix: String = "addArticle - ";
-  private onError: boolean = false;
+
   private topicSubject = new BehaviorSubject<Topic[]>([]);
   public topic$ = this.topicSubject.asObservable();
   public selected: number = 0;
@@ -44,7 +46,7 @@ export class ArticleAdd {
 
   constructor(
     private myLog: MyLoggingService,
-    private userStore: UserStore,
+    private sessionService: SessionService,
     private matSnackBar: MatSnackBar,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -53,6 +55,9 @@ export class ArticleAdd {
   ){}
 
   public ngOnInit(): void {
+
+    this.myLog.debug("article-home.ngOnInit");
+    this.userName = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.username : '';
 
     //to add the topics in topic list items
     this.topicService.allTopics().subscribe({
@@ -70,7 +75,6 @@ export class ArticleAdd {
     this.initForm();
 
   }
-
 
   public back() {
     window.history.back();
@@ -102,19 +106,17 @@ export class ArticleAdd {
                         content: this.addForm.get("content")?.value, 
                         id_topic: this.selected, 
                         topic_title: "",
-                        username: this.userStore.getUsername(), 
+                        username: this.userName, 
                         created_at: new Date()};
 
       this.postService.addPost(post).subscribe({
         next: (response: Post) => {
           this.myLog.info(this.logPrefix + " add Réalisé " );
-          this.onError = false;
           this.matSnackBar.open("ADD OK", 'Close', { duration: 3000 });
           this.router.navigate(['article']);
         },
         error : (error: HttpErrorResponse) => {
           this.myLog.info(this.logPrefix + "add post error : " + error.error);
-          this.onError = true;
           this.serverError(error);
         }
       });

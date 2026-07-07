@@ -9,6 +9,8 @@ import { UserStore } from '../../core/services/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Topic } from '../../core/models/topic.interface';
 import { HttpErrorResponse } from '@angular/common/http';
+import { SessionInfo } from '../../core/models/session-info.interface';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-topic-module',
@@ -21,7 +23,7 @@ export class TopicModule {
   private topicSubject = new BehaviorSubject<Topic[]>([]);
   public topic$ = this.topicSubject.asObservable();
 
-  public idUser!: number;
+  public idUser!: number ;
 
   private logPrefix: string = "TopicModule";
   private onError: boolean = false;
@@ -36,29 +38,36 @@ export class TopicModule {
     private myLog: MyLoggingService,
     private topicService: TopicService,
     private userInfoService: UserInfoService,
-    private userStore: UserStore,
-    private matSnackBar: MatSnackBar
+    private matSnackBar: MatSnackBar,
+    private sessionService: SessionService
   ) {  }
 
   public ngOnInit(): void { 
     
-    this.idUser = this.userStore.getUserId();
+    this.myLog.info("topic.ngOnInit");
+    this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
+    this.myLog.info("idUser=" + this.idUser + " username=" + this.sessionService.sessionInformation?.username);
 
-    this.topicService.all(this.userStore.getUsername()).subscribe({
-      next: (topics: Topic[]) => {
-            this.topicSubject.next(topics);
-            this.myLog.info(this.logPrefix + "all topics found" );
-            this.onError = false;
+    if (this.idUser>0){
+      this.topicService.all(this.idUser).subscribe({
+        next: (topics: Topic[]) => {
+              this.topicSubject.next(topics);
+              this.myLog.info(this.logPrefix + "all topics found" );
+              this.onError = false;
+            },
+        error: (error: HttpErrorResponse) => {
+            this.myLog.info(this.logPrefix + " get all topics error : " + error.status.toString() + " " + error.statusText);
+            this.onError = true;
+            this.matSnackBar.open(
+              this.labelsGeneric.error + error.status.toString() + " " + error.statusText, 'Close', { duration: 3000 }
+            );
           },
-      error: (error: HttpErrorResponse) => {
-          this.myLog.info(this.logPrefix + " get all topics error : " + error.status.toString() + " " + error.statusText);
-          this.onError = true;
-          this.matSnackBar.open(
-            this.labelsGeneric.error + error.status.toString() + " " + error.statusText, 'Close', { duration: 3000 }
-          );
-        },
-          
-      });
+            
+        });
+      } else {
+        this.matSnackBar.open(this.labelsTopic.topicMsgCnxKo, 'Close', { duration: 3000 });
+      }
+
     }
 
   public subscription(idTopic: number,event: Event, read: Boolean): void {

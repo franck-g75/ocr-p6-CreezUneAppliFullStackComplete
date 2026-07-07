@@ -1,5 +1,7 @@
 package com.orion.mdd.controllers;
 
+import com.orion.mdd.dto.MyResponseDto;
+import com.orion.mdd.dto.ResponseCode;
 import com.orion.mdd.dto.UserInfoDto;
 import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
@@ -10,6 +12,8 @@ import com.orion.mdd.services.UserInfoService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -47,7 +51,17 @@ public class UserInfoController {
 
           if (user.isPresent()){
             this.userInfoService.update( user.get(), userInfoDto );
-            return ResponseEntity.ok().body(this.userToDto(user.get()));
+
+            Map<String, String> infos = new HashMap<>();
+            infos.put("email",user.get().getEmail());
+            infos.put("username",user.get().getUsername());
+            
+            MyResponseDto response = new MyResponseDto(
+              ResponseCode.USER_UPDATE_SUCCESS.getCode(),
+              ResponseCode.USER_UPDATE_SUCCESS.getMessage(),
+              infos);
+
+            return ResponseEntity.ok().body(response);
           } else {
             log.error("user {} not found in db.", userInfoDto.getId());
             return ErrorManagement.responseError(new CustomException(ErrorCode.DATA_NOT_FOUND));

@@ -17,6 +17,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
 import { MatInputModule } from '@angular/material/input';
+import { SessionService } from '../../core/services/session.service';
 @Component({
   selector: 'app-article-details',
   imports: [FormsModule, ReactiveFormsModule , DatePipe, AsyncPipe, MatInputModule, MatIconModule, MatButtonModule, MatButtonModule, MatCardModule, MatLabel, MatFormFieldModule, MatSnackBarModule],
@@ -47,7 +48,7 @@ export class ArticleDetails implements OnInit{
       private formBuilder: FormBuilder,
       private postService: PostService,
       private matSnackBar: MatSnackBar,
-      private userStore: UserStore,
+      private sessionService: SessionService
     ){}
 
   public ngOnInit(){
@@ -120,7 +121,7 @@ export class ArticleDetails implements OnInit{
       let comment: Comment = { 
         id:0, 
         content: this.addComment.get("content")?.value, 
-        username: this.userStore.getUsername(), 
+        username: this.sessionService.sessionInformation ? this.sessionService.sessionInformation?.username : "", 
       };
 
       this.postService.addComment(this.idArticle,comment).subscribe({

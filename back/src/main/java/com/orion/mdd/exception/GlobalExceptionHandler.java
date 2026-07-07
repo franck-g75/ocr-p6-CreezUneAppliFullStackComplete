@@ -18,19 +18,19 @@ import java.util.Map;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex, WebRequest request) {
+    public ResponseEntity<MyErrorResponse> handleCustomException(CustomException ex, WebRequest request) {
 
         ErrorCode errorCode = ex.getErrorCode();
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), errorCode.getMessage());
+        MyErrorResponse errorResponse = new MyErrorResponse(errorCode.getCode(), errorCode.getMessage());
 
         return new ResponseEntity<>(errorResponse, errorCode.getHttpStatus());
 
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
+    public ResponseEntity<MyErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse("E000", "Unexpected error occurred");
+        MyErrorResponse errorResponse = new MyErrorResponse(ErrorCode.SERVER_ERROR.getCode(), ErrorCode.SERVER_ERROR.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -46,12 +46,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         ex.getBindingResult().getFieldErrors().forEach(error -> 
 
-            errors.put(error.getField(), error.getDefaultMessage()));
+            errors.put(error.getField(), error.getDefaultMessage())
+        
+        );
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_INPUT.getCode(), "Validation failed");
-        errorResponse.setValidationErrors(errors);
+        MyErrorResponse errorResponse = new MyErrorResponse(ErrorCode.INVALID_INPUT.getCode(), ErrorCode.INVALID_INPUT.getMessage());
+        errorResponse.setData(errors);
 
-        return new ResponseEntity<>(errorResponse, ErrorCode.INVALID_INPUT.getHttpStatus());
+        return new ResponseEntity<Object>(errorResponse, ErrorCode.INVALID_INPUT.getHttpStatus());
 
     }
 

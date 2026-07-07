@@ -4,15 +4,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { ARTICLE_LABELS } from '../../shared/labels';
-import { TopicService } from '../../core/services/topic.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { Topic } from '../../core/models/topic.interface';
-import { UserStore } from '../../core/services/user-store.service';
-import { AsyncPipe, DatePipe, LowerCasePipe, UpperCasePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { PostService } from '../../core/services/post.service';
 import { Post } from '../../core/models/post.interface';
 import { ShortenPipe } from "../../shared/shorten.pipe";
 import { MyLoggingService } from '../../core/services/logging.services';
+import { SessionService } from '../../core/services/session.service';
 
 
 @Component({
@@ -31,16 +29,18 @@ export class ArticleHome {
   
   public constructor(
     private myLog: MyLoggingService,
+    private sessionService: SessionService,
     private router: Router, 
     private postService: PostService,
-    private userStore: UserStore
+
   ){}
 
   public ngOnInit(): void { 
       
-      this.idUser = this.userStore.getUserId();
+      this.myLog.debug("article-home.ngOnInit");
+      this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
 
-      this.postService.all(this.userStore.getUserId()).subscribe(
+      this.postService.all(this.idUser).subscribe(
         posts => {
           this.postSubject.next(posts);
         });

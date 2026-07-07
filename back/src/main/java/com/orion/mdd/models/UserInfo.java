@@ -6,8 +6,6 @@ import java.util.Set;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.orion.mdd.security.Password;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -49,9 +47,9 @@ public class UserInfo {
     @Size(max = 50, min=6, message="La taille de l'email doit être comprise entre 6 et 50 caractères.")
     private String email;
 
+    @Size(max = 500, message="La taille du mot de passe doit être comprise entre 8 et 500 caractères.")
+    //@Password(message="Le mot de passe doit contenir au moins 1 chiffre, 1 majuscule, 1 minuscule, 1 caractère spécial. et faire 8 caractères mini.")
     @NotBlank(message = "Le mot de passe ne doit pas être vide.")
-    @Size(max = 50, min=8, message="La taille du mot de passe doit être comprise entre 8 et 50 caractères.")
-    @Password(message="Le mot de passe doit contenir au moins 1 chiffre, 1 majuscule, 1 minuscule, 1 caractère spécial. et faire 8 caractères mini.")
     private String pwd;
 
     @ManyToMany(fetch = FetchType.LAZY)

@@ -1,7 +1,8 @@
 export const GENERIC_LABELS = {
     error: "/!\\  Une erreur est survenue : ",
-    clientError: "Erreurs trouvées lors de la validation du formulaire : corrigez le formulaire en fonction des messages en rouge... ",
-    ok: "ok"
+    clientError: "Erreur(s) trouvée(s) lors de la validation du formulaire : veuillez corrigez le formulaire... ",
+    ok: "ok",
+    TryAgainLater: "Veuillez réessayer plus tard..."
 };
 export const LANDING_LABELS = {
     landingSeConnecter: "Se connecter",
@@ -24,6 +25,7 @@ export const TOPIC_LABELS = {
     topicDejaAbonne: "Déjà abonné",
     topicMsgSouscriptionOk: "Souscription enregistrée !",
     topicMsgSouscriptionKo: "Erreur lors de la souscription : veuillez contacter l'administrateur",
+    topicMsgCnxKo: "Connectez vous !"
 };
 export const ME_LABELS = {
     meTitle: "Profil utilisateur",
@@ -73,10 +75,11 @@ export const SIGNUP_LABELS = {
     MandatoryPwd: "Le mot de passse est obligatoire.",    
     PwdMinLength: "Le mot de passe doit être composé de 8 caractères minimum",
     PwdMaxLength: "Le mot de passe doit être composé de 50 caractères maximum",
-    PwdValidator: "Le mot de passe doit être composé d'ou moins : 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.",
+    PwdValidator: "Le mot de passe doit être composé d'au moins : 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.",
     MandatoryUsername: "Le nom d'utilisateur est obligatoire",
     UsernameMinLength: "Le nom d'utilisateur doit être composé de 2 caractères minimum",
     UsernameMaxLength: "Le nom d'utilisateur doit être composé de 20 caractères maximum",
+    EmailValidator: "L'email doit être bien formatté",
     ServerResponds: "Le serveur a répondu : "
-
+    
 }

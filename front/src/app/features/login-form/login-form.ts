@@ -1,19 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {  MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
 import { MatCardContent } from '@angular/material/card';
 import { MatCard } from '@angular/material/card';
 import { MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input'
 import { MatIcon } from '@angular/material/icon';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LOGIN_LABELS } from '../../shared/labels';
+import { GENERIC_LABELS, LOGIN_LABELS } from '../../shared/labels';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/services/auth.service';
-import { UserInfo } from '../../core/models/user-info.interface';
 import { MyLoggingService } from '../../core/services/logging.services';
-import { UserStore } from '../../core/services/user-store.service';
+import { LoginRequest } from '../../core/models/Login-request.interface';
+import { SessionService } from '../../core/services/session.service';
+import { ServerResponse } from '../../core/models/server-response.interface';
+import { SessionInfo } from '../../core/models/session-info.interface';
+import { BackEndValidationErrors } from '../../core/models/back-end-validation-errors.interface';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-form',
@@ -25,6 +29,10 @@ import { UserStore } from '../../core/services/user-store.service';
 export class LoginForm implements OnInit{
 
   labels = LOGIN_LABELS;
+  labels_generic = GENERIC_LABELS;
+
+  private serverErrorMessage!: String;
+
   public hide = true; //hidden password by default
   public myLoginForm!: FormGroup;
   public onError = false;
@@ -32,7 +40,7 @@ export class LoginForm implements OnInit{
 
   private initForm(): void {
     this.myLoginForm = this.formBuilder.group({
-        string: ['',
+        str: ['',
           [Validators.required]
         ],
         pwd: ['',
@@ -42,16 +50,16 @@ export class LoginForm implements OnInit{
   }
 
   public ngOnInit(): void {
+    this.myLog.debug(this.logPrefix + " ngOnInit");
     this.initForm();
   }
 
   constructor(
     private myLog: MyLoggingService,
-    private userStore: UserStore,
-    private route: ActivatedRoute,
+    private sessionService: SessionService,
+    private router: Router,
     private matSnackBar: MatSnackBar,
     private formBuilder: FormBuilder,
-    private router: Router,
     private authService: AuthService
   ){  }
 
@@ -60,25 +68,62 @@ export class LoginForm implements OnInit{
   }
 
   public submit(): void { 
-    //const loginRequest = this.form.value as LoginRequest;
 
-    //window.alert("coucou " + this.myLoginForm.get("string")?.value + ", et ton mot de passe est : " + this.myLoginForm.get("pwd")?.value);
+
     this.myLog.info(this.logPrefix + "appel du service");
-    this.authService.getByString(this.myLoginForm.get("string")?.value).subscribe({
-      next: (response: UserInfo) => {
-        this.myLog.info(this.logPrefix + " User trouvé : " + response.id + " " + response.email + " " + response.username );
-        this.onError = false;
-        this.userStore.setEmail(response.email);
-        this.userStore.setUsername(response.username);
-        this.userStore.setUserId(response.id);
+
+    const lr: LoginRequest = { str: this.myLoginForm.get("str")?.value, pwd: this.myLoginForm.get("pwd")?.value }
+
+    this.authService.login(lr).subscribe({
+      next: (response: ServerResponse) => {
+        const backEndResponseData = response.data as SessionInfo;
+        this.myLog.info(this.logPrefix + " User trouvé : " + backEndResponseData.id + " " + backEndResponseData.email + " " + backEndResponseData.username + " " + backEndResponseData.token );
+        
+        localStorage.setItem('token', backEndResponseData.token);
+        this.sessionService.logIn(backEndResponseData);
         this.router.navigate(['article']);
       },
-      error : (error: Error) => {
-        //this.myLog.info(this.logPrefix + "error : " + JSON.stringify(error).toString());
+      error : (error: HttpErrorResponse) => {
+        this.myLog.info(this.logPrefix + "error : " + JSON.stringify(error).toString());
         this.onError = true;
+        this.serverError(error);
       }
     })
 
   }
 
+  
+  public showServerErrorMessage(){
+    return this.serverErrorMessage!==null ? this.serverErrorMessage : '';
+  }
+
+
+
+
+  public serverError(error : HttpErrorResponse): void {
+      
+      this.serverErrorMessage = "";
+      
+      if (error.error!==null){
+      
+        const backEndResponseData = error.error.data as BackEndValidationErrors;
+
+        if (backEndResponseData!==null && backEndResponseData!==undefined){
+          
+            this.myLog.error(`Backend returned ${error.error.message}`);
+            this.serverErrorMessage = error.error.message;
+            
+          } else {//error.error.data==null
+        
+            this.myLog.error(`Backend returned ${error.status}  ${error.message}  ${error.error.code}  ${error.error.message}`);
+            this.serverErrorMessage =  error.error.message;
+        
+          }
+      } else {//error.error==null
+
+        this.myLog.error(`Backend returned ${error.status}  ${error.statusText}  ${error.message} `);
+        this.serverErrorMessage =  error.status + " " + error.statusText + "  " + ((error.status===500) ? this.labels_generic.TryAgainLater : "") ;
+        
+      }
+    }
 }

@@ -6,9 +6,12 @@ public enum ErrorCode {
 
     //java/com/orion/security/password.java contains the invalid pasword message (need a const string)
 
-    SERVER_ERROR("E001", "erreur de serveur interne.", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_INPUT("E002", "Saisie invalide.", HttpStatus.BAD_REQUEST),
-    DATA_NOT_FOUND("E003", "Donnée(s) non trouvée(s).", HttpStatus.NOT_FOUND);
+    SERVER_ERROR("ERREUR_INTERNE_DE_SERVEUR", "Erreur interne de serveur : veuillez réessayer plus tard.", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_INPUT("SAISIE_INVALIDE", "Erreur de saisie : veuillez recommencer.", HttpStatus.BAD_REQUEST),
+    INVALID_CREDENTIALS("LOGIN_EMAIL_OU_MOTDEPASSE_INVALIDE", "Erreur de saisie dans les identifiants : veuillez recommencer.", HttpStatus.BAD_REQUEST),
+    INVALID_USERNAME("NOM_UTILISATEUR_INVALIDE", "Erreur de saisie : nom d'utilisateur invalide, veuillez recommencer.", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL("EMAIL_UTILISATEUR_INVALIDE", "Erreur de saisie : email d'utilisateur invalide, veuillez recommencer.", HttpStatus.BAD_REQUEST),
+    DATA_NOT_FOUND("DONNEE_NON_TROUVEE", "Donnée(s) non trouvée(s).", HttpStatus.NOT_FOUND);
     
     private final String code;
 

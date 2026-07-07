@@ -48,7 +48,7 @@
                         <ul class="navbar-nav ">
                             
                         @if(showRight){
-                            <li class="nav-item disconnect p-1">{{labels.headerSeDeconnecter}}</li>
+                            <li class="nav-item disconnect p-1"><a (click)="disconnect()" [class]="colored_header_disconnect_link">{{labels.headerSeDeconnecter}}</a></li>
                             <li class="nav-item p-1"><a routerLink="article" [class]="colored_header_article_link">{{labels.headerArticle}}</a></li>
                             <li class="nav-item p-1"><a routerLink="theme" [class]="colored_header_theme_link">{{labels.headerTheme}}</a></li>
                             <li class="nav-item p-1"><mat-icon id="account" routerLink="me" [class]="colored_accont_icon">account_circle</mat-icon></li>                

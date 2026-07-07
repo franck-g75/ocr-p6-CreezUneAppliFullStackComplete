@@ -3,6 +3,7 @@ package com.orion.mdd.services;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.orion.mdd.dto.UserInfoDto;
@@ -19,35 +20,45 @@ import lombok.extern.log4j.Log4j2;
 public class UserInfoService {
 
 
+    private final PasswordEncoder passwordEncoder;
     private final TopicService topicService;
     private final UserInfoRepository userInfoRepository;
+    
 
-    public UserInfoService(UserInfoRepository userInfoRepository, TopicService topicService){
+    public UserInfoService(
+            UserInfoRepository userInfoRepository, 
+            TopicService topicService,
+            PasswordEncoder passwordEncoder
+        ){
         this.userInfoRepository = userInfoRepository;
         this.topicService = topicService;
+        this.passwordEncoder = passwordEncoder; 
     }
 
-    public UserInfo findByEmail(String email) throws CustomException {
+    public Optional<UserInfo> findByEmail(String email) throws CustomException {
         log.info("findByEmail({})...",email);
-        Optional<UserInfo> user = userInfoRepository.findByEmail(email);
+        return userInfoRepository.findByEmail(email);
+        /*
         if (user.isEmpty()){
             log.error("findByEmail({}) ==> user not found", email);
             throw new CustomException(ErrorCode.DATA_NOT_FOUND);
         } else {
             return user.get();
         }
-
+        */
     }
     
-    public UserInfo findByUsername(String username) throws CustomException{
+    public Optional<UserInfo> findByUsername(String username) throws CustomException{
         log.info("findByUsername({})...",username);
-        Optional<UserInfo> user = userInfoRepository.findByUsername(username);
+        return userInfoRepository.findByUsername(username);
+        /*
         if (user.isEmpty()){
             log.error("findByUsername({}) ==> user not found",username);
             throw new CustomException(ErrorCode.DATA_NOT_FOUND);
         } else {
             return user.get();
         }
+        */
     }
 
     public Optional<UserInfo> findById(Long id){
@@ -76,10 +87,10 @@ public class UserInfoService {
         
         if (userByMail.isPresent()) {             //existing User (same email)
             log.error("create({}) mail is found in db",user);
-            throw new CustomException(ErrorCode.INVALID_INPUT);
+            throw new CustomException(ErrorCode.INVALID_EMAIL);
         } else if (userByUsername.isPresent()) {  //existing user (same username)
             log.error( "create({}) username is found in db", user);
-            throw new CustomException(ErrorCode.INVALID_INPUT);
+            throw new CustomException(ErrorCode.INVALID_USERNAME);
         } else { //non existing user : save it
             log.info("saving user ...");
             return userInfoRepository.save(user);
@@ -117,7 +128,7 @@ public class UserInfoService {
             log.info("Updating user...");
             userFoundById.setEmail(userDto.getEmail());
             userFoundById.setUsername(userDto.getUsername());
-            userFoundById.setPwd(userDto.getPwd());
+            userFoundById.setPwd(passwordEncoder.encode(userDto.getPwd()));
             return userInfoRepository.save(userFoundById);
         }
         

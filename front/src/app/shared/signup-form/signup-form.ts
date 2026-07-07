@@ -11,10 +11,14 @@ import { UserStore } from '../../core/services/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserInfo } from '../../core/models/user-info.interface';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse, HttpStatusCode } from '@angular/common/http';
 import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
 import { AuthService } from '../../core/services/auth.service';
 import { UserInfoService } from '../../core/services/user-info.service';
+import { ServerResponse } from '../../core/models/server-response.interface';
+import { BackEndValidationErrors } from '../../core/models/back-end-validation-errors.interface';
+import { SessionInfo } from '../../core/models/session-info.interface';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-signup',
@@ -31,6 +35,9 @@ export class SignupForm implements OnInit{
   public labels_generic = GENERIC_LABELS;
 
   @Input({required:true}) public myOrigin!: 'subscription' | 'me';
+
+  public sessionInfo!: SessionInfo;
+  private idUser: number = 0;
 
   public myTitle!: string;
   public myBtnLabel!: string;
@@ -61,12 +68,17 @@ export class SignupForm implements OnInit{
     private formBuilder: FormBuilder,
     private userStore: UserStore,
     private matSnackBar: MatSnackBar,
-    private router: Router){
+    private router: Router,
+    private sessionService: SessionService){
 
   }
 
   public ngOnInit(){
     
+    this.myLog.info("topic.ngOnInit");
+    this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
+    this.myLog.info("idUser=" + this.idUser + " username=" + this.sessionService.sessionInformation?.username);
+
     switch(this.myOrigin){
       case 'subscription' : 
         this.myTitle = this.labels_sub.subscriptionTitle;
@@ -93,17 +105,18 @@ export class SignupForm implements OnInit{
 
   private initForm(): void {
 
+    //TODO préremplissage
     this.mySignUpForm = this.formBuilder.group({
-        username: [this.userStore.getUsername(),
+        username: [this.sessionService.sessionInformation?.username,
           [Validators.required, Validators.maxLength(20), Validators.minLength(2)]
         ],
-        email: [this.userStore.getEmail(),
+        email: [this.sessionService.sessionInformation?.email,
           [Validators.required, Validators.email, Validators.minLength(6), Validators.maxLength(50)]
         ],
         pwd: ['',
           [Validators.required, Validators.minLength(8), Validators.maxLength(50), this.pwdValidator()]
         ],
-        id:[this.userStore.getUserId()]
+        id:[this.sessionService.sessionInformation?.id]
       });
 
   }
@@ -147,23 +160,32 @@ export class SignupForm implements OnInit{
       if (!this.onUpdate) {
         this.myLog.info(`saving userInfo ${userInfo.username} in progress...`);
         this.authService.create(userInfo).subscribe({
-          next: (user: UserInfo) => {
+          next: (resp: ServerResponse) => {
+            
+            this.myLog.info(`${resp.code} ${resp.message}` );
             this.exitPage(this.labels_sub.subscriptionUserCreated);
+            
           },
           error: (error: HttpErrorResponse) => {
-            this.myLog.info('srv error found ... ' + error); 
+
+            this.myLog.info('srv error found ... ' + error.status + " " + error.message); 
             this.serverError(error);
+          
           }
         });
       } else {
         this.myLog.info(`updating userInfo ${userInfo.username} in progress...`);
         this.userInfoService.update(userInfo).subscribe({
-          next: (user: UserInfo) => {
+          next: (user: ServerResponse) => {
+
             this.exitPage(this.labels_me.meUserUpdated);
+
           },
           error: (error: HttpErrorResponse) => {
-            this.myLog.info('User not updated !  : ' + error.status + ' ' + error.error );
-            this.serverError(error);
+
+            this.myLog.info('User not updated !  : ' + error.status + ' ' + error.message );
+            this.serverError(error.error);
+
           }
         });
       }
@@ -183,13 +205,15 @@ export class SignupForm implements OnInit{
 
   public showClientEmailValidationError(): string {
     const emailControl = this.mySignUpForm.get('email');
-    if (emailControl?.touched && !emailControl?.valid) {
+    if ( !emailControl?.valid) {
       if (emailControl?.errors?emailControl.errors['required']:false){
         return this.labels_sign.MandatoryEmail;
       } else if (emailControl?.errors ? emailControl.errors['minlength'] : false){
         return this.labels_sign.EmailMinLength;
       } else if (emailControl?.errors ? emailControl.errors['maxlength'] : false){
         return this.labels_sign.EmailMaxLength;
+      } else if (emailControl?.errors ? emailControl.errors['email'] : false){
+        return this.labels_sign.EmailValidator;
       } else {
         return "";
       }
@@ -200,7 +224,7 @@ export class SignupForm implements OnInit{
 
   public showClientUsernameValidationError(){
     const usernameControl = this.mySignUpForm.get('username');
-    if (usernameControl?.touched && !usernameControl?.valid) {
+    if ( !usernameControl?.valid ) {
       if (usernameControl?.errors?usernameControl.errors['required']:false){
         return this.labels_sign.MandatoryUsername;
       } else if (usernameControl?.errors ? usernameControl.errors['minlength'] : false){
@@ -217,7 +241,7 @@ export class SignupForm implements OnInit{
 
   public showClientPwdValidationError(){
     const pwdControl = this.mySignUpForm.get('pwd');
-    if (pwdControl?.touched && !pwdControl?.valid) {
+    if (!pwdControl?.valid) {
       if (pwdControl?.errors?pwdControl.errors['required']:false){
         return this.labels_sign.MandatoryPwd;
       } else if (pwdControl?.errors ? pwdControl.errors['minlength'] : false){
@@ -249,7 +273,80 @@ export class SignupForm implements OnInit{
     return this.serverErrorMessage!==null ? this.serverErrorMessage : '';
   }
 
+  public serverError(error : HttpErrorResponse): void {
+    
+    this.serverEmailErrorMessage = "";
+    this.serverPwdErrorMessage = "";
+    this.serverUsernameErrorMessage = "";
+    this.serverErrorMessage = "";
+    if (error.error!==null){
+        const backEndResponseData = error.error.data as BackEndValidationErrors;
+        if (backEndResponseData!==null && backEndResponseData!==undefined){
+          
+              this.myLog.error(`Backend returned code ${error.error.code}, message:`, error.error.message);
+              if (backEndResponseData.email!==undefined) {
+                this.myLog.error(`Backend returned ${backEndResponseData.email}`);
+                this.serverEmailErrorMessage = backEndResponseData.email;        
+              }
+              if (backEndResponseData.pwd!==undefined) {
+                this.myLog.error(`Backend returned ${backEndResponseData.pwd}`);
+                this.serverPwdErrorMessage = backEndResponseData.pwd;        
+              }
+              if (backEndResponseData.username!==undefined) {
+                this.myLog.error(`Backend returned ${backEndResponseData.username}`);
+                this.serverUsernameErrorMessage = backEndResponseData.username;
+              }
+            
+        } else {
+
+          this.myLog.error(`Backend returned ${error.status}  ${error.statusText}  ${error.message} ${error.error.code}  ${error.error.message}`);
+          this.serverErrorMessage =  error.error.message;// status + " " + error.statusText + "  " + error.error.code;// + "  " + error.error.message ;
+
+        }
+    } else {
+
+      this.myLog.error(`Backend returned ${error.status}  ${error.statusText}  ${error.message} `);
+      this.serverErrorMessage =  error.status + " " + error.statusText + "  " + ((error.status===500) ? this.labels_generic.TryAgainLater : "") ;
+     
+    }
+
+  }
+
+/*
   public  serverError(error : HttpErrorResponse): void{
+    const backEndResponseBody = error.error as BackEndErrorResponseBody;
+    if (backEndResponseBody!==null && backEndResponseBody!==undefined){
+      this.serverEmailErrorMessage = "";
+      this.serverPwdErrorMessage = "";
+      this.serverUsernameErrorMessage = "";
+      this.serverErrorMessage = "";
+        if (backEndResponseBody.validationErrors!==null && backEndResponseBody.validationErrors !==undefined ) {
+          this.myLog.error(`Backend returned code ${error.status}, message:`, error.message);
+          if (backEndResponseBody.validationErrors.email!==undefined) {
+            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.email}`);
+            this.serverEmailErrorMessage = backEndResponseBody.validationErrors.email;        
+          }
+          if (backEndResponseBody.validationErrors.pwd!==undefined) {
+            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.pwd}`);
+            this.serverPwdErrorMessage = backEndResponseBody.validationErrors.pwd;        
+          }
+          if (backEndResponseBody.validationErrors.username!==undefined) {
+            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.username}`);
+            this.serverUsernameErrorMessage = backEndResponseBody.validationErrors.username;
+          }
+        } else { //validationErrrors==nuul 
+          this.myLog.error(`Backend returned ${backEndResponseBody.errorMessage}`);
+          this.serverErrorMessage = this.labels_sign.ServerResponds + backEndResponseBody.errorMessage;
+        }
+    } else {
+      this.myLog.error(`Backend returned  ${error.status}  ${error.message} `);
+      this.serverErrorMessage = this.labels_sign.ServerResponds + error.status + "  " + error.message;
+    }
+  }
+
+
+
+public  serverError(error : HttpErrorResponse): void{
     const backEndResponseBody = error.error as BackEndErrorResponseBody;
     if (backEndResponseBody!==null && backEndResponseBody!==undefined){
       this.serverEmailErrorMessage = "";
@@ -283,5 +380,8 @@ export class SignupForm implements OnInit{
       this.serverErrorMessage = this.labels_sign.ServerResponds + error.status + "  " +  error.statusText + " " + error.message;
     }
   }
+*/
+
+
 }
 
