@@ -1,7 +1,5 @@
 package com.orion.mdd.dto;
 
-import org.springframework.lang.Nullable;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

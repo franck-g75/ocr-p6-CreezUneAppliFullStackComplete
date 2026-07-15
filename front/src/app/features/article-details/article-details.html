@@ -25,7 +25,7 @@
                 <div><span><pre>{{post.content}}</pre></span></div>
             
             </div>
-        }
+
 
 
         <div class="centred_content_no_margin"><hr /></div>
@@ -56,8 +56,6 @@
         </div>
         }
     
-
-
         <div class="container text-end">
             <div class="row justify-content-end">
                 <div class="col col-xs-12 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-xxl-1 "></div>
@@ -71,7 +69,6 @@
                                 <textarea matInput formControlName="content"></textarea>
                                 <div class="centred_content_no_margin error">{{ showClientCommentValidationError() }}</div>
                             </mat-form-field>
-                        
                             
                             <mat-icon id="sendcomment" (click)="submit();"  class="extended20 hand" >send</mat-icon>
                             
@@ -89,7 +86,7 @@
         </div>
 
     </div>
-
+            }
 </div>
 </div>
 

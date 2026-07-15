@@ -19,14 +19,14 @@ export class UserInfoService {
  
   
 
-  public postsubscription(idUser: number,idTopic: number): Observable<void> { 
-    this.myUserSvcLog.info(this.logPrefix + "postsubscription(idUser="+idUser+" idTopic="+idTopic+")");
-    return this.httpClient.post<void>(`${this.pathService}/subscribe/idUser/${idUser}/idTopic/${idTopic}`,null);
+  public postsubscription(idTopic: number): Observable<ServerResponse> { 
+    this.myUserSvcLog.info(this.logPrefix + "postsubscription(topic="+idTopic+")");
+    return this.httpClient.post<ServerResponse>(`${this.pathService}/subscribe/topic/${idTopic}`,null);
   }
   
-  public postunsubscription(idUser: number,idTopic: number): Observable<void> { 
-    this.myUserSvcLog.info(this.logPrefix + "postunsubscription(idUser="+idUser+" idTopic="+idTopic+")");
-    return this.httpClient.post<void>(`${this.pathService}/unsubscribe/idUser/${idUser}/idTopic/${idTopic}`,null);
+  public postunsubscription(idTopic: number): Observable<ServerResponse> { 
+    this.myUserSvcLog.info(this.logPrefix + "postunsubscription(topic="+idTopic+")");
+    return this.httpClient.post<ServerResponse>(`${this.pathService}/unsubscribe/topic/${idTopic}`,null);
   }
 
   public update(userInfo: UserInfo): Observable<ServerResponse> {

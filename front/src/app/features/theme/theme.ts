@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TopicModule } from '../../shared/topic/topic';
+import { GENERIC_LABELS } from '../../shared/labels';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-theme',
@@ -7,6 +11,20 @@ import { TopicModule } from '../../shared/topic/topic';
   templateUrl: './theme.html',
   styleUrl: './theme.scss',
 })
-export class Theme {
+export class Theme implements OnInit {
+public idUser!: number;
+  public labelsGeneric = GENERIC_LABELS;
 
+  constructor(
+      private matSnackBar: MatSnackBar,
+      private router: Router,
+      private sessionService: SessionService) {  }
+
+  public ngOnInit(){
+    this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
+    if (this.idUser<=0){
+      this.matSnackBar.open(this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 });
+      this.router.navigate(['landing']);
+    }
+  }
 }

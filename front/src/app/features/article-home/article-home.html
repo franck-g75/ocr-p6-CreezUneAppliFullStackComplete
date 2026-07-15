@@ -20,7 +20,7 @@
     <div class="container-fluid"><!--class="display_grid_old"   class="container-fluid"-->
         <div class="row gx-1"> <!--nothing  class="row gx-1"-->
         @for(post of (post$ | async); track post.id){
-        <div id="clickable" class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2" ><!--class="display_cell_old"   class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2"-->
+        <div id="clickable" class="col-xs-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6" ><!--class="display_cell_old"   class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2"-->
         <div id="cell" class="display_cell hand" (click)="showArticleDetails(post.id)">
             <h2>{{post.title}}</h2>
             <div class="article_top centred_content_no_margin ">

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Topic } from '../models/topic.interface';
 import { MyLoggingService } from './logging.services';
+import { ServerResponse } from '../models/server-response.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,14 +18,14 @@ export class TopicService {
   ) {
   }
 
-  public all(userId: number): Observable<Topic[]> {
-    this.myLog.info("TopicService path = " + this.pathService + "/user/" + userId);
-    return this.httpClient.get<Topic[]>(this.pathService + "/user/" + userId);
+  public all(): Observable<ServerResponse> {
+    this.myLog.info("TopicService path = " + this.pathService + "/user" );
+    return this.httpClient.get<ServerResponse>(this.pathService + "/user");
   }
   
-  public allTopics() : Observable<Topic[]> {
+  public allTopics() : Observable<ServerResponse> {
     this.myLog.info("TopicService path = " + this.pathService);
-    return this.httpClient.get<Topic[]>(this.pathService);
+    return this.httpClient.get<ServerResponse>(this.pathService);
   }
 
   public getById(idTopic: number): Observable<Topic> {

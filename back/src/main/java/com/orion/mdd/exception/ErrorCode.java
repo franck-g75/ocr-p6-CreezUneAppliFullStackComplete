@@ -11,7 +11,8 @@ public enum ErrorCode {
     INVALID_CREDENTIALS("LOGIN_EMAIL_OU_MOTDEPASSE_INVALIDE", "Erreur de saisie dans les identifiants : veuillez recommencer.", HttpStatus.BAD_REQUEST),
     INVALID_USERNAME("NOM_UTILISATEUR_INVALIDE", "Erreur de saisie : nom d'utilisateur invalide, veuillez recommencer.", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL("EMAIL_UTILISATEUR_INVALIDE", "Erreur de saisie : email d'utilisateur invalide, veuillez recommencer.", HttpStatus.BAD_REQUEST),
-    DATA_NOT_FOUND("DONNEE_NON_TROUVEE", "Donnée(s) non trouvée(s).", HttpStatus.NOT_FOUND);
+    DATA_NOT_FOUND("DONNEE_NON_TROUVEE", "Donnée(s) non trouvée(s).", HttpStatus.NOT_FOUND),
+    NOT_AUTHORIZED("ACTION_NON_AUTORISEE", "Action non autorisée...", HttpStatus.UNAUTHORIZED);
     
     private final String code;
 

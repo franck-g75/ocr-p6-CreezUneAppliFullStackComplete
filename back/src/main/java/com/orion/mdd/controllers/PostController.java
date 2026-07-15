@@ -1,10 +1,14 @@
 package com.orion.mdd.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,17 +18,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.orion.mdd.dto.CommentDto;
+import com.orion.mdd.dto.MyResponseDto;
 import com.orion.mdd.dto.PostDto;
+import com.orion.mdd.dto.ResponseCode;
 import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.exception.ErrorManagement;
 import com.orion.mdd.models.Topic;
+import com.orion.mdd.models.UserInfo;
 import com.orion.mdd.services.PostService;
 import com.orion.mdd.services.TopicService;
+import com.orion.mdd.services.UserInfoService;
 
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * PostController is a controller class to manage the posts ans comment operation 
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/post")
@@ -33,135 +44,197 @@ public class PostController {
 
     private final PostService postService;
     private final TopicService topicService;
-    
+    private final UserInfoService userInfoService;
+
     public PostController( 
         PostService postService, 
-        TopicService topicService
+        TopicService topicService,
+        UserInfoService userInfoService
        ) {
         this.postService = postService;
         this.topicService = topicService;
+        this.userInfoService = userInfoService;
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<?> findAll(@PathVariable("id") Long idUser) {
-        log.info("findAll(iduser={}) ...", idUser);
+    /**
+     * find all the posts for the user connected
+     * @return MyResponseDto containing the post list or an error
+     */
+    @GetMapping("/user")
+    public ResponseEntity<MyResponseDto> findAll() {
+        log.info("findAll() ...");
+
         try{
-            Set<PostDto> posts = this.postService.findPostsByUserInfo(idUser);
-            return ResponseEntity.ok().body(posts);
-        } catch(CustomException ce){
-            log.error("findAll(iduser) customException : " + ce.toString());
-            switch (ce.getErrorCode()){
-                case INVALID_INPUT : 
-                    return ResponseEntity.badRequest().build();
-                case DATA_NOT_FOUND :
-                    return ResponseEntity.notFound().build();
-                case SERVER_ERROR : 
-                    return ResponseEntity.internalServerError().build();
-                default :
-                    return ResponseEntity.notFound().build();
-             }
-        } catch (Exception e){
-            log.error("findAll(iduser) exception : " + e.toString());
-            if (e instanceof RuntimeException){
-                return ResponseEntity.internalServerError().build();
+           
+            Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
+
+            if (userToken.isPresent()){
+
+                Set<PostDto> posts = this.postService.findPostsByUserInfo(userToken.get().getId());
+
+                MyResponseDto response = new MyResponseDto();
+                response.setCode(ResponseCode.DATA_FOUND.getCode());
+                response.setMessage(ResponseCode.DATA_FOUND.getMessage());
+                Map<String, Object> infos = new HashMap<>();
+                infos.put("posts", posts);
+                response.setData(infos);
+                    
+                return ResponseEntity.ok().body(response);
+
             } else {
-                return ResponseEntity.notFound().build();
+
+                log.info("/api/post/user error token username not found in db.");
+                return ErrorManagement.responseError(new CustomException(ErrorCode.DATA_NOT_FOUND));
+
             }
+            
+        } catch (Exception e){
+
+            log.info("/api/post/user exception \n" + e.toString());
+            return ErrorManagement.responseError(e);
+           
         }
     }
 
+    /**
+     * Find the post identified by id parameter
+     * @param idPost the id of the post searched
+     * @return MyResponseDto containing the post or an errror
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<?> findPost(@PathVariable("id") Long idPost) {
+    public ResponseEntity<MyResponseDto> findPost(@PathVariable("id") @NonNull Long idPost) {
         log.info("findPost(idpost={}) ...", idPost);
         try{
-            PostDto post = this.postService.findPostById(idPost);
-            return ResponseEntity.ok().body(post);
-        } catch (CustomException ce) {
-            log.error("findPost(idpost) customException : " + ce.toString());
-            throw ce;
-        } catch (Exception e){
-            log.error("findPost(idpost) exception : " + e.toString());
-            if (e instanceof RuntimeException){
-                return ResponseEntity.internalServerError().build();
+            
+            Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
+
+            if (userToken.isPresent()){
+
+                PostDto post = this.postService.findPostById(idPost);
+            
+                MyResponseDto response = new MyResponseDto();
+                response.setCode(ResponseCode.DATA_FOUND.getCode());
+                response.setMessage(ResponseCode.DATA_FOUND.getMessage());
+                Map<String, Object> infos = new HashMap<>();
+                infos.put("post", post);
+                response.setData(infos);
+                
+                return ResponseEntity.ok().body(response);
             } else {
-                return ResponseEntity.notFound().build();
-            }
+                log.info("/api/post/{}' error token username not found in db.", idPost);
+                return ErrorManagement.responseError(new CustomException(ErrorCode.DATA_NOT_FOUND));
+            }     
+
+        } catch (Exception e){
+
+            log.error("findPost(idpost) exception : " + e.toString());
+            return ErrorManagement.responseError(e);
+            
         }
     }
 
+    /**
+     * Add a post 
+     * @param postDto the post to add
+     * @return a MyResponseDto in case of success or error
+     */
+    @PostMapping("")
+    public ResponseEntity<MyResponseDto> addPost(@Valid @RequestBody PostDto postDto) {
+        
+        log.info("addPost post=" + postDto.toString());
+        try{
+
+            Optional<Topic> topic = this.topicService.findById(postDto.getId_topic());
+            Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
+
+            if (topic.isPresent() && userToken.isPresent()){
+            
+                postDto.setUsername(userToken.get().getUsername()); //a user X cannot add a post for a user Y
+                this.postService.addPost(postDto);
+
+                MyResponseDto response = new MyResponseDto(ResponseCode.OPERATION_SUCCESS.getMessage(), ResponseCode.OPERATION_SUCCESS.getCode(), null);
+
+                return ResponseEntity.ok().body(response);
+
+            } else {
+
+                log.error("addPost : Topic or userToken non trouvé.");
+                return ErrorManagement.responseError( new CustomException(ErrorCode.DATA_NOT_FOUND) );
+
+            }
+        } catch (Exception e) {
+            log.error("add post exception : " + e.getMessage());
+            return ErrorManagement.responseError(e);
+        }
+
+    }
+
+    /**
+     * findAllComments finds all comments of the post identified by postId in parameter 
+     * @param postId the id of of the comment's post wanted
+     * @return MyResponseDto if success (200) or a MyResponseDto if there is an error
+     */
     @GetMapping("/{id}/comments")
-    public ResponseEntity<?> findAllComments(@PathVariable("id") Long postId) {
+    public ResponseEntity<MyResponseDto> findAllComments(@PathVariable("id") @NonNull Long postId) {
         log.info("findAllComments(iduser={}) ...", postId);
         try{
+            Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
             List<CommentDto> comments = this.postService.findCommentsByPostId(postId);
-            return ResponseEntity.ok().body(comments);
-        } catch (CustomException ce) {
-            log.error("findAllComments(postId) customException : " + ce.toString());
-            throw ce;
+
+            if ( userToken.isPresent() && comments != null ){
+
+                MyResponseDto response = new MyResponseDto();
+                response.setCode(ResponseCode.DATA_FOUND.getCode());
+                response.setMessage(ResponseCode.DATA_FOUND.getMessage());
+                Map<String, Object> infos = new HashMap<>();
+                infos.put("comments", comments);
+                response.setData(infos);
+                return ResponseEntity.ok().body(response);
+
+            } else {
+
+                log.error("findAllComments : userToken not found in DB or comments list null.");
+                return ErrorManagement.responseError( new CustomException(ErrorCode.DATA_NOT_FOUND) );
+                
+            }
         } catch(Exception e) {
             log.error("findAllComments exception : " + e.getMessage());
-            if (e instanceof RuntimeException){
-                return ResponseEntity.internalServerError().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return ErrorManagement.responseError(e);
         }
     }
 
+    /**
+     * addComment add the comment CommentDto to the post identified by idPost 
+     * The username in CommentDto is useless to identify the author of the comment : the token user is choosen instead
+     * @param idPost the id of the post 
+     * @param commentDto the comment to add
+     * @return a MyResponseDto in case of success or error
+     */
     @PostMapping("/{id}/comment")
-    public ResponseEntity<?> addComment(@PathVariable("id") Long idPost, @Valid @RequestBody CommentDto commentDto) {
+    public ResponseEntity<MyResponseDto> addComment(@PathVariable("id") @NonNull Long idPost, @Valid @RequestBody CommentDto commentDto) {
 
         log.info("addComment(idpost={}) commentDto= {}  ...", idPost, commentDto);
         try{
-            this.postService.addComment(idPost, commentDto);
-            return ResponseEntity.ok().build();
-        } catch (CustomException ce) {
-            log.error("addComment(idPost,commentDto) customException : " + ce.toString());
-            throw ce;
+
+            Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
+            if (userToken.isPresent()){
+                commentDto.setUsername(userToken.get().getUsername()); //User X can't post a comment for user Y
+                this.postService.addComment(idPost, commentDto);
+                return ResponseEntity.ok().body(
+                    new MyResponseDto(ResponseCode.OPERATION_SUCCESS.getMessage(), ResponseCode.OPERATION_SUCCESS.getCode(), null)
+                );
+            } else {
+                log.error("addComments : userToken not found in DB or comments list null.");
+                return ErrorManagement.responseError( new CustomException(ErrorCode.DATA_NOT_FOUND) );
+            }
+            
         } catch (Exception e) {
             log.error("addComment exception : " + e.getMessage());
-            if (e instanceof RuntimeException){
-                return ResponseEntity.internalServerError().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return ErrorManagement.responseError(e);
         }
 
     }
 
 
-    /**
-     * 
-     * @param postDto
-     * @return
-     * @throws CustomException
-     */
-    @PostMapping("")
-    public ResponseEntity<?> addPost(@Valid @RequestBody PostDto postDto) throws CustomException {
-        
-        log.info("addPost post=" + postDto.toString());
-
-        Optional<Topic> topic = this.topicService.findById(postDto.getId_topic());
-
-        if (topic.isPresent()){
-           
-            try{
-                this.postService.addPost(postDto);
-                return ResponseEntity.ok().build();
-            } catch (CustomException ce) {
-                log.error("add post customexception : " + ce.getMessage());
-                return ErrorManagement.responseError(ce);
-            } catch (Exception e) {
-                log.error("add post exception : " + e.getMessage());
-                return ErrorManagement.responseError(e);
-            }
-
-        } else { //topic not present
-
-            log.error("addPost : Topic non trouvé.");
-            return ErrorManagement.responseError( new CustomException(ErrorCode.DATA_NOT_FOUND) );
-
-        }
-
-    }
+    
 }

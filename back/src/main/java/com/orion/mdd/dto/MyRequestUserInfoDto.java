@@ -9,25 +9,41 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Class MyRequestUserInfoDto used to create or update users in the app
+ * 
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInfoDto {
+public class MyRequestUserInfoDto {
 
+    /**
+     * id of the user to update (==0 in case of creation)
+     */
     private Long id;
 
+    /**
+     * name  of the user
+     */
     @NotBlank(message="Le nom d'utilisateur ne doit pas être vide.")
     @Size(max = 20, min = 2, message="La taille du nom d'utilisateur doit être comprise entre 2 et 20 caractères.")
     private String username;
 
+    /**
+     * email of the user string like abcde@fghi is enough to valid the email format (no .com or .xxx needed)
+     */
     @NotBlank(message="L'email ne doit pas être vide.")
     @Email(message= "L'email doit être corectement formatté.")
     @Size(max = 50, min = 6, message="La taille de l'email doit être comprise entre 6 et 50 caractères.")
     private String email;
 
+    /**
+     * password of the user. 
+     */
     @NotBlank(message = "Le mot de passe ne doit pas être vide.")
-    @Password(message="Le mot de passe doit contenir au moins 1 chiffre, 1 majuscule, 1 minuscule, 1 caractère spécial. et faire 8 caractères mini.")
     @Size(max = 50, min = 8, message="La taille du mot de passe doit être comprise entre 8 et 50 caractères.")
+    @Password(message="Le mot de passe doit contenir au moins 1 chiffre, 1 majuscule, 1 minuscule, 1 caractère spécial. et faire 8 caractères mini.")
     private String pwd;
 
     //too hard to maintain and the minus character can't be in

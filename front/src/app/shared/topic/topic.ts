@@ -5,12 +5,13 @@ import { GENERIC_LABELS, ME_LABELS, TOPIC_LABELS } from '../labels';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { TopicService } from '../../core/services/topic.service';
 import { UserInfoService } from '../../core/services/user-info.service';
-import { UserStore } from '../../core/services/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Topic } from '../../core/models/topic.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SessionInfo } from '../../core/models/session-info.interface';
 import { SessionService } from '../../core/services/session.service';
+import { ServerResponse } from '../../core/models/server-response.interface';
+import { BackEndTopicArray } from '../../core/models/back-end-topic-array.interface';
 
 @Component({
   selector: 'app-topic-module',
@@ -49,11 +50,20 @@ export class TopicModule {
     this.myLog.info("idUser=" + this.idUser + " username=" + this.sessionService.sessionInformation?.username);
 
     if (this.idUser>0){
-      this.topicService.all(this.idUser).subscribe({
-        next: (topics: Topic[]) => {
-              this.topicSubject.next(topics);
-              this.myLog.info(this.logPrefix + "all topics found" );
-              this.onError = false;
+      this.topicService.all().subscribe({
+        next: (response: ServerResponse) => {
+              this.myLog.info(this.logPrefix + "  searching all topics in response" );
+
+              try{
+
+                let beTopic = response.data as BackEndTopicArray;
+                this.topicSubject.next(beTopic.topics);
+                this.onError = false;
+
+              } catch(e: any) {
+                this.myLog.error(this.logPrefix + "  all topics in error");
+              }
+              this.myLog.info(this.logPrefix + "  all topics found" );
             },
         error: (error: HttpErrorResponse) => {
             this.myLog.info(this.logPrefix + " get all topics error : " + error.status.toString() + " " + error.statusText);
@@ -65,7 +75,7 @@ export class TopicModule {
             
         });
       } else {
-        this.matSnackBar.open(this.labelsTopic.topicMsgCnxKo, 'Close', { duration: 3000 });
+        this.matSnackBar.open(this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 });
       }
 
     }
@@ -75,20 +85,24 @@ export class TopicModule {
     this.myLog.info("Topic subscription : idUser=" + this.idUser + "," + idTopic);
     if (!read){
       //subscribe the topic...
-      this.userInfoService.postsubscription(this.idUser, idTopic).subscribe({
-      next: (_: any) => {
-          //success
-          //change the read value of the topiId in the observable topicSubject :
-          this.topicSubject.next(
-            this.topicSubject.getValue().map(topic =>
-              topic.id === idTopic ? { ...topic, read: true } : topic
-            )
-          );
+      this.userInfoService.postsubscription(idTopic).subscribe({
+      next: (response: ServerResponse) => {//success
+          
+          try{
+              //change the read value of the topiId in the observable topicSubject :
+              this.topicSubject.next(
+                this.topicSubject.getValue().map(topic =>
+                  topic.id === idTopic ? { ...topic, read: true } : topic
+                )
+              );
+              this.matSnackBar.open(this.labelsTopic.topicMsgSouscriptionOk, 'Close', { duration: 3000 });
+            } catch (e: any) {
+              this.myLog.error(this.logPrefix + "  subscription in error...");
+            }
         
-          this.matSnackBar.open(this.labelsTopic.topicMsgSouscriptionOk, 'Close', { duration: 3000 });
         },
-      error:(err) => {
-        this.myLog.error( `Error when subscription : ${err.status} - ${err.message}` );
+      error:(error: HttpErrorResponse) => {
+        this.myLog.error( this.logPrefix +  `Error when subscription : ${error.status} - ${error.message}` );
         this.matSnackBar.open(
           this.labelsTopic.topicMsgSouscriptionKo, 'Close', { duration: 5000 }
         );
@@ -108,23 +122,27 @@ export class TopicModule {
 
     if (read){
       //unsubscribe the topic...
-      this.userInfoService.postunsubscription(this.idUser, idTopic).subscribe({
-      next: (_: any) => {
-          //success
-          //change the read value of the topiId in the observable topicSubject :
-          this.topicSubject.next(
-            this.topicSubject.getValue().map(topic =>
-              topic.id === idTopic ? { ...topic, read: false } : topic
-            )
-          );
-        
-          this.matSnackBar.open( this.labelsMe.meUnsubcriptionSuccess , 'Close', { duration: 3000 });
+      this.userInfoService.postunsubscription(idTopic).subscribe({
+      next: (response: ServerResponse) => {//success
+
+          try{ 
+              //change the read value of the topiId in the observable topicSubject :
+              this.topicSubject.next(
+                this.topicSubject.getValue().map(topic =>
+                  topic.id === idTopic ? { ...topic, read: false } : topic
+                )
+              );
+              this.matSnackBar.open( this.labelsMe.meUnsubcriptionSuccess , 'Close', { duration: 3000 });
+            } catch (e: any) {
+              this.myLog.error(this.logPrefix + "  subscription in error...");
+            }
+          
         },
-      error:(err) => {
-        this.myLog.error( `Error when unsubscription : ${err.status} - ${err.message}` );
-        this.matSnackBar.open(
-          this.labelsMe.meUnsubcriptionError, 'Close', { duration: 5000 }
-        );
+      error:(error: HttpErrorResponse) => {
+          this.myLog.error( `Error when unsubscription : ${error.status} - ${error.message}` );
+          this.matSnackBar.open(
+            this.labelsMe.meUnsubcriptionError, 'Close', { duration: 5000 }
+          );
       }
     });
     } else {

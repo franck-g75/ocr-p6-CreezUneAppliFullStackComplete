@@ -7,12 +7,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MyLoggingService } from '../../core/services/logging.services';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
-import { UserStore } from '../../core/services/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserInfo } from '../../core/models/user-info.interface';
 import { Router } from '@angular/router';
 import { HttpErrorResponse, HttpResponse, HttpStatusCode } from '@angular/common/http';
-import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
 import { AuthService } from '../../core/services/auth.service';
 import { UserInfoService } from '../../core/services/user-info.service';
 import { ServerResponse } from '../../core/models/server-response.interface';
@@ -66,7 +64,6 @@ export class SignupForm implements OnInit{
     private authService: AuthService,
     private userInfoService: UserInfoService,
     private formBuilder: FormBuilder,
-    private userStore: UserStore,
     private matSnackBar: MatSnackBar,
     private router: Router,
     private sessionService: SessionService){
@@ -157,7 +154,7 @@ export class SignupForm implements OnInit{
     const userInfo = this.mySignUpForm?.value as UserInfo;
 
     if (this.mySignUpForm.valid){
-      if (!this.onUpdate) {
+      if (!this.onUpdate) { //create form
         this.myLog.info(`saving userInfo ${userInfo.username} in progress...`);
         this.authService.create(userInfo).subscribe({
           next: (resp: ServerResponse) => {
@@ -173,18 +170,19 @@ export class SignupForm implements OnInit{
           
           }
         });
-      } else {
+      } else { //me form (udating the user)
         this.myLog.info(`updating userInfo ${userInfo.username} in progress...`);
         this.userInfoService.update(userInfo).subscribe({
           next: (user: ServerResponse) => {
 
+            this.sessionService.logOut(); //
             this.exitPage(this.labels_me.meUserUpdated);
 
           },
           error: (error: HttpErrorResponse) => {
 
             this.myLog.info('User not updated !  : ' + error.status + ' ' + error.message );
-            this.serverError(error.error);
+            this.serverError(error);
 
           }
         });
@@ -279,7 +277,7 @@ export class SignupForm implements OnInit{
     this.serverPwdErrorMessage = "";
     this.serverUsernameErrorMessage = "";
     this.serverErrorMessage = "";
-    if (error.error!==null){
+    if (error.error!==null && error.error!==undefined){
         const backEndResponseData = error.error.data as BackEndValidationErrors;
         if (backEndResponseData!==null && backEndResponseData!==undefined){
           
@@ -297,13 +295,13 @@ export class SignupForm implements OnInit{
                 this.serverUsernameErrorMessage = backEndResponseData.username;
               }
             
-        } else {
+        } else { //error.error.data is null
 
           this.myLog.error(`Backend returned ${error.status}  ${error.statusText}  ${error.message} ${error.error.code}  ${error.error.message}`);
           this.serverErrorMessage =  error.error.message;// status + " " + error.statusText + "  " + error.error.code;// + "  " + error.error.message ;
 
         }
-    } else {
+    } else { //error.error is null
 
       this.myLog.error(`Backend returned ${error.status}  ${error.statusText}  ${error.message} `);
       this.serverErrorMessage =  error.status + " " + error.statusText + "  " + ((error.status===500) ? this.labels_generic.TryAgainLater : "") ;
@@ -311,76 +309,6 @@ export class SignupForm implements OnInit{
     }
 
   }
-
-/*
-  public  serverError(error : HttpErrorResponse): void{
-    const backEndResponseBody = error.error as BackEndErrorResponseBody;
-    if (backEndResponseBody!==null && backEndResponseBody!==undefined){
-      this.serverEmailErrorMessage = "";
-      this.serverPwdErrorMessage = "";
-      this.serverUsernameErrorMessage = "";
-      this.serverErrorMessage = "";
-        if (backEndResponseBody.validationErrors!==null && backEndResponseBody.validationErrors !==undefined ) {
-          this.myLog.error(`Backend returned code ${error.status}, message:`, error.message);
-          if (backEndResponseBody.validationErrors.email!==undefined) {
-            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.email}`);
-            this.serverEmailErrorMessage = backEndResponseBody.validationErrors.email;        
-          }
-          if (backEndResponseBody.validationErrors.pwd!==undefined) {
-            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.pwd}`);
-            this.serverPwdErrorMessage = backEndResponseBody.validationErrors.pwd;        
-          }
-          if (backEndResponseBody.validationErrors.username!==undefined) {
-            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.username}`);
-            this.serverUsernameErrorMessage = backEndResponseBody.validationErrors.username;
-          }
-        } else { //validationErrrors==nuul 
-          this.myLog.error(`Backend returned ${backEndResponseBody.errorMessage}`);
-          this.serverErrorMessage = this.labels_sign.ServerResponds + backEndResponseBody.errorMessage;
-        }
-    } else {
-      this.myLog.error(`Backend returned  ${error.status}  ${error.message} `);
-      this.serverErrorMessage = this.labels_sign.ServerResponds + error.status + "  " + error.message;
-    }
-  }
-
-
-
-public  serverError(error : HttpErrorResponse): void{
-    const backEndResponseBody = error.error as BackEndErrorResponseBody;
-    if (backEndResponseBody!==null && backEndResponseBody!==undefined){
-      this.serverEmailErrorMessage = "";
-      this.serverPwdErrorMessage = "";
-      this.serverUsernameErrorMessage = "";
-      this.serverErrorMessage = "";
-      if (error.status === 0) {
-        console.error('Network error:', error.error);
-      } else {
-        if (backEndResponseBody.validationErrors!==null && backEndResponseBody.validationErrors !==undefined ) {
-          this.myLog.error(`Backend returned code ${error.status}, body:`, error.error);
-          if (backEndResponseBody.validationErrors.email!==undefined) {
-            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.email}`);
-            this.serverEmailErrorMessage = backEndResponseBody.validationErrors.email;        
-          }
-          if (backEndResponseBody.validationErrors.pwd!==undefined) {
-            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.pwd}`);
-            this.serverPwdErrorMessage = backEndResponseBody.validationErrors.pwd;        
-          }
-          if (backEndResponseBody.validationErrors.username!==undefined) {
-            this.myLog.error(`Backend returned ${backEndResponseBody.validationErrors.username}`);
-            this.serverUsernameErrorMessage = backEndResponseBody.validationErrors.username;
-          }
-        } else { //validationErrrors==nuul 
-          this.myLog.error(`Backend returned ${backEndResponseBody.errorMessage}`);
-          this.serverErrorMessage = this.labels_sign.ServerResponds + backEndResponseBody.errorMessage;
-        }
-      }
-    } else {
-      this.myLog.error(`Backend returned  ${error.status}  ${error.statusText}  ${error.message}`);
-      this.serverErrorMessage = this.labels_sign.ServerResponds + error.status + "  " +  error.statusText + " " + error.message;
-    }
-  }
-*/
 
 
 }

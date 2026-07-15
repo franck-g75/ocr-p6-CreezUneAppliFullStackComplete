@@ -76,10 +76,13 @@ export class LoginForm implements OnInit{
 
     this.authService.login(lr).subscribe({
       next: (response: ServerResponse) => {
+        //serverResponse.message
+        //serverResponse.code
+        //serverResponse.data (can be null)
         const backEndResponseData = response.data as SessionInfo;
         this.myLog.info(this.logPrefix + " User trouvé : " + backEndResponseData.id + " " + backEndResponseData.email + " " + backEndResponseData.username + " " + backEndResponseData.token );
         
-        localStorage.setItem('token', backEndResponseData.token);
+        localStorage.setItem('token', backEndResponseData.token);// store the token in browser
         this.sessionService.logIn(backEndResponseData);
         this.router.navigate(['article']);
       },
@@ -91,17 +94,26 @@ export class LoginForm implements OnInit{
     })
 
   }
-
   
   public showServerErrorMessage(){
     return this.serverErrorMessage!==null ? this.serverErrorMessage : '';
   }
 
-
-
-
   public serverError(error : HttpErrorResponse): void {
       
+      /*
+      
+      HttpErrorResponse structure : 
+      error.message
+      error.status
+      error.statusText
+      error.error.message
+      error.error.code
+      error.error.data
+      error.error & error.error.data can be null
+
+      */
+
       this.serverErrorMessage = "";
       
       if (error.error!==null){

@@ -11,26 +11,31 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.orion.mdd.dto.MyResponseDto;
+
+import lombok.extern.log4j.Log4j2;
+
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@Log4j2
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<MyErrorResponse> handleCustomException(CustomException ex, WebRequest request) {
+    public ResponseEntity<MyResponseDto> handleCustomException(CustomException ex, WebRequest request) {
 
         ErrorCode errorCode = ex.getErrorCode();
-        MyErrorResponse errorResponse = new MyErrorResponse(errorCode.getCode(), errorCode.getMessage());
+        MyResponseDto errorResponse = new MyResponseDto(errorCode.getCode(), errorCode.getMessage(), null);
 
         return new ResponseEntity<>(errorResponse, errorCode.getHttpStatus());
 
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<MyErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
+    public ResponseEntity<MyResponseDto> handleGlobalException(Exception ex, WebRequest request) {
 
-        MyErrorResponse errorResponse = new MyErrorResponse(ErrorCode.SERVER_ERROR.getCode(), ErrorCode.SERVER_ERROR.getMessage());
+        MyResponseDto errorResponse = new MyResponseDto(ErrorCode.SERVER_ERROR.getCode(), ErrorCode.SERVER_ERROR.getMessage(), null);
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -42,7 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                     @NonNull HttpStatusCode status, 
                                                                     @NonNull WebRequest request) {
         
-        Map<String, String> errors = new HashMap<>();
+        Map<String, Object> errors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(error -> 
 
@@ -50,9 +55,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         
         );
 
-        MyErrorResponse errorResponse = new MyErrorResponse(ErrorCode.INVALID_INPUT.getCode(), ErrorCode.INVALID_INPUT.getMessage());
-        errorResponse.setData(errors);
+        MyResponseDto errorResponse = new MyResponseDto(ErrorCode.INVALID_INPUT.getCode(), ErrorCode.INVALID_INPUT.getMessage(), errors);
 
+        log.error("MethodArgumentNotValid");
         return new ResponseEntity<Object>(errorResponse, ErrorCode.INVALID_INPUT.getHttpStatus());
 
     }

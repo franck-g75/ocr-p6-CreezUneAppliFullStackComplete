@@ -4,6 +4,7 @@ import { MyLoggingService } from "./logging.services";
 import { Post } from "../models/post.interface";
 import { Observable } from "rxjs/internal/Observable";
 import { Comment } from "../models/comment.interface";
+import { ServerResponse } from "../models/server-response.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -16,29 +17,29 @@ export class PostService {
         private myLog: MyLoggingService,
     ) { }
 
-    public all(userid: number): Observable<Post[]> {
-      this.myLog.info("PostService path = " + this.pathService + "/user/" + userid);
-      return this.httpClient.get<Post[]>(this.pathService + "/user/" + userid);
+    public all(): Observable<ServerResponse> {
+      this.myLog.info("PostService path = " + this.pathService + "/user" );
+      return this.httpClient.get<ServerResponse>(this.pathService + "/user");
     }
 
     public addPost(post: Post){
       this.myLog.info("PostService path = " + this.pathService );
-      return this.httpClient.post<Post>(this.pathService, post);
+      return this.httpClient.post<ServerResponse>(this.pathService, post);
     } 
   
-    public getPost(postid: number): Observable<Post> {
+    public getPost(postid: number): Observable<ServerResponse> {
       this.myLog.info("PostService path = " + this.pathService + "/" + postid);
-      return this.httpClient.get<Post>(this.pathService + "/" + postid);
+      return this.httpClient.get<ServerResponse>(this.pathService + "/" + postid);
     }
 
-    public getComments(postid: number): Observable<Comment[]> {
+    public getComments(postid: number): Observable<ServerResponse> {
       this.myLog.info("PostService path = " + this.pathService + '/' + postid + "/comments" );
-      return this.httpClient.get<Comment[]>(this.pathService + '/' + postid + "/comments" );
+      return this.httpClient.get<ServerResponse>(this.pathService + '/' + postid + "/comments" );
     }
 
     public addComment(postid: number, comment: Comment){
       this.myLog.info("PostService path = " + this.pathService + '/' + postid + "/comment" );
-      return this.httpClient.post<Post>(this.pathService + '/' + postid + '/comment' , comment);
+      return this.httpClient.post<ServerResponse>(this.pathService + '/' + postid + '/comment' , comment);
     } 
   
 }

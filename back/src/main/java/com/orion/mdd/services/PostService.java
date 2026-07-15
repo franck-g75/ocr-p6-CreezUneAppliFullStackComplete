@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.orion.mdd.dto.CommentDto;
@@ -41,7 +42,7 @@ public class PostService {
         this.userInfoRepository = userInfoRepository;
     }
 
-    public Set<PostDto> findPostsByUserInfo(Long id) throws CustomException{
+    public Set<PostDto> findPostsByUserInfo(@NonNull Long id) throws CustomException{
 
         Optional<UserInfo> user = this.userInfoService.findById(id);
 
@@ -53,7 +54,7 @@ public class PostService {
         
     }
 
-    public PostDto findPostById(Long id) throws CustomException{
+    public PostDto findPostById(@NonNull Long id) throws CustomException{
 
         Optional<Post> post = this.postRepository.findById(id);
 
@@ -75,7 +76,7 @@ public class PostService {
         
     }
 
-    public List<CommentDto> findCommentsByPostId(Long id) throws CustomException{
+    public List<CommentDto> findCommentsByPostId(@NonNull Long id) throws CustomException{
 
         Optional<Post> post = this.postRepository.findById(id);
 
@@ -103,7 +104,7 @@ public class PostService {
 
 
     
-    public void addComment(Long idPost, CommentDto commentDto) throws CustomException {
+    public void addComment(@NonNull Long idPost, CommentDto commentDto) throws CustomException {
 
         Optional<UserInfo> user = this.userInfoRepository.findByUsername(commentDto.getUsername());
         Optional<Post> post = this.postRepository.findById(idPost);

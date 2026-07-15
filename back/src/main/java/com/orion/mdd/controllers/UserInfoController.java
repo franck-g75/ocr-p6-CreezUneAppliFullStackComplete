@@ -2,7 +2,7 @@ package com.orion.mdd.controllers;
 
 import com.orion.mdd.dto.MyResponseDto;
 import com.orion.mdd.dto.ResponseCode;
-import com.orion.mdd.dto.UserInfoDto;
+import com.orion.mdd.dto.MyRequestUserInfoDto;
 import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.exception.ErrorManagement;
@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -33,9 +34,7 @@ public class UserInfoController {
         this.userInfoService = userInfoService;
     }
 
-    
-
-     /**
+    /**
      * update a user
      * @param userInfoDto
      * @return a 200 ok response if ok or notFoundException if user not found or a badRequest response if exception found
@@ -43,27 +42,41 @@ public class UserInfoController {
      * @throws badRequest response if exception found
      */
     @PutMapping()
-    public ResponseEntity<?> update(@Valid @RequestBody UserInfoDto userInfoDto){
-        log.info("updating user  {} ...", userInfoDto.getId() + "  :  " + userInfoDto.getUsername());
+    public ResponseEntity<MyResponseDto> update(@Valid @RequestBody MyRequestUserInfoDto userInfoDto){
+
+        log.info("entering update user  {} :", userInfoDto.getId() + "  :  " + userInfoDto.getUsername() + " userToken=" + SecurityContextHolder.getContext().getAuthentication().getName());
+        
         try{
-                  
-          Optional<UserInfo> user = userInfoService.findById(userInfoDto.getId());
+          
+          Optional<UserInfo> userRequest = userInfoService.findById(userInfoDto.getId());
+          Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
 
-          if (user.isPresent()){
-            this.userInfoService.update( user.get(), userInfoDto );
+          if (userToken.isPresent() && userRequest.isPresent()){
 
-            Map<String, String> infos = new HashMap<>();
-            infos.put("email",user.get().getEmail());
-            infos.put("username",user.get().getUsername());
-            
-            MyResponseDto response = new MyResponseDto(
-              ResponseCode.USER_UPDATE_SUCCESS.getCode(),
-              ResponseCode.USER_UPDATE_SUCCESS.getMessage(),
-              infos);
+            log.info("userToken.id=" +userToken.get().getId() + " userToken.userName=" + userToken.get().getUsername() + " userRequest.id=" + userRequest.get().getId() + " userRequest.username=" + userRequest.get().getUsername());
 
-            return ResponseEntity.ok().body(response);
+            //if (userToken.get().getUsername().equals(userRequest.get().getUsername())) {
+
+                this.userInfoService.update( userToken.get(), userInfoDto );
+
+                Map<String, Object> infos = new HashMap<>();
+                infos.put("email",userRequest.get().getEmail());
+                infos.put("username",userRequest.get().getUsername());
+                
+                MyResponseDto response = new MyResponseDto(
+                  ResponseCode.USER_UPDATE_SUCCESS.getCode(),
+                  ResponseCode.USER_UPDATE_SUCCESS.getMessage(),
+                  infos);
+
+                return ResponseEntity.ok().body(response);
+
+            //} else {
+            //  log.error("user {} , {} not equals. userToken try to modify userRequest : it is forbiden", userToken.get().getUsername(), userRequest.get().getUsername());
+            //  return ErrorManagement.responseError(new CustomException(ErrorCode.NOT_AUTHORIZED));
+            //}
+           
           } else {
-            log.error("user {} not found in db.", userInfoDto.getId());
+            log.error("userToken or user Request or both are not found in db.");
             return ErrorManagement.responseError(new CustomException(ErrorCode.DATA_NOT_FOUND));
           }
 
@@ -75,54 +88,56 @@ public class UserInfoController {
         }
     }
 
-    @PostMapping("/subscribe/idUser/{idUser}/idTopic/{idTopic}")
-    public ResponseEntity<?> addSubscription(@PathVariable("idTopic") Long idTopic, @PathVariable("idUser") Long idUser) {
-        log.info("addSubscription " + idUser + " - " + idTopic + "...");
+    @PostMapping("/subscribe/topic/{idTopic}")
+    public ResponseEntity<MyResponseDto> addSubscription(@PathVariable("idTopic") Long idTopic) {
+        log.info("addSubscription - " + idTopic + " ...");
         try{
 
-          this.userInfoService.addTopic(idUser,idTopic);
-          return ResponseEntity.ok().build();
+          Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
 
-        } catch (Exception e){
+          if (userToken.isPresent()){
+            this.userInfoService.addTopic(userToken.get().getId(),idTopic);
+            MyResponseDto response = new MyResponseDto();
+            response.setCode(ResponseCode.OPERATION_SUCCESS.getCode());
+            response.setMessage(ResponseCode.OPERATION_SUCCESS.getMessage());
+            return ResponseEntity.ok().body(response);
+          } else {
+            return ErrorManagement.responseError(new CustomException(ErrorCode.DATA_NOT_FOUND));
+          }
 
-          log.info("/subscribe/idUser/{}/idTopic/{} exception \n ",idUser,idTopic  + e.toString());
+        } catch (Exception e) {
+
+          log.info("/subscribe/topic/{} exception \n ",idTopic  + e.toString());
           return ErrorManagement.responseError(e);
-
 
         }
     }
 
-    @PostMapping("/unsubscribe/idUser/{idUser}/idTopic/{idTopic}")
-    public ResponseEntity<?> delSubscription(@PathVariable("idTopic") Long idTopic, @PathVariable("idUser") Long idUser) {
-        log.info("delSubscription " + idUser + " - " + idTopic + "...");
+    @PostMapping("/unsubscribe/topic/{idTopic}")
+    public ResponseEntity<MyResponseDto> delSubscription(@PathVariable("idTopic") Long idTopic) {
+        log.info("delSubscription - " + idTopic + " ...");
         try{
 
-          this.userInfoService.delTopic(idUser,idTopic);
-          return ResponseEntity.ok().build();
+          Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
+          
+          if (userToken.isPresent()){
+            this.userInfoService.delTopic(userToken.get().getId(),idTopic);
+            MyResponseDto response = new MyResponseDto();
+            response.setCode(ResponseCode.OPERATION_SUCCESS.getCode());
+            response.setMessage(ResponseCode.OPERATION_SUCCESS.getMessage());
+            return ResponseEntity.ok().body(response);
+          } else {
+            return ErrorManagement.responseError(new CustomException(ErrorCode.DATA_NOT_FOUND));
+          }
 
         } catch (Exception e){
 
-          log.error("/unsubscribe/idUser/{}/idTopic/{} exception \n ",idUser,idTopic  + e.toString());
+          log.error("/unsubscribe/topic/{} exception \n ",idTopic  + e.toString());
           return ErrorManagement.responseError(e);
 
-
         }
-    }
-
-    private UserInfoDto userToDto(UserInfo user) throws CustomException {
-      UserInfoDto usrReturn = new UserInfoDto();
-
-      if (user==null){
-        log.error("userToDto(null) user==null");
-        throw new CustomException(ErrorCode.DATA_NOT_FOUND);
-      } else {
-        usrReturn.setId(user.getId());
-        usrReturn.setEmail(user.getEmail());
-        usrReturn.setUsername(user.getUsername());
-        usrReturn.setPwd(user.getPwd());
-      }
-      
-      return usrReturn;
     }
 
 }
+
+

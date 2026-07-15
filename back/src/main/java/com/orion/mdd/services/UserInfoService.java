@@ -3,10 +3,11 @@ package com.orion.mdd.services;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.orion.mdd.dto.UserInfoDto;
+import com.orion.mdd.dto.MyRequestUserInfoDto;
 import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.models.Topic;
@@ -19,11 +20,9 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class UserInfoService {
 
-
     private final PasswordEncoder passwordEncoder;
     private final TopicService topicService;
     private final UserInfoRepository userInfoRepository;
-    
 
     public UserInfoService(
             UserInfoRepository userInfoRepository, 
@@ -35,48 +34,47 @@ public class UserInfoService {
         this.passwordEncoder = passwordEncoder; 
     }
 
-    public Optional<UserInfo> findByEmail(String email) throws CustomException {
+    /**
+     * find a user by email (String)
+     * @param email to search
+     * @return an Optionnal<UserInfo>
+     */
+    public Optional<UserInfo> findByEmail(String email)  {
         log.info("findByEmail({})...",email);
         return userInfoRepository.findByEmail(email);
-        /*
-        if (user.isEmpty()){
-            log.error("findByEmail({}) ==> user not found", email);
-            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
-        } else {
-            return user.get();
-        }
-        */
     }
     
-    public Optional<UserInfo> findByUsername(String username) throws CustomException{
+    /**
+     * find a user by username (String)
+     * @param username to search
+     * @return an Optionnal<UserInfo>
+     */
+    public Optional<UserInfo> findByUsername(String username) {
         log.info("findByUsername({})...",username);
         return userInfoRepository.findByUsername(username);
-        /*
-        if (user.isEmpty()){
-            log.error("findByUsername({}) ==> user not found",username);
-            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
-        } else {
-            return user.get();
-        }
-        */
     }
 
-    public Optional<UserInfo> findById(Long id){
+    /**
+     * find a user by id (Long)
+     * @param id to search
+     * @return an Optionnal<UserInfo>
+     */
+    public Optional<UserInfo> findById(@NonNull Long id){
 
         log.info("findById({})...",id);
         Optional<UserInfo> user = userInfoRepository.findById(id);
         if (user.isEmpty()){
             log.error("findById({}) ==> user not found",id);
-        } 
+        }
         return user;
         
     }
 
     /**
-     * 
-     * @param user
-     * @return
-     * @throws CustomException
+     * create user if email AND username not found in DB
+     * @param user the user to create in DB
+     * @return a UserInfo if ok
+     * @throws CustomException if email or username found in DB
      */
     public UserInfo create(UserInfo user) throws CustomException {
 
@@ -99,42 +97,56 @@ public class UserInfoService {
     }
 
     /**
-     * 
-     * @param userFoundById user found by the id
+     * update user function
+     * @param userToChange user found by the id
      * @param userDto data given in the request
      * @return the User modified
      * @throws CustomException
      */
-    public UserInfo update(UserInfo userFoundById, UserInfoDto userDto) throws CustomException {
+    public UserInfo update(UserInfo userToChange, MyRequestUserInfoDto userDto) throws CustomException {
 
         Optional<UserInfo> userByUsername = userInfoRepository.findByUsername(userDto.getUsername());
         Optional<UserInfo> userByMail = userInfoRepository.findByEmail(userDto.getEmail());
         
-        log.info("Updating user ...  :  userByMail:" + userByMail.isPresent() + "   userByUsername:" + userByUsername.isPresent() + "  userId WS:" + userDto.getId());
+        log.info("Entering update user : userByMail:" + userByMail.isPresent() + "   userByUsername:" + userByUsername.isPresent() + "   userDto:" + userDto.getId());
 
-        if ( userByMail.isPresent() && userByUsername.isPresent() && userDto.getId()!=userByMail.get().getId() && userDto.getId()!=userByUsername.get().getId() && userByMail.get().getId() == userByUsername.get().getId()) { 
-            log.error("Email et username trouvés dans le meme tuple de base.");
-            throw new CustomException(ErrorCode.INVALID_INPUT);
-        } else if ( userByMail.isPresent() && userByUsername.isPresent() && userDto.getId()!=userByMail.get().getId() && userDto.getId()!=userByUsername.get().getId() && userByMail.get().getId() != userByUsername.get().getId()) { 
-            log.error("Email et username trouvés mais pas dans les meme tuples de base.");
-            throw new CustomException(ErrorCode.INVALID_INPUT);
-        } else if (userByMail.isPresent() && userDto.getId()!=userByMail.get().getId()) {          //existing User (same email and not same id)
-            log.error("Email trouvé dans la base et id differents");
-            throw new CustomException(ErrorCode.INVALID_INPUT);
-        } else if (userByUsername.isPresent() && userDto.getId()!=userByUsername.get().getId()) {  //existing user (same username and not same id)
-            log.error("Username trouvé dans la base et id différents.");
-            throw new CustomException(ErrorCode.INVALID_INPUT);
+        if ((userToChange.getId()==userDto.getId()) && (userDto.getId()!=0)){
+            //
+            if ( userByMail.isPresent() && userByUsername.isPresent() && userDto.getId()!=userByMail.get().getId() && userDto.getId()!=userByUsername.get().getId() && userByMail.get().getId() == userByUsername.get().getId()) { 
+                log.error("Email et username trouvés dans le meme tuple de base.");
+                throw new CustomException(ErrorCode.INVALID_INPUT);
+            } else if ( userByMail.isPresent() && userByUsername.isPresent() && userDto.getId()!=userByMail.get().getId() && userDto.getId()!=userByUsername.get().getId() && userByMail.get().getId() != userByUsername.get().getId()) { 
+                log.error("Email et username trouvés mais pas dans les meme tuples de base.");
+                throw new CustomException(ErrorCode.INVALID_INPUT);
+            } else if (userByMail.isPresent() && userDto.getId()!=userByMail.get().getId()) {          //existing User (same email and not same id)
+                log.error("Email trouvé dans la base et id differents");
+                throw new CustomException(ErrorCode.INVALID_INPUT);
+            } else if (userByUsername.isPresent() && userDto.getId()!=userByUsername.get().getId()) {  //existing user (same username and not same id)
+                log.error("Username trouvé dans la base et id différents.");
+                throw new CustomException(ErrorCode.INVALID_INPUT);
+            } else {
+                log.info("Updating user...");
+                userToChange.setEmail(userDto.getEmail());
+                userToChange.setUsername(userDto.getUsername());
+                userToChange.setPwd(passwordEncoder.encode(userDto.getPwd()));
+                return userInfoRepository.save(userToChange);
+            }
+
         } else {
-            log.info("Updating user...");
-            userFoundById.setEmail(userDto.getEmail());
-            userFoundById.setUsername(userDto.getUsername());
-            userFoundById.setPwd(passwordEncoder.encode(userDto.getPwd()));
-            return userInfoRepository.save(userFoundById);
+            log.error("Les identifiants sont differents.");
+            throw new CustomException(ErrorCode.NOT_AUTHORIZED);
         }
         
     }
 
-    public void addTopic(Long idUser, long idTopic){
+    /**
+     * addTopic add a topic-user relationship if user and topic found in db
+     * If relationship exist in DB, nothing is done except log.
+     * @param idUser user id to add
+     * @param idTopic topic id to add
+     * @throws CustomException if user or topic not found
+     */
+    public void addTopic(@NonNull Long idUser, long idTopic) throws CustomException {
 
         log.info("adding topic {} to the user {} in USER_TOPIC table", idTopic, idUser);
 
@@ -166,7 +178,13 @@ public class UserInfoService {
         
     }
 
-    public void delTopic(Long idUser, Long idTopic) {
+    /**
+     * delete a topic-user relationship if topic and user found in db
+     * @param idUser the id of the user
+     * @param idTopic the id of the topic
+     * throws CustomException if topic or user not found
+     */
+    public void delTopic(@NonNull Long idUser, @NonNull Long idTopic) throws CustomException {
 
         log.info("delete topic {} to the user {} in USER_TOPIC table", idTopic, idUser);
 

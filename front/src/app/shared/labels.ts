@@ -2,7 +2,8 @@ export const GENERIC_LABELS = {
     error: "/!\\  Une erreur est survenue : ",
     clientError: "Erreur(s) trouvée(s) lors de la validation du formulaire : veuillez corrigez le formulaire... ",
     ok: "ok",
-    TryAgainLater: "Veuillez réessayer plus tard..."
+    TryAgainLater: "Veuillez réessayer plus tard...",
+    msgCnxKo: "Connectez vous !"
 };
 export const LANDING_LABELS = {
     landingSeConnecter: "Se connecter",
@@ -24,8 +25,8 @@ export const TOPIC_LABELS = {
     topicSabonner: "S'abonner",
     topicDejaAbonne: "Déjà abonné",
     topicMsgSouscriptionOk: "Souscription enregistrée !",
-    topicMsgSouscriptionKo: "Erreur lors de la souscription : veuillez contacter l'administrateur",
-    topicMsgCnxKo: "Connectez vous !"
+    topicMsgSouscriptionKo: "Erreur lors de la souscription : veuillez contacter l'administrateur"
+    
 };
 export const ME_LABELS = {
     meTitle: "Profil utilisateur",

@@ -18,6 +18,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
 import { SessionService } from '../../core/services/session.service';
+import { ServerResponse } from '../../core/models/server-response.interface';
+import { BackEndTopicArray } from '../../core/models/back-end-topic-array.interface';
 
 @Component({
   selector: 'app-article-add',
@@ -59,18 +61,36 @@ export class ArticleAdd {
     this.myLog.debug("article-home.ngOnInit");
     this.userName = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.username : '';
 
-    //to add the topics in topic list items
-    this.topicService.allTopics().subscribe({
-      next: (topics: Topic[]) => {
-        this.topicSubject.next(topics);
-        this.selected = topics[0].id;
-        this.myLog.info('loading of topic list done.'); 
-      },
-      error: (error: HttpErrorResponse) => {
-        this.myLog.info('srv error found ... ' + error); 
-        this.matSnackBar.open(this.labels_generic.error + " " + error.status + " " + error.statusText, 'Close', { duration: 10000 });
-      }
-    });
+    if (this.userName!=null && this.userName!=''){
+
+      //to add the topics in topic list items
+      this.topicService.allTopics().subscribe({
+        next: (response: ServerResponse) => {
+
+          try{
+            let beTopic = response.data as BackEndTopicArray;
+
+            this.topicSubject.next(beTopic.topics);
+            this.selected = beTopic.topics[0].id;
+            this.myLog.info('loading of topic list done.');
+
+          } catch(e: any) {
+            this.myLog.error(this.logPrefix + "  all topics in error");
+          }
+
+        },
+        error: (error: HttpErrorResponse) => {
+          this.myLog.info('srv error found ... ' + error); 
+          this.matSnackBar.open(this.labels_generic.error + " " + error.status + " " + error.statusText, 'Close', { duration: 3000 });
+        }
+      });
+
+    } else {
+
+      this.matSnackBar.open(this.labels_generic.error, 'Close', { duration: 3000 });
+      this.router.navigate(['landing']);
+
+    }
 
     this.initForm();
 
@@ -110,9 +130,9 @@ export class ArticleAdd {
                         created_at: new Date()};
 
       this.postService.addPost(post).subscribe({
-        next: (response: Post) => {
+        next: (response: ServerResponse) => {
           this.myLog.info(this.logPrefix + " add Réalisé " );
-          this.matSnackBar.open("ADD OK", 'Close', { duration: 3000 });
+          this.matSnackBar.open(response.code, 'Close', { duration: 3000 });
           this.router.navigate(['article']);
         },
         error : (error: HttpErrorResponse) => {

@@ -2,7 +2,8 @@
     @if(myOrigin!="me"){
         <div class="row gx-1">
         @for(topic of (topic$ | async); track topic.id){
-            <div class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2 display_cell" > <!-- class="display_cell" class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2 display_cell"-->
+            <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6" > <!-- class="display_cell" class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2 display_cell"-->
+                <div class="display_cell">
                 <h2>{{topic.title | uppercase}}</h2>
                 <p>{{topic.content | lowercase}}</p>
                 <p>
@@ -15,6 +16,7 @@
                         {{topic.read ? labelsTopic.topicDejaAbonne : labelsTopic.topicSabonner}}
                     </button>
                 </p>
+                </div>
             </div>
         }
         </div>
@@ -22,7 +24,8 @@
         <div class="row gx-1"><!--nothing class="row gx-1"-->
         @for(topic of (topic$ | async); track topic.id){
             @if (topic.read ){
-                <div class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2 display_cell">  <!--class="display_cell" class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2 display_cell"-->
+                <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6">  <!--class="display_cell" class="col-xs-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2 display_cell"-->
+                    <div class="display_cell">
                     <h2>{{topic.title | uppercase}} </h2>
                     <p>{{topic.content | lowercase}}</p>
                     <p>
@@ -34,6 +37,7 @@
                             {{topic.read ? labelsMe.meUnsubcribe : ''}}
                         </button>
                     </p>
+                    </div>
                 </div>
             }
         }

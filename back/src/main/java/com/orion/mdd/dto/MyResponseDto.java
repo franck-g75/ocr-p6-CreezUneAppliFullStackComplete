@@ -15,6 +15,6 @@ public class MyResponseDto {
 
     private String message;
     private String code;
-    private Map<String, String> data;
+    private Map<String, Object> data;
 
 }

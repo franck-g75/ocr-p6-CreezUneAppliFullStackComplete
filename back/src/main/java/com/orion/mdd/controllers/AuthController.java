@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.orion.mdd.dto.LoginDto;
+import com.orion.mdd.dto.MyRequestLoginDto;
 import com.orion.mdd.dto.MyResponseDto;
 import com.orion.mdd.dto.ResponseCode;
-import com.orion.mdd.dto.UserInfoDto;
+import com.orion.mdd.dto.MyRequestUserInfoDto;
 import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.exception.ErrorManagement;
@@ -32,6 +32,11 @@ import com.orion.mdd.services.UserInfoService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * class AuthController
+ * use this class to log in or / and to create an account
+ * this class is under "permit all" access
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -54,8 +59,13 @@ public class AuthController {
         this.jwtUtils = jwtUtils;
     }
 
+    /**
+     * Login function
+     * @param loginDto
+     * @return MyResponseDto with data fill in with id, login, email and token if OK and an HttpErrorResponse INVALID_CREDENTIALS if not ok
+     */
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<MyResponseDto> loginUser(@Valid @RequestBody MyRequestLoginDto loginDto) {
       
         log.info("récupérer le username & l'authentication...");
         try{
@@ -72,7 +82,6 @@ public class AuthController {
                     //email found in DB
                     authentication = authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(user.get().getUsername(), loginDto.getPwd()) );
                 } 
-
             }
 
             if (authentication == null) {
@@ -88,7 +97,7 @@ public class AuthController {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             log.info("retourner la Response...");
 
-            Map<String, String> infos = new HashMap<>();
+            Map<String, Object> infos = new HashMap<>();
             infos.put("id",userDetails.getId().toString());
             infos.put("email",userDetails.getEmail());
             infos.put("username",userDetails.getUsername());
@@ -104,33 +113,15 @@ public class AuthController {
             return ErrorManagement.responseError(new CustomException(ErrorCode.INVALID_CREDENTIALS));
         }
         
-        
-        /*   
-        UserInfo user = null;
-        UserInfoDto usersDto = null;
-
-        user = userInfoService.findByUsername(loginDto.getStr());
-        if (user!=null){
-            usersDto = this.userToDto(user);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(usersDto);
-        */
-
-
-                
-        
-
     }
 
     /**
-     * Create a user
+     * Create user function
      * @param userInfoDto
-     * @return a 200 ok response if ok or a badRequest response if exception found
+     * @return a MyResponseBody 201 USER_CREATION_SUCCESS with email and username or a badRequest response INVALID_INPUT or INVALID_USERNAME or INVALID_EMAIL if exception found
      */
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserInfoDto userInfoDto){
+    public ResponseEntity<MyResponseDto> createUser(@Valid @RequestBody MyRequestUserInfoDto userInfoDto){
         log.info("creating user..." + userInfoDto);
         try{
           UserInfo user = new UserInfo();
@@ -144,7 +135,7 @@ public class AuthController {
 
           this.userInfoService.create(user);
 
-          Map<String, String> infos = new HashMap<>();
+          Map<String, Object> infos = new HashMap<>();
           infos.put("email", user.getEmail());
           infos.put("username", user.getUsername());
         
@@ -158,21 +149,4 @@ public class AuthController {
         }
     }
 
-    /*
-    private UserInfoDto userToDto(UserInfo user) throws CustomException {
-      UserInfoDto usrReturn = new UserInfoDto();
-
-      if (user==null){
-        log.error("userToDto(null) user==null");
-        throw new CustomException(ErrorCode.DATA_NOT_FOUND);
-      } else {
-        usrReturn.setId(user.getId());
-        usrReturn.setEmail(user.getEmail());
-        usrReturn.setUsername(user.getUsername());
-        usrReturn.setPwd(user.getPwd());
-      }
-      
-      return usrReturn;
-    }
-    */
 }
