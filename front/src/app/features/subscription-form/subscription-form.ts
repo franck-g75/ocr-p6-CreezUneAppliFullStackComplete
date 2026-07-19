@@ -13,12 +13,11 @@ import { MatIconButton } from '@angular/material/button';
   standalone: true
 })
 export class SubscriptionForm {
-
   
-
   public back() {
     window.history.back();
   }
+  
 }
 
 

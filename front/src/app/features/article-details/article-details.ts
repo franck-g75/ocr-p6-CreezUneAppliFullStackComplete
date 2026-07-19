@@ -58,10 +58,8 @@ export class ArticleDetails implements OnInit{
 
     this.idArticle = Number(this.route.snapshot.paramMap.get('idArticle'));
     this.myLog.info(this.logPrefix + " idArticle = " + this.idArticle);
-    this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
-    this.myLog.info(this.logPrefix + " idUser = " + this.idUser); 
-
-    if (this.idUser>0){
+    
+    if (localStorage.getItem('token')!=null || localStorage.getItem('token')!=undefined){
       this.postService.getPost(this.idArticle).subscribe({
         next: (response: ServerResponse) => {
           this.myLog.info(this.logPrefix + "  searching post in response" );
@@ -79,12 +77,15 @@ export class ArticleDetails implements OnInit{
         },
         error: (error: HttpErrorResponse) => {
           this.myLog.info(this.logPrefix + " get post error : " + error.status.toString() + " " + error.statusText);
-      
-          this.matSnackBar.open(
-            this.labelsGeneric.error + error.status.toString() + " " + error.statusText, 'Close', { duration: 3000 }
-          );
+          if (error.status==401){
+              this.matSnackBar.open( this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 } );
+              this.router.navigate(["landing"]);
+            } else {
+              this.matSnackBar.open(
+                this.labelsGeneric.error + error.status.toString() + " " + error.statusText, 'Close', { duration: 3000 }
+              );
+            }
         }
-
       });
     
       this.getComments();

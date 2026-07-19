@@ -10,7 +10,6 @@ import { PostService } from '../../core/services/post.service';
 import { Post } from '../../core/models/post.interface';
 import { ShortenPipe } from "../../shared/shorten.pipe";
 import { MyLoggingService } from '../../core/services/logging.services';
-import { SessionService } from '../../core/services/session.service';
 import { BackEndPostArray } from '../../core/models/back-end-post-array.interface';
 import { ServerResponse } from '../../core/models/server-response.interface';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -35,7 +34,6 @@ export class ArticleHome {
 
   public constructor(
     private myLog: MyLoggingService,
-    private sessionService: SessionService,
     private router: Router, 
     private postService: PostService,
     private matSnackBar: MatSnackBar
@@ -44,9 +42,8 @@ export class ArticleHome {
   public ngOnInit(): void { 
       
       this.myLog.debug("article-home.ngOnInit");
-      this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
-
-      if (this.idUser>0){
+      
+      if (localStorage.getItem('token')!=null || localStorage.getItem('token')!=undefined){
         this.postService.all().subscribe({
 
           next: (response: ServerResponse) => {
@@ -65,16 +62,22 @@ export class ArticleHome {
           error: (error: HttpErrorResponse) => {
               this.myLog.info(this.logPrefix + " get all posts error : " + error.status.toString() + " " + error.statusText);
           
-              this.matSnackBar.open(
-                this.labelsGeneric.error + error.status.toString() + " " + error.statusText, 'Close', { duration: 3000 }
-              );
+              if (error.status==401){
+                this.matSnackBar.open( this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 } );
+                this.router.navigate(["landing"]);
+              } else {
+                this.matSnackBar.open(
+                  this.labelsGeneric.error + error.status.toString() + " " + error.statusText, 'Close', { duration: 3000 }
+                );
+              }
+              
             }
             
         });
-    } else {
+      } else {
       
-      this.matSnackBar.open(this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 });
-      this.router.navigate(['landing']);
+        this.matSnackBar.open(this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 });
+        this.router.navigate(['landing']);
 
     }
   }

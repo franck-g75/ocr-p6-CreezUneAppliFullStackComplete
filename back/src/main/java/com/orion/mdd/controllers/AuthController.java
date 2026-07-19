@@ -1,6 +1,8 @@
 package com.orion.mdd.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,12 +11,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.orion.mdd.dto.MyRequestLoginDto;
@@ -25,7 +28,7 @@ import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.exception.ErrorManagement;
 import com.orion.mdd.models.UserInfo;
-import com.orion.mdd.security.JwtUtils;
+import com.orion.mdd.security.services.JwtService;
 import com.orion.mdd.security.services.UserDetailsImpl;
 import com.orion.mdd.services.UserInfoService;
 
@@ -37,26 +40,25 @@ import lombok.extern.log4j.Log4j2;
  * use this class to log in or / and to create an account
  * this class is under "permit all" access
  */
+@Log4j2
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
-@Log4j2
 public class AuthController {
 
     private final UserInfoService userInfoService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    private final JwtService jwtService;
 
     public AuthController( 
         AuthenticationManager authenticationManager, 
         UserInfoService userInfoService, 
         PasswordEncoder passwordEncoder,
-        JwtUtils jwtUtils ) {
+        JwtService jwtService ) {
         this.userInfoService = userInfoService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -64,9 +66,11 @@ public class AuthController {
      * @param loginDto
      * @return MyResponseDto with data fill in with id, login, email and token if OK and an HttpErrorResponse INVALID_CREDENTIALS if not ok
      */
-    @PostMapping("/login")
+    @PostMapping("/api/auth/login")
     public ResponseEntity<MyResponseDto> loginUser(@Valid @RequestBody MyRequestLoginDto loginDto) {
       
+        UsernamePasswordAuthenticationToken userToken = null;  //the authenticated user found
+
         log.info("récupérer le username & l'authentication...");
         try{
             //find the username with str
@@ -81,7 +85,7 @@ public class AuthController {
                 if (user.isPresent()){
                     //email found in DB
                     authentication = authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(user.get().getUsername(), loginDto.getPwd()) );
-                } 
+                }
             }
 
             if (authentication == null) {
@@ -89,18 +93,18 @@ public class AuthController {
                 return ErrorManagement.responseError(new CustomException(ErrorCode.INVALID_CREDENTIALS));
             }
             
-            log.info("régler l'authentification..." + authentication.getName());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("générer le token...");
-            String jwt = jwtUtils.generateJwtToken(authentication);
-            log.info("récupérer le userDetails...");
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            log.info("retourner la Response...");
+            final List<SimpleGrantedAuthority> grantedAuths = new ArrayList<>();                //empty role list
+            //final String encodedPassword = this.passwordEncoder.encode( loginDto.getPwd() );    //password is encoded in db and in network
+            final UserDetailsImpl principal = (UserDetailsImpl) authentication.getPrincipal();  //
+            userToken = new UsernamePasswordAuthenticationToken( principal , loginDto.getPwd() , grantedAuths ); //UsernamePasswordAuthenticationToken
+            SecurityContextHolder.getContext().setAuthentication(userToken);    //authenticate the user
+            String jwt = jwtService.generateToken(authentication);              //generate the jwt
 
+            //return the MyResponseDto
             Map<String, Object> infos = new HashMap<>();
-            infos.put("id",userDetails.getId().toString());
-            infos.put("email",userDetails.getEmail());
-            infos.put("username",userDetails.getUsername());
+            infos.put("id",principal.getId().toString());
+            infos.put("email",principal.getEmail());
+            infos.put("username",principal.getUsername());
             infos.put("token",jwt);
 
             return ResponseEntity.ok().body(
@@ -120,7 +124,7 @@ public class AuthController {
      * @param userInfoDto
      * @return a MyResponseBody 201 USER_CREATION_SUCCESS with email and username or a badRequest response INVALID_INPUT or INVALID_USERNAME or INVALID_EMAIL if exception found
      */
-    @PostMapping("/register")
+    @PostMapping("/api/auth/register")
     public ResponseEntity<MyResponseDto> createUser(@Valid @RequestBody MyRequestUserInfoDto userInfoDto){
         log.info("creating user..." + userInfoDto);
         try{

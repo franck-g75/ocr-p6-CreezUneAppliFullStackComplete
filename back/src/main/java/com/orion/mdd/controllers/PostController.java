@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * PostController is a controller class to manage the posts ans comment operation 
+ * PostController is a controller class to manage the posts and comment operation 
  */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -174,7 +174,7 @@ public class PostController {
      * @param postId the id of of the comment's post wanted
      * @return MyResponseDto if success (200) or a MyResponseDto if there is an error
      */
-    @GetMapping("/{id}/comments")
+    @GetMapping("/comments/{id}")
     public ResponseEntity<MyResponseDto> findAllComments(@PathVariable("id") @NonNull Long postId) {
         log.info("findAllComments(iduser={}) ...", postId);
         try{
@@ -210,7 +210,7 @@ public class PostController {
      * @param commentDto the comment to add
      * @return a MyResponseDto in case of success or error
      */
-    @PostMapping("/{id}/comment")
+    @PostMapping("/comment/{id}")
     public ResponseEntity<MyResponseDto> addComment(@PathVariable("id") @NonNull Long idPost, @Valid @RequestBody CommentDto commentDto) {
 
         log.info("addComment(idpost={}) commentDto= {}  ...", idPost, commentDto);

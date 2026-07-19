@@ -1,9 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { GENERIC_LABELS, ME_LABELS } from '../../shared/labels';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { Topic } from '../../core/models/topic.interface';
+import { GENERIC_LABELS } from '../../shared/labels';
 import { MatInputModule } from '@angular/material/input'
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SignupForm } from "../../shared/signup-form/signup-form";
 import { TopicModule } from "../../shared/topic/topic";
 import { SessionService } from '../../core/services/session.service';
@@ -26,15 +24,15 @@ export class MeForm implements OnInit{
 
   constructor(
       private matSnackBar: MatSnackBar,
-      private router: Router,
-      private sessionService: SessionService) {  }
+      private router: Router) {  }
 
   public ngOnInit(){
-    this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
-    if (this.idUser<=0){
+    
+    if (localStorage.getItem('token')==null || localStorage.getItem('token')==undefined){
       this.matSnackBar.open(this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 });
       this.router.navigate(['landing']);
-    }
+    } 
+
   }
 }
 

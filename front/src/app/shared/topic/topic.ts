@@ -12,6 +12,7 @@ import { SessionInfo } from '../../core/models/session-info.interface';
 import { SessionService } from '../../core/services/session.service';
 import { ServerResponse } from '../../core/models/server-response.interface';
 import { BackEndTopicArray } from '../../core/models/back-end-topic-array.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-topic-module',
@@ -27,8 +28,7 @@ export class TopicModule {
   public idUser!: number ;
 
   private logPrefix: string = "TopicModule";
-  private onError: boolean = false;
-
+ 
   @Input({required:true}) public myOrigin!: 'theme' | 'me';
   
   public labelsMe = ME_LABELS;
@@ -40,16 +40,18 @@ export class TopicModule {
     private topicService: TopicService,
     private userInfoService: UserInfoService,
     private matSnackBar: MatSnackBar,
+    private router: Router,
     private sessionService: SessionService
   ) {  }
 
   public ngOnInit(): void { 
     
     this.myLog.info("topic.ngOnInit");
-    this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
-    this.myLog.info("idUser=" + this.idUser + " username=" + this.sessionService.sessionInformation?.username);
+    //this.idUser = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.id : 0;
+    //this.myLog.info("idUser=" + this.idUser + " username=" + this.sessionService.sessionInformation?.username);
 
-    if (this.idUser>0){
+    //if (this.idUser>0){
+    if (localStorage.getItem('token')!=null || localStorage.getItem('token')!=undefined){
       this.topicService.all().subscribe({
         next: (response: ServerResponse) => {
               this.myLog.info(this.logPrefix + "  searching all topics in response" );
@@ -58,7 +60,6 @@ export class TopicModule {
 
                 let beTopic = response.data as BackEndTopicArray;
                 this.topicSubject.next(beTopic.topics);
-                this.onError = false;
 
               } catch(e: any) {
                 this.myLog.error(this.logPrefix + "  all topics in error");
@@ -67,17 +68,19 @@ export class TopicModule {
             },
         error: (error: HttpErrorResponse) => {
             this.myLog.info(this.logPrefix + " get all topics error : " + error.status.toString() + " " + error.statusText);
-            this.onError = true;
-            this.matSnackBar.open(
-              this.labelsGeneric.error + error.status.toString() + " " + error.statusText, 'Close', { duration: 3000 }
-            );
+            if (error.status==401){
+                this.matSnackBar.open( this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 } );
+                this.router.navigate(["landing"]);
+              } else {
+                this.matSnackBar.open(
+                  this.labelsGeneric.error + error.status.toString() + " " + error.statusText, 'Close', { duration: 3000 }
+                );
+              }
           },
             
         });
-      } else {
-        this.matSnackBar.open(this.labelsGeneric.msgCnxKo, 'Close', { duration: 3000 });
       }
-
+    
     }
 
   public subscription(idTopic: number,event: Event, read: Boolean): void {

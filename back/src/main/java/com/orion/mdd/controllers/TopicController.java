@@ -24,6 +24,10 @@ import com.orion.mdd.services.UserInfoService;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * 
+ * TopicController is used to retrieve topics
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/topic")
@@ -42,8 +46,12 @@ public class TopicController {
         this.userInfoService = userInfoService;
     }
 
+    /**
+     * find all topics and set a read boolean to true for each topic subscribed by the user connected
+     * @return all topics
+     */
     @GetMapping("/user")
-    public ResponseEntity<MyResponseDto> findAll() throws CustomException {
+    public ResponseEntity<MyResponseDto> findAll() {
         log.info("findAll()  ...  ");
 
         try{
@@ -84,6 +92,10 @@ public class TopicController {
         }
     }
 
+    /**
+     * find all topics (used to fill the combo)
+     * @return all topics with the read boolean set to false for every topics
+     */
     @GetMapping()
     public ResponseEntity<MyResponseDto> findAllTopics() {
         log.info("findAllTopics() ...");

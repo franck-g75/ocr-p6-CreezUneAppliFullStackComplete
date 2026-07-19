@@ -1,11 +1,10 @@
-import { ApplicationConfig, inject, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { HttpEvent, HttpEventType, HttpHandlerFn, HttpRequest, provideHttpClient, withInterceptors } from '@angular/common/http'
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { Observable } from 'rxjs/internal/Observable';
 import { tap } from 'rxjs/internal/operators/tap';
-import { SessionService } from './core/services/session.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,6 +15,7 @@ export const appConfig: ApplicationConfig = {
   ]
 };
 
+//not used
 export function loggingInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
@@ -32,13 +32,18 @@ export function loggingInterceptor(
   );
 }
 
+//
 export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   // Inject the current `AuthService` and use it to get an authentication token:
-  const authToken = inject(SessionService).sessionInformation?.token;
-
-  // Clone the request to add the authentication header.
-  const newReq = req.clone({
-    headers: req.headers.append('Authorization', authToken ? "Bearer " +  authToken : "Bearer no-token"),
-  });
-  return next(newReq);
+  //const authToken = inject(SessionService).sessionInformation?.token;
+  const authToken = localStorage.getItem('token');// get the token from browser
+  if (req.url.indexOf("login")>0 || req.url.indexOf("register")>0 ){
+    return next(req); //no change
+  } else {// Clone the request to add the authentication header.
+    const jwtReq = req.clone({
+      headers: req.headers.append('Authorization', authToken ? "Bearer " +  authToken : ""),
+    });
+    return next(jwtReq);
+  }
 }
+

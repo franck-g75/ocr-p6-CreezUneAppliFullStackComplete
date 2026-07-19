@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment.prod';
 @Pipe({
   name: 'shorten'
 })
+
 export class ShortenPipe implements PipeTransform {
   
   transform(value: string): string {
@@ -12,4 +13,5 @@ export class ShortenPipe implements PipeTransform {
     }
     return value.substring(0, environment.shortentext) + '…';
   }
+  
 }

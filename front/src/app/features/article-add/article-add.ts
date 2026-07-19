@@ -17,7 +17,6 @@ import { Post } from '../../core/models/post.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
-import { SessionService } from '../../core/services/session.service';
 import { ServerResponse } from '../../core/models/server-response.interface';
 import { BackEndTopicArray } from '../../core/models/back-end-topic-array.interface';
 
@@ -48,7 +47,6 @@ export class ArticleAdd {
 
   constructor(
     private myLog: MyLoggingService,
-    private sessionService: SessionService,
     private matSnackBar: MatSnackBar,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -59,11 +57,9 @@ export class ArticleAdd {
   public ngOnInit(): void {
 
     this.myLog.debug("article-home.ngOnInit");
-    this.userName = this.sessionService.sessionInformation ? this.sessionService.sessionInformation.username : '';
 
-    if (this.userName!=null && this.userName!=''){
-
-      //to add the topics in topic list items
+    if (localStorage.getItem('token')!=null || localStorage.getItem('token')!=undefined){
+      // add the topics in topic list items
       this.topicService.allTopics().subscribe({
         next: (response: ServerResponse) => {
 
@@ -81,18 +77,22 @@ export class ArticleAdd {
         },
         error: (error: HttpErrorResponse) => {
           this.myLog.info('srv error found ... ' + error); 
-          this.matSnackBar.open(this.labels_generic.error + " " + error.status + " " + error.statusText, 'Close', { duration: 3000 });
+          if (error.status==401){
+            this.matSnackBar.open( this.labels_generic.msgCnxKo, 'Close', { duration: 3000 } );
+            this.router.navigate(["landing"]);
+          } else {
+            this.matSnackBar.open(this.labels_generic.error + " " + error.status + " " + error.statusText, 'Close', { duration: 3000 });
+          }
         }
       });
 
+      this.initForm();
     } else {
-
-      this.matSnackBar.open(this.labels_generic.error, 'Close', { duration: 3000 });
-      this.router.navigate(['landing']);
+    
+        this.matSnackBar.open(this.labels_generic.msgCnxKo, 'Close', { duration: 3000 });
+        this.router.navigate(['landing']);
 
     }
-
-    this.initForm();
 
   }
 
@@ -147,7 +147,6 @@ export class ArticleAdd {
 
   }
 
-
   public showClientTitleValidationError(){
     const titleControl = this.addForm.get('title');
     if (titleControl?.touched && !titleControl?.valid) {
@@ -194,7 +193,6 @@ export class ArticleAdd {
     return this.serverErrorMessage!==null ? this.serverErrorMessage : '';
   }
 
-
   public  serverError(error : HttpErrorResponse): void{
       const backEndResponseBody = error.error as BackEndErrorResponseBody;
       if (backEndResponseBody!==null && backEndResponseBody!==undefined){
@@ -204,7 +202,6 @@ export class ArticleAdd {
         this.serverErrorMessage = "";
         if (error.status === 0) {
           console.error('Network error:', error.error)
-          //this.serverErrorMessage.push("erreur réseau");
         } else {
           if (backEndResponseBody.validationErrors!==null && backEndResponseBody.validationErrors !==undefined ) {
             this.myLog.error(`Backend returned code ${error.status}, body:`, error.error);

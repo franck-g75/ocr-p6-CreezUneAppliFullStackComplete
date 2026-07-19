@@ -19,6 +19,7 @@ import { BackEndValidationErrors } from '../../core/models/back-end-validation-e
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-login-form',
   imports: [FormsModule, ReactiveFormsModule,  MatIcon, MatIconButton, MatFormField, MatLabel, MatCardContent,  MatCard, MatInputModule],
@@ -68,8 +69,6 @@ export class LoginForm implements OnInit{
   }
 
   public submit(): void { 
-
-
     this.myLog.info(this.logPrefix + "appel du service");
 
     const lr: LoginRequest = { str: this.myLoginForm.get("str")?.value, pwd: this.myLoginForm.get("pwd")?.value }
@@ -139,3 +138,11 @@ export class LoginForm implements OnInit{
       }
     }
 }
+
+//
+//useless : https://stackoverflow.com/questions/3715920/is-it-worth-hashing-passwords-on-the-client-side
+/*
+function hashPassword( password: string ): string {
+  return bcrypt.hashSync(password, 10);
+}
+*/

@@ -33,13 +33,13 @@ export class PostService {
     }
 
     public getComments(postid: number): Observable<ServerResponse> {
-      this.myLog.info("PostService path = " + this.pathService + '/' + postid + "/comments" );
-      return this.httpClient.get<ServerResponse>(this.pathService + '/' + postid + "/comments" );
+      this.myLog.info("PostService path = " + this.pathService + "/comments/" + postid  );
+      return this.httpClient.get<ServerResponse>(this.pathService + "/comments/" + postid );
     }
 
     public addComment(postid: number, comment: Comment){
-      this.myLog.info("PostService path = " + this.pathService + '/' + postid + "/comment" );
-      return this.httpClient.post<ServerResponse>(this.pathService + '/' + postid + '/comment' , comment);
+      this.myLog.info("PostService path = " + this.pathService + "/comment/" + postid  );
+      return this.httpClient.post<ServerResponse>(this.pathService + '/comment/' + postid  , comment);
     } 
   
 }
