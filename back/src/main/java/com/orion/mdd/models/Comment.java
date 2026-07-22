@@ -21,6 +21,10 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * Comment
+ * class used to add a comment to a post used for reading and writing operations
+ */
 @Table(name = "COMMENT")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -33,24 +37,38 @@ import jakarta.validation.constraints.NotNull;
 @AllArgsConstructor
 public class Comment {
 
+    /**
+     * identifer of the comment
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * user who post the comment
+     */
     @ManyToOne( fetch = FetchType.LAZY )
     @JoinColumn(name="user_info_id", nullable=false)
     @Size(max = 20)
     private UserInfo userInfo;
 
+    /**
+     * post related to the comment inserted
+     */
     @ManyToOne( fetch = FetchType.LAZY )
     @JoinColumn(name="post_id", nullable=false )
     private Post post;
 
+    /**
+     * content of the comment
+     */
     @NotBlank(message="Le contenu du message ne doit pas être vide.")
     @Size(max = 2000, message="Le contenu du message ne doit pas dépasser 2000 caractères.")
     private String content;
 
-    //champs technique pour la descente vers le client.
+    /**
+     * technical field used for the front end data transfert.
+     */
     @NotNull
     @DateTimeFormat
     private Date created_at;

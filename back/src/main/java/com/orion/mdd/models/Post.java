@@ -24,7 +24,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-
+/**
+ * Post
+ * class used to manage the post informations
+ */
 @Table(name = "POST")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -42,25 +45,43 @@ public class Post {//article
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * all the comments related to this post
+     */
     @OneToMany(mappedBy="post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Comment> comments;
 
+    /**
+     * the topic related to this post 
+     */
     @ManyToOne( fetch = FetchType.LAZY )
     @JoinColumn(name="topic_id", nullable=false)
     private Topic topic;
 
+    /**
+     * the user author of this post
+     */
     @ManyToOne( fetch = FetchType.LAZY )
     @JoinColumn(name="user_info_id", nullable=false)
     private UserInfo userInfo;
 
+    /**
+     * content of the post
+     */
     @NotBlank(message="Le contenu d'un article doit être saisi.")
     @Size(max=4000, message="La taille d'un article doit être comprise entre 1 et 4000 caractères.")
     private String content;
 
+    /**
+     * title of the post
+     */
     @NotBlank(message="Le titre d'un article doit être saisi.")
     @Size(max=50, message = "Le titre du theme doit avoir une taille comprise entre 1 et 50 caractères.")
     private String title;
 
+    /**
+     * creation date 
+     */
     @NotNull
     @DateTimeFormat
     private Date created_at;

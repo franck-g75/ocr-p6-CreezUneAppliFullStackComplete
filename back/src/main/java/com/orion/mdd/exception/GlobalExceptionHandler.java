@@ -18,10 +18,20 @@ import lombok.extern.log4j.Log4j2;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Can handle every excption of the project
+ * GlobalExceptionHandler
+ */
 @ControllerAdvice
 @Log4j2
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     * handling of custom exception raised in the application
+     * @param ex the custom exception
+     * @param request the request
+     * @return an adapted response entity
+     */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<MyResponseDto> handleCustomException(CustomException ex, WebRequest request) {
 
@@ -32,6 +42,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+    /**
+     * handling global exception
+     * @param ex the exception
+     * @param request the request
+     * @return an adapted response entity
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MyResponseDto> handleGlobalException(Exception ex, WebRequest request) {
 
@@ -41,6 +57,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+
+    /**
+     * Argument not valid occurs when a user doesn't respect the validity of the form
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(  @NonNull MethodArgumentNotValidException ex, 
                                                                     @NonNull HttpHeaders headers, 
@@ -57,7 +77,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         MyResponseDto errorResponse = new MyResponseDto(ErrorCode.INVALID_INPUT.getCode(), ErrorCode.INVALID_INPUT.getMessage(), errors);
 
-        log.error("MethodArgumentNotValid");
+        log.error("MethodArgumentNotValid" + errors.toString());
         return new ResponseEntity<Object>(errorResponse, ErrorCode.INVALID_INPUT.getHttpStatus());
 
     }

@@ -46,6 +46,12 @@ public class PostController {
     private final TopicService topicService;
     private final UserInfoService userInfoService;
 
+    /**
+     * constructor
+     * @param postService     service class to manage / find posts
+     * @param topicService    service class to manage / find topic  
+     * @param userInfoService service class to manage users 
+     */
     public PostController( 
         PostService postService, 
         TopicService topicService,
@@ -138,7 +144,7 @@ public class PostController {
      * @param postDto the post to add
      * @return a MyResponseDto in case of success or error
      */
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<MyResponseDto> addPost(@Valid @RequestBody PostDto postDto) {
         
         log.info("addPost post=" + postDto.toString());
@@ -149,7 +155,9 @@ public class PostController {
 
             if (topic.isPresent() && userToken.isPresent()){
             
-                postDto.setUsername(userToken.get().getUsername()); //a user X cannot add a post for a user Y
+                //replace the username by the one in token
+                log.info("username : " + userToken.get().getUsername());
+                postDto.setUsername(userToken.get().getUsername()); //a user X cannot add a post for a user Y     
                 this.postService.addPost(postDto);
 
                 MyResponseDto response = new MyResponseDto(ResponseCode.OPERATION_SUCCESS.getMessage(), ResponseCode.OPERATION_SUCCESS.getCode(), null);

@@ -23,6 +23,9 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class JwtService {
 	
+    /**
+     * no arg constructor
+     */
     public JwtService() {}
     
 	@Autowired
@@ -31,13 +34,16 @@ public class JwtService {
 	@Autowired
 	JwtDecoder jwtDecoder;
     
+    /**
+     * The time in milisseconds in witch the jtw expire
+     */
     @Value("${orion.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
     /**
-     * 
-     * @param request
-     * @return
+     * alalyse the request passed in parameter and extract the token from the autorization header without the prefix Bearer
+     * @param request the request to analyse
+     * @return a string containing the token or null if not found.
      */
     public String getJwtTokenFromHeader(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
@@ -49,8 +55,8 @@ public class JwtService {
 
     /**
      * generate the token
-     * @param authentication
-     * @return the token
+     * @param authentication an Authentication of spring sécurity object is passed as argument to generate the token
+     * @return the token encoded with private key
      */
     public String generateToken(Authentication authentication) {
 	    Instant now = Instant.now();
@@ -66,8 +72,8 @@ public class JwtService {
     
     /**
      * getUsernameFromToken
-     * @param token
-     * @return
+     * @param token the token without Bearer name
+     * @return the username in the token
      */
     public String getUsernameFromToken(String token) {
         log.info("getUsernameFromToken...");
@@ -78,21 +84,20 @@ public class JwtService {
 	 
     /**
      * getExpirationDateFromToken
-     * @param token
-     * @return 
+     * @param token token to analyse
+     * @return the Instant ExpiresAt
      */
     private Instant getExpirationDateFromToken(String token) {
         log.info("getExpirationDateFromToken...");
         Instant retour =  this.jwtDecoder.decode(token).getExpiresAt();
-        //log.info(retour.toString());
         return retour;
     }
 	 
     /**
      * validateToken
-     * @param token
-     * @param userDetails
-     * @return
+     * @param token to analyse
+     * @param userDetails user of the 
+     * @return true if token is validated false else
      */
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
@@ -101,8 +106,8 @@ public class JwtService {
 	 
     /**
      * isTokenExpired
-     * @param token
-     * @return
+     * @param token token to analyse
+     * @return true if token is expired else false 
      */
     private boolean isTokenExpired(String token) {
         final Instant expiration = getExpirationDateFromToken(token);

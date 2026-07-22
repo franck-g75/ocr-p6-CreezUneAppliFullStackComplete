@@ -75,8 +75,6 @@
 		</dependency>
 
 
-
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -87,6 +85,7 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 
 		<dependency>
 			<groupId>com.mysql</groupId>
@@ -150,7 +149,32 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin><!--private members (mvn javadoc:javadoc)-->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.12.0</version>
+				<configuration>
+					<show>private</show>
+					<nohelp>true</nohelp>
+					<reportOutputDirectory>../javadoc-private/</reportOutputDirectory>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
-
+	<reporting>
+		<plugins>
+		<plugin><!--public members (mvn site)-->
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-javadoc-plugin</artifactId>
+			<version>3.12.0</version>
+			<configuration>
+			<!--<stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>-->
+			<reportOutputDirectory>../javadoc-public/</reportOutputDirectory>
+			<show>public</show>
+			</configuration>
+		</plugin>
+		</plugins>
+  </reporting>
 </project>

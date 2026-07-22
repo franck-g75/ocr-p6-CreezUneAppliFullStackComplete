@@ -22,6 +22,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * UserInfo : the user entity
+ */
 @Table(name = "USER_INFO")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -34,24 +37,39 @@ import jakarta.validation.constraints.Size;
 @ToString(exclude = {"posts","comments","topics"})
 public class UserInfo {
     
+    /**
+     * user id 
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * username (can be used to log in)
+     */
     @NotBlank(message="Le nom d'utilisateur ne doit pas être vide.")
     @Size(max = 20, min=2, message="La taille du nom d'utilisateur doit être comprise entre 2 et 20 caractères.")
     private String username;
 
+    /**
+     * email (can be used to log in)
+     */
     @NotBlank(message="L'email ne doit pas être vide.")
     @Email(message= "L'email doit être corectement formatté.")
     @Size(max = 50, min=6, message="La taille de l'email doit être comprise entre 6 et 50 caractères.")
     private String email;
 
+    /**
+     * the password is hashed in DB (that's why 500)
+     */
     @Size(max = 500, message="La taille du mot de passe doit être comprise entre 8 et 500 caractères.")
     //@Password(message="Le mot de passe doit contenir au moins 1 chiffre, 1 majuscule, 1 minuscule, 1 caractère spécial. et faire 8 caractères mini.")
     @NotBlank(message = "Le mot de passe ne doit pas être vide.")
     private String pwd;
 
+    /**
+     * the topics subscribed by the user
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="TOPIC_USER",
     joinColumns = {
@@ -61,9 +79,15 @@ public class UserInfo {
     } )
     private Set<Topic> topics;
 
+    /**
+     * the posts writen by the user
+     */
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Post> posts;
 
+    /**
+     * the comments written by the user
+     */
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
 

@@ -15,6 +15,7 @@ import com.orion.mdd.exception.CustomException;
 import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.models.Comment;
 import com.orion.mdd.models.Post;
+import com.orion.mdd.models.Topic;
 import com.orion.mdd.models.UserInfo;
 import com.orion.mdd.repository.CommentRepository;
 import com.orion.mdd.repository.PostRepository;
@@ -22,29 +23,47 @@ import com.orion.mdd.repository.UserInfoRepository;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * class that give services for post class
+ * PostService
+ */
 @Log4j2
 @Service
 public class PostService {
 
+    private TopicService topicService;
     private PostRepository postRepository;
     private CommentRepository commentRepository;
-    private UserInfoService userInfoService;
     private UserInfoRepository userInfoRepository;
 
+    /**
+     * constructor
+     * @param postRepository to access data base post table
+     * @param commentRepository to access data base comment table
+     * @param userInfoRepository to access data base user info table 
+     * @param topicService to check the existence of the topic in addPost
+     */
     public PostService(
         PostRepository postRepository, 
         CommentRepository commentRepository,
         UserInfoRepository userInfoRepository,
-        UserInfoService userInfoService){
+        TopicService topicService
+        ){
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
-        this.userInfoService = userInfoService;
         this.userInfoRepository = userInfoRepository;
+        this.topicService = topicService;
     }
 
+    /**
+     * findPostsByUserInfo 
+     * @param id id of the user
+     * @return all the posts related to the topic the user had subscribed 
+     * @throws CustomException if user not found
+     */
     public Set<PostDto> findPostsByUserInfo(@NonNull Long id) throws CustomException{
 
-        Optional<UserInfo> user = this.userInfoService.findById(id);
+        Optional<UserInfo> user = this.userInfoRepository.findById(id);
 
         if (user.isEmpty()){
             throw new CustomException(ErrorCode.DATA_NOT_FOUND);
@@ -54,6 +73,12 @@ public class PostService {
         
     }
 
+    /**
+     * findPostById
+     * @param id id of the post 
+     * @return a postDto if exist
+     * @throws CustomException if post n° id is not found
+     */
     public PostDto findPostById(@NonNull Long id) throws CustomException{
 
         Optional<Post> post = this.postRepository.findById(id);
@@ -76,6 +101,12 @@ public class PostService {
         
     }
 
+    /**
+     * findCommentsByPostId
+     * @param id of the post
+     * @return a list of comment DTO if exist
+     * @throws CustomException if post not found
+     */
     public List<CommentDto> findCommentsByPostId(@NonNull Long id) throws CustomException{
 
         Optional<Post> post = this.postRepository.findById(id);
@@ -103,7 +134,12 @@ public class PostService {
 
 
 
-    
+    /**
+     * addComment 
+     * @param idPost the post to add the comment
+     * @param commentDto the comment to add
+     * @throws CustomException if the post or the user is not found
+     */
     public void addComment(@NonNull Long idPost, CommentDto commentDto) throws CustomException {
 
         Optional<UserInfo> user = this.userInfoRepository.findByUsername(commentDto.getUsername());
@@ -124,18 +160,26 @@ public class PostService {
     }
 
 
+    /**
+     * addPost 
+     * @param postDto the post informations to add
+     * @throws CustomException if the user is not found
+     */
     public void addPost( PostDto postDto ) throws CustomException {
 
         Optional<UserInfo> user = this.userInfoRepository.findByUsername(postDto.getUsername());
-        
+        Optional<Topic> topic = this.topicService.findById(postDto.getId_topic());
+
         if (user.isEmpty()) {
             log.error("adding post : user not found");
+            throw new CustomException(ErrorCode.DATA_NOT_FOUND);
+        } else if (topic.isEmpty()) {
+            log.error("adding post : topic not found");
             throw new CustomException(ErrorCode.DATA_NOT_FOUND);
         } else {
             this.postRepository.addPost(postDto.getTitle(), postDto.getContent(), postDto.getId_topic(), user.get().getId(), new Date());
         }
         
     }
-
 
 }

@@ -16,19 +16,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * sevice class to manage topics.
+ * TopicService
+ */
 @Log4j2
 @Service
 public class TopicService {
 
     private final TopicRepository topicRepository;
 
+    /**
+     * constructor
+     * @param topicRepository to manage the table topic in database
+     */
     public TopicService(TopicRepository topicRepository){
         this.topicRepository = topicRepository;
     }
 
     /**
      * Find all topics 
-     * @return a List<TopicDto> with read=false for every topics
+     * @return a List of TopicDto with read=false for every topics
      */
     public List<TopicDto> findAll() {
         log.info("findAll() ...");
@@ -44,8 +52,8 @@ public class TopicService {
 
     /**
      * Find all topics for a username and mark them as subscribed (read=true) or not subscribed (read=false)
-     * @param userName 
-     * @return a List<TopicDto> 
+     * @param user used to to tag the topics as subscribed or not
+     * @return a List of TopicDto 
      */
     public List<TopicDto> findAll(UserInfo user) throws CustomException{
         
@@ -93,6 +101,11 @@ public class TopicService {
         
     }
 
+    /**
+     * findById : find a topic by id
+     * @param idTopic id of the topic to find
+     * @return optional Topic
+     */
     public Optional<Topic> findById(@NonNull Long idTopic) {
         log.info("findById({})", idTopic);
         return topicRepository.findById(idTopic);

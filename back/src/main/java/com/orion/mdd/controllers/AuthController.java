@@ -50,6 +50,13 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+    /**
+     * Constructor 
+     * @param authenticationManager used to authenticate the user
+     * @param userInfoService used to find user by mail or username
+     * @param passwordEncoder used to encode password
+     * @param jwtService used for token affairs
+     */
     public AuthController( 
         AuthenticationManager authenticationManager, 
         UserInfoService userInfoService, 
@@ -62,8 +69,8 @@ public class AuthController {
     }
 
     /**
-     * Login function
-     * @param loginDto
+     * Login function 
+     * @param loginDto contains the str and the pwd to identify the user
      * @return MyResponseDto with data fill in with id, login, email and token if OK and an HttpErrorResponse INVALID_CREDENTIALS if not ok
      */
     @PostMapping("/api/auth/login")
@@ -120,8 +127,8 @@ public class AuthController {
     }
 
     /**
-     * Create user function
-     * @param userInfoDto
+     * Create user function : create a user if login and email doesn't exist in database.
+     * @param userInfoDto contain id=0, login, username and password to create the user
      * @return a MyResponseBody 201 USER_CREATION_SUCCESS with email and username or a badRequest response INVALID_INPUT or INVALID_USERNAME or INVALID_EMAIL if exception found
      */
     @PostMapping("/api/auth/register")

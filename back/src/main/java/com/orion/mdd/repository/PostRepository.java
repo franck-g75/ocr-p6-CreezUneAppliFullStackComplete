@@ -14,27 +14,71 @@ import org.springframework.transaction.annotation.Transactional;
 import com.orion.mdd.dto.PostDto;
 import com.orion.mdd.models.Post;
 
+/**
+ * interface PostRepository
+ */
 @Transactional
 public interface PostRepository extends JpaRepository<Post, Long>{
 
+    /**
+     * the big query to find the posts of the subscribed topic user 
+     */
     String qSelect = " SELECT POST.id, POST.title as 'title', POST.content as 'content', POST.created_at as 'created_at', fait.username as 'username', POST.topic_id as 'id_topic', TOPIC.title as 'topic_title' ";
+    /**
+     * the from part and first inner of the request
+     */
     String qFromInner1 = " FROM POST INNER JOIN TOPIC ON POST.topic_id=TOPIC.id ";
+    /**
+     * the second inner part
+     */
     String qInner2 = " INNER JOIN TOPIC_USER as abo1 ON abo1.topic_id = TOPIC.id  ";
+    /**
+     * third
+     */
     String qInner3 = " INNER JOIN USER_INFO as abo2 ON abo1.user_info_id = abo2.id  ";
+    /**
+     * fourth
+     */
     String qInner4 = " INNER JOIN USER_INFO as fait ON POST.user_info_id = fait.id  ";
+    /**
+     * where part 
+     */
     String qWhere = " WHERE abo2.id=:idUser ORDER BY POST.id desc  ";
 
+    /**
+     * find the post list to display at beginning
+     * @param idUser the userId of the list 
+     * @return all the posts related to the topic the user had subscribed 
+     */
     @Query(value=qSelect + qFromInner1 + qInner2 + qInner3 + qInner4 + qWhere, nativeQuery=true)
     public Set<PostDto> findPostList(@Param("idUser") Long idUser);
 
-    @SuppressWarnings("null")
+
+    /**
+     * find a post ById 
+     */
     public Optional<Post> findById(@NonNull Long id);
 
+    /**
+     * insert a coment to a post (the fields are vérified before)
+     * @param idPost the post id
+     * @param content the content 
+     * @param idUser the author of the post
+     * @param creatDate create date of the post
+     */
     @Modifying
     @Transactional
     @Query(value="INSERT INTO COMMENT(post_id, content, user_info_id, created_at) VALUES(?1,?2,?3,?4)", nativeQuery=true)
     public void addComment(Long idPost, String content, Long idUser, Date creatDate);
 
+    /**
+     * add a post 
+     * @param Title     post title
+     * @param content   post content
+     * @param idTopic   post topic
+     * @param idUser    post author
+     * @param creatDate created date
+     */
     @Modifying
     @Transactional
     @Query(value="INSERT INTO POST( title, content, topic_id, user_info_id, created_at ) VALUES(?1,?2,?3,?4, ?5)", nativeQuery=true)

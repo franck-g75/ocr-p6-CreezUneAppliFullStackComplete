@@ -19,6 +19,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SpringSecurityConfig {
 
+    /**
+     * securityFilterChain : the node of security in the app
+     * @param http HttpSecurity 
+     * @return SecurityFilterChain 
+     * @throws Exception 
+     */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         System.out.println("entering the SecurityChainFilter");
@@ -30,13 +36,13 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET,  "/api/post/user","/api/post/**", "/api/topic/user", "/api/topic", "/api/post/comments/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/users/subscribe/topic/**", "/api/users/unsubscribe/topic/**", "/api/post", "/api/post/comment/**").authenticated()
                 .requestMatchers(HttpMethod.PUT,  "/api/users").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
-
+                .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll() 
+                
             )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // the sessions are stateless sessions
             .exceptionHandling((exceptions) -> exceptions											      // popups //found on gitHub https://github.com/spring-projects/spring-security-samples
 				.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())			          // popups protection
-				.accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+				.accessDeniedHandler(new BearerTokenAccessDeniedHandler())                                // handler for access denied
 			)
             .build();
 

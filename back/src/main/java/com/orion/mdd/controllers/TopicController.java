@@ -25,8 +25,7 @@ import com.orion.mdd.services.UserInfoService;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * 
- * TopicController is used to retrieve topics
+ * TopicController is used to handle topic input and output 
  */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -38,6 +37,11 @@ public class TopicController {
     private final UserInfoService userInfoService;
     
 
+    /**
+     * constructor
+     * @param topicService gives services for topic objects
+     * @param userInfoService gives services for userinfo objects
+     */
     public TopicController( 
             TopicService topicService, 
             UserInfoService userInfoService

@@ -21,25 +21,33 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
+/**
+ * 
+ * The class that handles user input and output ( add or delete subscription ) and update user
+ * User must be identified in the app to use these routes
+ * 
+ * UserInfoController
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/users")
 @Log4j2
 public class UserInfoController {
     
-   
     private final UserInfoService userInfoService;
     
+    /**
+     * constructor
+     * @param userInfoService a service class to manage users
+     */
     public UserInfoController(  UserInfoService userInfoService ) {
         this.userInfoService = userInfoService;
     }
 
     /**
      * update a user
-     * @param userInfoDto
+     * @param userInfoDto the request payload
      * @return a 200 ok response if ok or notFoundException if user not found or a badRequest response if exception found
-     * @throws notFoundException if user not found
-     * @throws badRequest response if exception found
      */
     @PutMapping()
     public ResponseEntity<MyResponseDto> update(@Valid @RequestBody MyRequestUserInfoDto userInfoDto){
@@ -51,11 +59,9 @@ public class UserInfoController {
           Optional<UserInfo> userRequest = userInfoService.findById(userInfoDto.getId());
           Optional<UserInfo> userToken = userInfoService.findByUsername( SecurityContextHolder.getContext().getAuthentication().getName() );
 
-          if (userToken.isPresent() && userRequest.isPresent()){
+          if ( userToken.isPresent() && userRequest.isPresent() ){
 
             log.info("userToken.id=" +userToken.get().getId() + " userToken.userName=" + userToken.get().getUsername() + " userRequest.id=" + userRequest.get().getId() + " userRequest.username=" + userRequest.get().getUsername());
-
-            //if (userToken.get().getUsername().equals(userRequest.get().getUsername())) {
 
                 this.userInfoService.update( userToken.get(), userInfoDto );
 
@@ -69,12 +75,7 @@ public class UserInfoController {
                   infos);
 
                 return ResponseEntity.ok().body(response);
-
-            //} else {
-            //  log.error("user {} , {} not equals. userToken try to modify userRequest : it is forbiden", userToken.get().getUsername(), userRequest.get().getUsername());
-            //  return ErrorManagement.responseError(new CustomException(ErrorCode.NOT_AUTHORIZED));
-            //}
-           
+          
           } else {
             log.error("userToken or user Request or both are not found in db.");
             return ErrorManagement.responseError(new CustomException(ErrorCode.DATA_NOT_FOUND));
@@ -88,6 +89,11 @@ public class UserInfoController {
         }
     }
 
+    /**
+     * add subscription to the user logged in
+     * @param idTopic the topic id the user want to subscribe
+     * @return the appropriate response (error or entity)
+     */
     @PostMapping("/subscribe/topic/{idTopic}")
     public ResponseEntity<MyResponseDto> addSubscription(@PathVariable("idTopic") Long idTopic) {
         log.info("addSubscription - " + idTopic + " ...");
@@ -113,6 +119,11 @@ public class UserInfoController {
         }
     }
 
+    /**
+     * delete subscription to the user logged in
+     * @param idTopic the topic id the user want to unsubscribe
+     * @return the appropriate response (error or entity)
+     */
     @PostMapping("/unsubscribe/topic/{idTopic}")
     public ResponseEntity<MyResponseDto> delSubscription(@PathVariable("idTopic") Long idTopic) {
         log.info("delSubscription - " + idTopic + " ...");

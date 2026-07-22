@@ -16,6 +16,11 @@ import com.orion.mdd.repository.UserInfoRepository;
 
 import lombok.extern.log4j.Log4j2;
 
+
+/**
+ * User class 
+ * UserInfoService
+ */
 @Log4j2
 @Service
 public class UserInfoService {
@@ -24,6 +29,12 @@ public class UserInfoService {
     private final TopicService topicService;
     private final UserInfoRepository userInfoRepository;
 
+    /**
+     * constructor
+     * @param userInfoRepository access to database, table userinfo
+     * @param topicService to manage topics of the user   
+     * @param passwordEncoder used to update a user
+     */
     public UserInfoService(
             UserInfoRepository userInfoRepository, 
             TopicService topicService,
@@ -37,7 +48,7 @@ public class UserInfoService {
     /**
      * find a user by email (String)
      * @param email to search
-     * @return an Optionnal<UserInfo>
+     * @return an Optionnal UserInforamations
      */
     public Optional<UserInfo> findByEmail(String email)  {
         log.info("findByEmail({})...",email);
@@ -47,7 +58,7 @@ public class UserInfoService {
     /**
      * find a user by username (String)
      * @param username to search
-     * @return an Optionnal<UserInfo>
+     * @return an Optionnal User informations
      */
     public Optional<UserInfo> findByUsername(String username) {
         log.info("findByUsername({})...",username);
@@ -57,7 +68,7 @@ public class UserInfoService {
     /**
      * find a user by id (Long)
      * @param id to search
-     * @return an Optionnal<UserInfo>
+     * @return an Optionnal User Informations
      */
     public Optional<UserInfo> findById(@NonNull Long id){
 
@@ -101,7 +112,7 @@ public class UserInfoService {
      * @param userToChange user found by the id
      * @param userDto data given in the request
      * @return the User modified
-     * @throws CustomException
+     * @throws CustomException if username or email or both are already in DataBase
      */
     public UserInfo update(UserInfo userToChange, MyRequestUserInfoDto userDto) throws CustomException {
 

@@ -11,6 +11,9 @@ import com.orion.mdd.exception.ErrorCode;
 import com.orion.mdd.models.UserInfo;
 import com.orion.mdd.repository.UserInfoRepository;
 
+/**
+ * UserDetailsServiceImpl
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
   UserInfoRepository userRepository;

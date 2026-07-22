@@ -3,23 +3,22 @@ package com.orion.mdd.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
 import com.orion.mdd.dto.MyResponseDto;
 
-
-
 /**
- * 
+ * Management of all returned errors in the app
  * ErrorManagement
  */
 public class ErrorManagement {
 
+    /**
+     * static function
+     * @param e the exception raised
+     * @return the ResponseEntity adapted to the raised error
+     */
     public static ResponseEntity<MyResponseDto> responseError(Exception e){
 
         MyResponseDto myResponseDto = new MyResponseDto(ErrorCode.SERVER_ERROR.getCode(),ErrorCode.SERVER_ERROR.getMessage(), null);
-        //myResponse.setData(null);
-        //myResponse.setCode(ErrorCode.SERVER_ERROR.getCode());
-        //myResponse.setMessage(ErrorCode.SERVER_ERROR.getMessage());
 
         if (e instanceof CustomException) {
             switch (((CustomException)e).getErrorCode().getHttpStatus()){

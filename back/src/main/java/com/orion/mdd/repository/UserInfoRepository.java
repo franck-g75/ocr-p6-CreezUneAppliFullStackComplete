@@ -19,26 +19,26 @@ public interface UserInfoRepository  extends JpaRepository<UserInfo, Long> {
     /**
      * find a user by email
      * @param email the email to search
-     * @return a Optional<UserInfo>
+     * @return a Optional user informations
      */
     @NonNull Optional<UserInfo> findByEmail(String email);
 
     /**
      * find a user by username
      * @param username the username to search
-     * @return a Optional<UserInfo>
+     * @return a Optional user informations
      */
     @NonNull Optional<UserInfo> findByUsername(String username);
 
     /**
      * find a user by id
      * @param id the id to search
-     * @return a Optional<UserInfo>
+     * @return a Optional user informations
      */
     @NonNull Optional<UserInfo> findById(@NonNull Long id);
     
     /**
-     * save a UserInfo in DB
+     * save a user informations in DB
      */
     <U extends UserInfo> U save(@NonNull U entity);
 

@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 /**
- * 
+ * PasswordValidator used to validate password at account creation and update
  */
 public class PasswordValidator implements ConstraintValidator<Password, String> {
 

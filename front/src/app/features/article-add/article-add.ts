@@ -19,6 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { BackEndErrorResponseBody } from '../../core/models/error-response.interface';
 import { ServerResponse } from '../../core/models/server-response.interface';
 import { BackEndTopicArray } from '../../core/models/back-end-topic-array.interface';
+import { SessionInfo } from '../../core/models/session-info.interface';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-article-add',
@@ -31,7 +33,7 @@ export class ArticleAdd {
   public labels = ARTICLE_LABELS;
   public labels_generic = GENERIC_LABELS;
 
-  private userName!: string;
+  //private userName!: string;
 
   public addForm!: FormGroup;
   private logPrefix: String = "addArticle - ";
@@ -51,7 +53,8 @@ export class ArticleAdd {
     private formBuilder: FormBuilder,
     private router: Router,
     private topicService: TopicService,
-    private postService: PostService
+    private postService: PostService,
+    private sessionService: SessionService
   ){}
 
   public ngOnInit(): void {
@@ -85,7 +88,7 @@ export class ArticleAdd {
           }
         }
       });
-
+      
       this.initForm();
     } else {
     
@@ -126,7 +129,7 @@ export class ArticleAdd {
                         content: this.addForm.get("content")?.value, 
                         id_topic: this.selected, 
                         topic_title: "",
-                        username: this.userName, 
+                        username: (this.sessionService?.sessionInformation?.username == undefined) ? '' : this.sessionService?.sessionInformation?.username , 
                         created_at: new Date()};
 
       this.postService.addPost(post).subscribe({
@@ -136,8 +139,13 @@ export class ArticleAdd {
           this.router.navigate(['article']);
         },
         error : (error: HttpErrorResponse) => {
-          this.myLog.info(this.logPrefix + "add post error : " + error.error);
-          this.serverError(error);
+          if (error.status==401){
+            this.matSnackBar.open( this.labels_generic.msgCnxKo, 'Close', { duration: 3000 } );
+            this.router.navigate(["landing"]);
+          } else {
+            this.myLog.info(this.logPrefix + "add post error : " + error.error);
+            this.serverError(error);
+          }
         }
       });
     } else {
